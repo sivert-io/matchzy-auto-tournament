@@ -11,15 +11,15 @@ End-to-end tests for MatchZy Auto Tournament using Playwright.
 
 2. Install Playwright browsers:
    ```bash
-   yarn test:e2e:install
+   yarn test:install
    ```
 
 ## Running Tests
 
-### Run all tests (automated with Docker Compose)
+### Run all tests (recommended - fully automated)
 ```bash
 # Fully automated: spins up Docker Compose with PostgreSQL, runs tests, cleans up
-yarn test:all
+yarn test
 ```
 
 ### Run tests manually (requires server and database running)
@@ -27,32 +27,36 @@ yarn test:all
 # Make sure PostgreSQL is running: yarn db
 # Make sure server is running: yarn start
 # Then run tests:
-yarn test:e2e
+yarn test:manual
 ```
 
 ### Run tests with specific tags
 ```bash
 # Run only authentication tests
-yarn test:e2e --grep @auth
+yarn test:manual --grep @auth
 
 # Run only teams tests
-yarn test:e2e --grep @teams
+yarn test:manual --grep @teams
 
 # Run only CRUD tests
-yarn test:e2e --grep @crud
+yarn test:manual --grep @crud
 
 # Run login tests only
-yarn test:e2e --grep @login
+yarn test:manual --grep @login
 ```
 
-### Run tests in UI mode (interactive)
+### Run tests in UI mode (interactive debugging)
 ```bash
-yarn test:e2e:ui
+# Works with automated setup
+yarn test:ui
+
+# Or with manual setup (requires server/db running)
+yarn test:manual --ui
 ```
 
 ### View HTML report
 ```bash
-yarn test:e2e:report
+yarn test:report
 ```
 
 ## Test Tags

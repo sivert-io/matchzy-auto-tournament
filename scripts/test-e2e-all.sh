@@ -37,7 +37,7 @@ fi
 # Check if Playwright browsers are installed
 if [ ! -d "$HOME/.cache/ms-playwright" ] && [ ! -d "node_modules/.cache/ms-playwright" ]; then
   echo -e "${YELLOW}Playwright browsers not found. Installing...${NC}"
-  yarn test:e2e:install
+  yarn test:install
 fi
 
 # Set test environment variables
@@ -119,10 +119,10 @@ fi
 
 # Step 4: Show HTML report location
 echo ""
-echo -e "${YELLOW}Step 3/4: Test report${NC}"
+echo -e "${YELLOW}Step 4/4: Test report${NC}"
 if [ -d "playwright-report" ]; then
   echo -e "${GREEN}HTML report available at: playwright-report/index.html${NC}"
-  echo -e "${BLUE}View report with: yarn test:e2e:report${NC}"
+  echo -e "${BLUE}View report with: yarn test:report${NC}"
 else
   echo -e "${YELLOW}⚠️  No HTML report generated${NC}"
 fi
