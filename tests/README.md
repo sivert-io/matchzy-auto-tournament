@@ -121,7 +121,7 @@ test.describe('Your Feature', () => {
 
 After running tests, view the full HTML report:
 ```bash
-yarn test:e2e:report
+yarn test:report
 ```
 
 The report includes:
