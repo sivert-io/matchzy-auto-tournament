@@ -55,6 +55,13 @@ Tests are organized using tags for easy filtering:
 - `@logout` - Logout tests
 - `@teams` - Teams page tests
 - `@servers` - Servers page tests
+- `@tournament` - Tournament page tests
+- `@bracket` - Bracket page tests
+- `@matches` - Matches page tests
+- `@settings` - Settings page tests
+- `@dashboard` - Dashboard page tests
+- `@navigation` - Navigation tests
+- `@configuration` - Configuration/settings tests
 - `@crud` - Create, Read, Update, Delete operations
 - `@example` - Example/template tests
 
@@ -68,8 +75,13 @@ Tests are organized using tags for easy filtering:
 ```
 tests/
 ├── auth.spec.ts      # Authentication tests (@auth, @login, @logout)
+├── dashboard.spec.ts # Dashboard page tests (@dashboard, @navigation)
 ├── teams.spec.ts     # Teams page tests (@teams, @crud)
-├── servers.spec.ts    # Servers page tests (@servers, @crud)
+├── servers.spec.ts   # Servers page tests (@servers, @crud)
+├── tournament.spec.ts # Tournament page tests (@tournament, @crud)
+├── bracket.spec.ts   # Bracket page tests (@bracket, @navigation)
+├── matches.spec.ts   # Matches page tests (@matches, @navigation)
+├── settings.spec.ts   # Settings page tests (@settings, @configuration)
 └── example.spec.ts   # Example/template tests (@example)
 ```
 
