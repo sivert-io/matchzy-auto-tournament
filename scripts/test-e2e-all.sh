@@ -102,7 +102,7 @@ echo ""
 # Run tests (skip webServer since Docker Compose handles it)
 # Note: timeout command may not be available on macOS, so we run without it
 # The test timeout is handled by Playwright's own timeout settings
-SKIP_WEBSERVER=1 yarn test:e2e
+SKIP_WEBSERVER=1 yarn test:manual
 TEST_EXIT_CODE=$?
 
 if [ $TEST_EXIT_CODE -ne 0 ]; then
