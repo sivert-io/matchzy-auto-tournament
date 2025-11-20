@@ -231,7 +231,6 @@ export function getBracketName(stage: Stage, type: GroupType): string | undefine
     }
 }
 
-// eslint-disable-next-line jsdoc/require-param
 /**
  * Returns the name of a round.
  */
@@ -239,7 +238,6 @@ export function getRoundName({ roundNumber, roundCount }: RoundNameInfo, t: TFun
     return roundNumber === roundCount ? t('common.round-name-final') : t('common.round-name', { roundNumber });
 }
 
-// eslint-disable-next-line jsdoc/require-param
 /**
  * Returns the name of a round in the winner bracket of a double elimination stage.
  */
@@ -247,7 +245,6 @@ export function getWinnerBracketRoundName({ roundNumber, roundCount }: RoundName
     return roundNumber === roundCount ? t('common.round-name-winner-bracket-final') : t('common.round-name-winner-bracket', { roundNumber });
 }
 
-// eslint-disable-next-line jsdoc/require-param
 /**
  * Returns the name of a round in the loser bracket of a double elimination stage.
  */

@@ -84,10 +84,8 @@ export function updateFormCreator(configuration: FormConfiguration, changeCallab
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id') ?? 0;
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const storedBrackets = JSON.parse(localStorage.getItem('brackets') ?? '{}');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const currentBracket = storedBrackets[id] as Database;
+    const storedBrackets = JSON.parse(localStorage.getItem('brackets') ?? '{}') as Record<number, Database>;
+    const currentBracket = storedBrackets[id];
 
     const parent = document.getElementById(configuration.parent_id);
 
@@ -139,10 +137,8 @@ function createBaseMask(parent: HTMLElement, configuration: FormConfiguration, s
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id') ?? 0;
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const storedBrackets = JSON.parse(localStorage.getItem('brackets') ?? '{}');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const currentBracket = storedBrackets[id] as Database;
+    const storedBrackets = JSON.parse(localStorage.getItem('brackets') ?? '{}') as Record<number, Database>;
+    const currentBracket = storedBrackets[id];
 
     // Name
     createInput(

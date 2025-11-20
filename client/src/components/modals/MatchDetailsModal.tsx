@@ -91,6 +91,27 @@ const MatchDetailsModal: React.FC<MatchDetailsModalProps> = ({
     return () => clearInterval(interval);
   }, [match]);
 
+  const derivedSeriesWins = useMemo(() => {
+    if (!match) return { team1: 0, team2: 0 };
+    if (match.mapResults && match.mapResults.length > 0) {
+      return match.mapResults.reduce(
+        (acc, result) => {
+          if (result.team1Score > result.team2Score) {
+            acc.team1 += 1;
+          } else if (result.team2Score > result.team1Score) {
+            acc.team2 += 1;
+          }
+          return acc;
+        },
+        { team1: 0, team2: 0 }
+      );
+    }
+    return {
+      team1: liveStats?.team1SeriesScore ?? match.team1Score ?? 0,
+      team2: liveStats?.team2SeriesScore ?? match.team2Score ?? 0,
+    };
+  }, [match, liveStats]);
+
   const getMatchPhaseDisplay = () => {
     if (match?.matchPhase) {
       return getPhaseDisplay(match.matchPhase);
@@ -100,6 +121,8 @@ const MatchDetailsModal: React.FC<MatchDetailsModalProps> = ({
 
   if (!match) return null;
 
+  const seriesWinsTeam1 = derivedSeriesWins.team1;
+  const seriesWinsTeam2 = derivedSeriesWins.team2;
   const mapRoundsTeam1 = liveStats?.team1Score ?? match.team1Score ?? 0;
   const mapRoundsTeam2 = liveStats?.team2Score ?? match.team2Score ?? 0;
   const activeMapNumber = liveStats?.mapNumber ?? match.mapNumber ?? null;
@@ -130,28 +153,6 @@ const MatchDetailsModal: React.FC<MatchDetailsModalProps> = ({
     match.config?.num_maps ??
     (mapList.length > 0 ? mapList.length : match.mapResults?.length) ??
     undefined;
-  const derivedSeriesWins = useMemo(() => {
-    if (match.mapResults && match.mapResults.length > 0) {
-      return match.mapResults.reduce(
-        (acc, result) => {
-          if (result.team1Score > result.team2Score) {
-            acc.team1 += 1;
-          } else if (result.team2Score > result.team1Score) {
-            acc.team2 += 1;
-          }
-          return acc;
-        },
-        { team1: 0, team2: 0 }
-      );
-    }
-    return {
-      team1: liveStats?.team1SeriesScore ?? match.team1Score ?? 0,
-      team2: liveStats?.team2SeriesScore ?? match.team2Score ?? 0,
-    };
-  }, [match.mapResults, liveStats, match.team1Score, match.team2Score]);
-
-  const seriesWinsTeam1 = derivedSeriesWins.team1;
-  const seriesWinsTeam2 = derivedSeriesWins.team2;
   const livePlayerStats = liveStats?.playerStats ?? null;
   const normalizedTeam1Players = livePlayerStats?.team1?.length
     ? livePlayerStats.team1.map((player) => ({

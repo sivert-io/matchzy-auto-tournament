@@ -35,7 +35,6 @@ export class BracketsViewer {
     private alwaysConnectFirstRound = false;
     private popover!: HTMLElement;
 
-    // eslint-disable-next-line jsdoc/require-jsdoc
     private getRoundName(info: RoundNameInfo, fallbackGetter: RoundNameGetter): string {
         return this.config.customRoundName?.(info, lang.t) || fallbackGetter(info, lang.t);
     }
@@ -62,7 +61,6 @@ export class BracketsViewer {
      * @param data The data to display.
      * @param config An optional configuration for the viewer.
      */
-    // eslint-disable-next-line @typescript-eslint/require-await -- Keep this async for backwards compatibility.
     public async render(data: ViewerData, config?: Partial<Config>): Promise<void> {
         if (typeof data === 'string')
             throw Error('Using a CSS selector as the first argument is deprecated. Please look here: https://github.com/Drarig29/brackets-viewer.js');

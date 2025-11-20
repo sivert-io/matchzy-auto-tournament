@@ -440,9 +440,8 @@ export function useTeamMatchData(teamId: string | undefined): UseTeamMatchDataRe
       socket.off('tournament:update', handleTournamentUpdate);
       socket.close();
     };
-    // Only re-run if teamId changes, not on every state update
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [teamId]);
+    // Re-run when teamId or dependent functions change (functions are memoized with teamId)
+  }, [teamId, loadTeamMatch, loadMatchHistory, loadTeamStats, fetchConnectionStatus, fetchLiveStats, swapPlayerStats]);
 
   return {
     team,

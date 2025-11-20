@@ -141,7 +141,7 @@ class DatabaseManager {
               `ALTER TABLE ${migration.table} ADD COLUMN ${migration.column} ${migration.type}`
             );
           }
-        } catch (err) {
+        } catch {
           // Ignore errors
         }
       }
