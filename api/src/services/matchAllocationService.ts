@@ -244,6 +244,10 @@ export class MatchAllocationService {
       });
     }
 
+    // How many matches are currently waiting for servers (ready + no server_id)
+    const readyMatches = await this.getReadyMatches();
+    const requiredServerCount = readyMatches.length;
+
     // This method is called both by UI endpoints and allocator helpers; only
     // emit a summary when there is contention so logs stay readable.
     if (requiredServerCount > 0 && availableServerCount === 0) {
@@ -259,10 +263,6 @@ export class MatchAllocationService {
         );
       }
     }
-
-    // How many matches are currently waiting for servers (ready + no server_id)
-    const readyMatches = await this.getReadyMatches();
-    const requiredServerCount = readyMatches.length;
 
     return {
       availableServerCount,

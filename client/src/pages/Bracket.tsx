@@ -388,37 +388,6 @@ export default function Bracket() {
     );
   }
 
-  const showWaitingForServersBanner =
-    allocationCountdown.requiredServerCount > 0 &&
-    allocationCountdown.availableServerCount === 0;
-
-  const renderAllocationBanner = () => {
-    if (!showWaitingForServersBanner) {
-      return null;
-    }
-
-    const nextIn = allocationCountdown.nextAllocationInSeconds;
-
-    return (
-      <Box mb={2}>
-        <Alert severity="info">
-          <Typography variant="body2" fontWeight={600} gutterBottom>
-            {t('servers.allocation.title')}
-          </Typography>
-          <Typography variant="body2">
-            {t('servers.allocation.waiting')}{' '}
-            <strong>{allocationCountdown.requiredServerCount}</strong>
-          </Typography>
-          {typeof nextIn === 'number' && nextIn > 0 && (
-            <Typography variant="body2" color="text.secondary" mt={0.5}>
-              {t('servers.allocation.nextPass', { seconds: nextIn })}
-            </Typography>
-          )}
-        </Alert>
-      </Box>
-    );
-  };
-
   if (!matches.length) {
     return (
       <Box sx={{ width: '100%', height: '100%' }}>
