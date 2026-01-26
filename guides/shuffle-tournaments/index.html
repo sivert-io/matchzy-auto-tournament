@@ -1,0 +1,3865 @@
+<!DOCTYPE html><html lang="en" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Automated CS2 tournament management platform MatchZy Auto Tournament  - one click from match creation to final scores with real-time match tracking and statistics">
+      
+      
+        <meta name="author" content="Sivert Gullberg Hansen">
+      
+      
+        <link rel="canonical" href="https://mat.sivert.io/guides/shuffle-tournaments/">
+      
+      
+        <link rel="prev" href="../how-to-set-up-a-tournament/">
+      
+      
+        <link rel="next" href="../managing-maps/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../icon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Shuffle Tournaments - MatchZy Auto Tournament</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#shuffle-tournaments-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="MatchZy Auto Tournament" class="md-header__button md-logo" aria-label="MatchZy Auto Tournament" data-md-component="logo">
+      
+  <img src="../../icon.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            MatchZy Auto Tournament
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Shuffle Tournaments
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Switch to light mode" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1M8 13h8v-2H8zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4a5 5 0 0 0 5-5 5 5 0 0 0-5-5"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Switch to dark mode" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Switch to system preference" type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/sivert-io/matchzy-auto-tournament" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    sivert-io/matchzy-auto-tournament
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../.." class="md-tabs__link">
+          
+  
+  
+    
+  
+  Home
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../admin-dashboard/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Guides
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../development/architecture/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  For Developers
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../changelog/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Related
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="MatchZy Auto Tournament" class="md-nav__button md-logo" aria-label="MatchZy Auto Tournament" data-md-component="logo">
+      
+  <img src="../../icon.svg" alt="logo">
+
+    </a>
+    MatchZy Auto Tournament
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/sivert-io/matchzy-auto-tournament" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    sivert-io/matchzy-auto-tournament
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../.." class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_1" id="__nav_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Home
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_2">
+        
+          
+          <label class="md-nav__link" for="__nav_1_2" id="__nav_1_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Features
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Features
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/map-veto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Map Veto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/shuffle-tournament-summary.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shuffle Tournaments
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../screenshots/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Screenshots
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../getting-started/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/server-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Server Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migration-to-2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating to 2.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tournament Admins
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tournament Admins
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../admin-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../admin-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to-set-up-a-tournament/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Set up a Tournament
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shuffle Tournaments
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shuffle Tournaments
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-a-shuffle-tournament" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating a Shuffle Tournament
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating a Shuffle Tournament">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-tournament-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Tournament Setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-map-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Map Selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-team-size-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Team Size Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-advanced-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Advanced Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-player-registration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Player Registration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-6-review-and-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 6: Review and Start
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-shuffle-tournaments-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Shuffle Tournaments Work
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How Shuffle Tournaments Work">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#automatic-team-balancing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automatic Team Balancing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#round-progression" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Round Progression
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#elo-rating-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ELO Rating System
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ELO Rating System">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#default-elo-mode-pure-winloss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default ELO mode (Pure Win/Loss)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#odd-number-of-players" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Odd Number of Players
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#viewing-tournament-progress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Viewing Tournament Progress
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Viewing Tournament Progress">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#public-tournament-leaderboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Public Tournament Leaderboard
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Public Tournament Leaderboard">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#global-vs-event-only-ratings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Global vs event-only ratings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#player-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Player Pages
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setting-player-elo-ratings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Player ELO Ratings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Setting Player ELO Ratings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-adding-players-to-teams" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When Adding Players to Teams
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bulk-import-teams-with-elo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bulk Import Teams with ELO
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bulk-import-players-with-elo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bulk Import Players with ELO
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tournament-winner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tournament Winner
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tips-and-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tips and Best Practices
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tips and Best Practices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#player-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Player Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tournament-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tournament Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#during-tournament" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        During Tournament
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#not-enough-players-registered" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "Not enough players registered"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#odd-number-of-players-warning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "Odd number of players" warning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#players-cant-connect-to-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Players can't connect to server
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#round-not-advancing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Round not advancing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#technical-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Technical Details
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Technical Details">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#team-balancing-algorithm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Team Balancing Algorithm
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#server-allocation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Server Allocation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#match-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Match Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#winner-decision-ties-when-using-performance-tiebreaks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Winner decision &amp; ties (when using performance tiebreaks)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Winner decision &amp; ties (when using performance tiebreaks)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inputs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-1-normal-scorebased-winner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1 – Normal score‑based winner
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-decide-if-we-allow-a-draw-or-force-a-tiebreak" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2 – Decide if we allow a draw or force a tiebreak
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-performancebased-tiebreak-damage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3 – Performance‑based tiebreak (damage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Endpoints
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Endpoints">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tournament-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tournament Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#player-registration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Player Registration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#leaderboards-standings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Leaderboards &amp; Standings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#player-management_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Player Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-api-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example API Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        See Also
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../managing-maps/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Managing Maps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../running-matches/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running Matches
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../manual-matches/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Manual Matches
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2">
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Team Management
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Team Management
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../teams/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Teams Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../team-pages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Team Pages
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3">
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Troubleshooting
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../match-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Match Recovery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reverse-proxy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reverse proxy (nginx, HTTPS)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4">
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    For Developers
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    For Developers
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/i18n-and-translation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Translation Guide 🌍
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/testing-pr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing PRs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cs2-server-manager/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CS2 Server Manager
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_6">
+        
+          
+          <label class="md-nav__link" for="__nav_4_6" id="__nav_4_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advanced
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Advanced
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/test-parallelization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Test Parallelization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/auth-providers-examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Auth Provider Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5">
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Related
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Related
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://sivert-io.github.io/cs2-server-manager/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CS2 Server Manager
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://me.sivert.io/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MatchZy Enhanced
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-a-shuffle-tournament" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating a Shuffle Tournament
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating a Shuffle Tournament">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-tournament-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Tournament Setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-map-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Map Selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-team-size-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Team Size Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-advanced-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Advanced Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-player-registration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Player Registration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-6-review-and-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 6: Review and Start
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-shuffle-tournaments-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Shuffle Tournaments Work
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How Shuffle Tournaments Work">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#automatic-team-balancing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automatic Team Balancing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#round-progression" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Round Progression
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#elo-rating-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ELO Rating System
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ELO Rating System">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#default-elo-mode-pure-winloss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default ELO mode (Pure Win/Loss)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#odd-number-of-players" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Odd Number of Players
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#viewing-tournament-progress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Viewing Tournament Progress
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Viewing Tournament Progress">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#public-tournament-leaderboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Public Tournament Leaderboard
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Public Tournament Leaderboard">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#global-vs-event-only-ratings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Global vs event-only ratings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#player-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Player Pages
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setting-player-elo-ratings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Player ELO Ratings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Setting Player ELO Ratings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-adding-players-to-teams" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When Adding Players to Teams
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bulk-import-teams-with-elo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bulk Import Teams with ELO
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bulk-import-players-with-elo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bulk Import Players with ELO
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tournament-winner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tournament Winner
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tips-and-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tips and Best Practices
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tips and Best Practices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#player-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Player Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tournament-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tournament Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#during-tournament" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        During Tournament
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#not-enough-players-registered" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "Not enough players registered"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#odd-number-of-players-warning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "Odd number of players" warning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#players-cant-connect-to-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Players can't connect to server
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#round-not-advancing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Round not advancing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#technical-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Technical Details
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Technical Details">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#team-balancing-algorithm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Team Balancing Algorithm
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#server-allocation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Server Allocation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#match-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Match Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#winner-decision-ties-when-using-performance-tiebreaks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Winner decision &amp; ties (when using performance tiebreaks)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Winner decision &amp; ties (when using performance tiebreaks)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inputs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-1-normal-scorebased-winner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1 – Normal score‑based winner
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-decide-if-we-allow-a-draw-or-force-a-tiebreak" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2 – Decide if we allow a draw or force a tiebreak
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-performancebased-tiebreak-damage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3 – Performance‑based tiebreak (damage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Endpoints
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Endpoints">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tournament-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tournament Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#player-registration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Player Registration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#leaderboards-standings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Leaderboards &amp; Standings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#player-management_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Player Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-api-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example API Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        See Also
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="shuffle-tournaments-guide">Shuffle Tournaments Guide<a class="headerlink" href="#shuffle-tournaments-guide" title="Permanent link">¶</a></h1>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">¶</a></h2>
+<p>Shuffle Tournaments are a unique tournament type designed for LAN parties and individual player competitions. Unlike traditional tournaments where players compete as fixed teams, shuffle tournaments dynamically reassign players to balanced teams for each round based on their ELO ratings.</p>
+<p><strong>Key Features:</strong></p>
+<ul>
+<li><strong>Individual Competition</strong>: Players compete individually, not as fixed teams</li>
+<li><strong>Dynamic Team Formation</strong>: Teams are automatically balanced and reshuffled each round</li>
+<li><strong>ELO-Based Balancing</strong>: Teams are balanced by average ELO to ensure fair matchups</li>
+<li><strong>Fully Automatic</strong>: System handles team balancing, match creation, and round progression automatically</li>
+<li><strong>Player-Centric Scoring</strong>: Tournament winner is the individual player with the most match wins</li>
+</ul>
+<h2 id="creating-a-shuffle-tournament">Creating a Shuffle Tournament<a class="headerlink" href="#creating-a-shuffle-tournament" title="Permanent link">¶</a></h2>
+<h3 id="step-1-tournament-setup">Step 1: Tournament Setup<a class="headerlink" href="#step-1-tournament-setup" title="Permanent link">¶</a></h3>
+<ol>
+<li>Navigate to <strong>Tournament</strong> page</li>
+<li>Select <strong>"Shuffle Tournament"</strong> as the tournament type</li>
+<li>Enter tournament name</li>
+<li><strong>Match Format</strong> is automatically set to BO1 (cannot be changed)</li>
+</ol>
+<h3 id="step-2-map-selection">Step 2: Map Selection<a class="headerlink" href="#step-2-map-selection" title="Permanent link">¶</a></h3>
+<ol>
+<li>Select maps from the map pool</li>
+<li><strong>Important</strong>: The number of maps you select determines the number of rounds</li>
+<li>Example: 5 maps = 5 rounds</li>
+<li>Each round uses one map (all matches in a round use the same map)</li>
+</ol>
+<h3 id="step-3-team-size-configuration">Step 3: Team Size Configuration<a class="headerlink" href="#step-3-team-size-configuration" title="Permanent link">¶</a></h3>
+<p>Configure the number of players per team:</p>
+<ul>
+<li><strong>Team Size</strong>: Select number of players per team (default: 5 for 5v5)</li>
+<li><strong>Range</strong>: 2-10 players per team</li>
+<li><strong>Common Options</strong>: 4v4, 5v5, 6v6</li>
+<li><strong>Minimum Players</strong>: Must register at least <code>teamSize * 2</code> players</li>
+</ul>
+<h3 id="step-4-advanced-configuration">Step 4: Advanced Configuration<a class="headerlink" href="#step-4-advanced-configuration" title="Permanent link">¶</a></h3>
+<p>Configure round limits and overtime settings:</p>
+<p><strong>Max Rounds:</strong></p>
+<ul>
+<li>Each match is capped at a configurable maximum number of rounds (default: 24).</li>
+<li>If max rounds are reached, the winner is determined by the current score.</li>
+</ul>
+<p><strong>Overtime Mode:</strong></p>
+<ul>
+<li><strong>Enable Overtime</strong>: Standard CS2 overtime rules (MR3 format).</li>
+<li><strong>Stop at Max Rounds</strong>: Match ends when max rounds reached (no overtime; ties are allowed).</li>
+</ul>
+<h3 id="step-4-player-registration">Step 4: Player Registration<a class="headerlink" href="#step-4-player-registration" title="Permanent link">¶</a></h3>
+<ol>
+<li><strong>Minimum Requirement</strong>: At least 10 players must be registered (for 5v5 matches)</li>
+<li>Click <strong>"Register Players"</strong> button</li>
+<li>Select players from the player selection modal</li>
+<li>Players can be registered individually or in bulk</li>
+<li>Players are automatically whitelisted for match servers</li>
+</ol>
+<p><strong>Note</strong>: Players must exist in the system before registration. You can add players in several ways:</p>
+<ol>
+<li>
+<p><strong>Via Teams Page</strong> (Recommended for predetermined teams):</p>
+</li>
+<li>
+<p>Create a team and add players directly</p>
+</li>
+<li><strong>Set ELO rating</strong> for each player when adding (optional, defaults to 3000)</li>
+<li>Players are automatically created in the players table</li>
+<li>
+<p>Useful when you have predetermined teams with known ELO ratings</p>
+</li>
+<li>
+<p><strong>Via Players Page</strong>:</p>
+</li>
+<li>
+<p>Create individual players</p>
+</li>
+<li>Bulk import players (CSV/JSON supported)</li>
+<li>Set initial ELO ratings (default: 3000)</li>
+<li>Edit player ELO after creation (with warning about resetting stats)</li>
+<li>
+<p><strong>Download CSV Template:</strong> <a href="../../PLAYER_IMPORT_EXAMPLE.csv">player-import-example.csv</a></p>
+</li>
+<li>
+<p><strong>Bulk Import Teams</strong> (with ELO):</p>
+</li>
+<li>Import teams via JSON with player ELO ratings included</li>
+<li>See <a href="../guides/managing-teams.md">Managing Teams Guide</a> for examples</li>
+</ol>
+<h3 id="step-6-review-and-start">Step 6: Review and Start<a class="headerlink" href="#step-6-review-and-start" title="Permanent link">¶</a></h3>
+<ol>
+<li>Review tournament configuration</li>
+<li>Verify player count (must be ≥ 10)</li>
+<li>Click <strong>"Start Tournament"</strong></li>
+</ol>
+<h2 id="how-shuffle-tournaments-work">How Shuffle Tournaments Work<a class="headerlink" href="#how-shuffle-tournaments-work" title="Permanent link">¶</a></h2>
+<h3 id="automatic-team-balancing">Automatic Team Balancing<a class="headerlink" href="#automatic-team-balancing" title="Permanent link">¶</a></h3>
+<p>Before each round:</p>
+<ol>
+<li>System retrieves all registered players</li>
+<li>Calculates current ELO for each player</li>
+<li>Uses team balancing algorithm to create balanced teams of 5 players</li>
+<li>Teams are balanced by average ELO to ensure fair matchups</li>
+</ol>
+<h3 id="round-progression">Round Progression<a class="headerlink" href="#round-progression" title="Permanent link">¶</a></h3>
+<ol>
+<li>
+<p><strong>Round Generation</strong>: System automatically generates matches for the round</p>
+</li>
+<li>
+<p>Number of matches = <code>Math.floor(playerCount / (teamSize * 2))</code></p>
+</li>
+<li>Example: 60 players with 5v5 (teamSize=5) = <code>Math.floor(60 / 10)</code> = 6 matches per round</li>
+<li>
+<p>Example: 40 players with 4v4 (teamSize=4) = <code>Math.floor(40 / 8)</code> = 5 matches per round</p>
+</li>
+<li>
+<p><strong>Match Creation</strong>:</p>
+</li>
+<li>
+<p>Teams are automatically assigned to matches</p>
+</li>
+<li>Map is assigned (same map for all matches in the round)</li>
+<li>Sides (CT/T) are randomly assigned</li>
+<li>
+<p>Servers are automatically allocated</p>
+</li>
+<li>
+<p><strong>Round Completion</strong>:</p>
+</li>
+<li>
+<p>All matches in a round must complete before next round begins</p>
+</li>
+<li>System automatically detects when all matches are complete</li>
+<li>
+<p>ELO ratings are updated after each match</p>
+</li>
+<li>
+<p><strong>Round Advancement</strong>:</p>
+</li>
+<li>System automatically advances to next round</li>
+<li>Teams are reshuffled based on updated ELO ratings</li>
+<li>New matches are generated automatically</li>
+<li>Servers are automatically allocated to new matches</li>
+</ol>
+<h3 id="elo-rating-system">ELO Rating System<a class="headerlink" href="#elo-rating-system" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Rating System</strong>: Uses OpenSkill (Bayesian rating system)</li>
+<li><strong>Admin Interface</strong>: Simple "ELO" number (system handles conversion internally)</li>
+<li><strong>Default Starting ELO</strong>: 3000 (FaceIT-style)</li>
+<li><strong>Rating Updates</strong>: Based on <strong>team result (win/loss)</strong>:</li>
+<li>All players on winning team get ELO increase</li>
+<li>All players on losing team get ELO decrease</li>
+<li>ELO change depends on opponent team's average ELO</li>
+</ul>
+<h4 id="default-elo-mode-pure-winloss">Default ELO mode (Pure Win/Loss)<a class="headerlink" href="#default-elo-mode-pure-winloss" title="Permanent link">¶</a></h4>
+<ul>
+<li><strong>Pure Win/Loss is the default template</strong> used for all tournaments (including shuffle) unless you explicitly pick another ELO template.</li>
+<li>With <strong>Pure Win/Loss</strong> selected:</li>
+<li>OpenSkill updates ratings <strong>only from the match result</strong> (win or loss).</li>
+<li>Individual stats (kills, ADR, MVPs, etc.) are <strong>tracked for leaderboards and exports but do not change ELO</strong>.</li>
+<li>This is the <strong>safest, most predictable mode</strong> and is recommended if you want Excel-style “result-only” ratings.</li>
+<li>Advanced ELO templates are <strong>optional</strong>:</li>
+<li>You can configure them in the <strong>ELO Templates</strong> admin page.</li>
+<li>When a non-default template is enabled and selected for a tournament, it adds <strong>stat-based adjustments on top of the OpenSkill win/loss change</strong>.</li>
+<li>The system ships with a <strong>Balanced Stats v1</strong> preset, which adds a modest adjustment based on ADR, KAST, K/D, utility damage and MVPs while still letting the match result dominate.</li>
+</ul>
+<h3 id="odd-number-of-players">Odd Number of Players<a class="headerlink" href="#odd-number-of-players" title="Permanent link">¶</a></h3>
+<p>If you have an odd number of players (e.g., 61 instead of 60):</p>
+<ul>
+<li><strong>Player Rotation</strong>: System automatically rotates players who sat out</li>
+<li>Players who sat out last round will play this round</li>
+<li>Ensures fair rotation - no player sits out multiple rounds in a row</li>
+<li>If rotation cannot be completed, system logs a warning</li>
+</ul>
+<h2 id="viewing-tournament-progress">Viewing Tournament Progress<a class="headerlink" href="#viewing-tournament-progress" title="Permanent link">¶</a></h2>
+<h3 id="public-tournament-leaderboard">Public Tournament Leaderboard<a class="headerlink" href="#public-tournament-leaderboard" title="Permanent link">¶</a></h3>
+<p>Navigate to <code>/tournament/:id/leaderboard</code> (public, no authentication required)</p>
+<p><strong>Displays:</strong></p>
+<ul>
+<li>Tournament name and status</li>
+<li>Current round number and progress</li>
+<li>Player leaderboard (sorted by wins, then ELO)</li>
+<li>Links to individual player pages</li>
+</ul>
+<p><strong>Leaderboard Columns:</strong></p>
+<ul>
+<li>Player name and avatar</li>
+<li>Current ELO</li>
+<li>Match wins</li>
+<li>Match losses</li>
+<li>Win rate</li>
+<li>Average ADR (if available)</li>
+<li>ELO change (since tournament start)</li>
+</ul>
+<h4 id="global-vs-event-only-ratings">Global vs event-only ratings<a class="headerlink" href="#global-vs-event-only-ratings" title="Permanent link">¶</a></h4>
+<ul>
+<li><strong>Global rating model</strong>:</li>
+<li>Each player has <strong>one global ELO</strong> that is shared across <strong>all tournaments and matches</strong>, including shuffle tournaments and team-based events.</li>
+<li>When a shuffle match finishes, the rating change is applied to the player’s global ELO (not to a per-event ladder).</li>
+<li><strong>Event-only ELO change on the leaderboard</strong>:</li>
+<li>The shuffle leaderboard’s “ELO change (since tournament start)” column shows <strong>how much each player’s global ELO has moved during this specific tournament</strong>.</li>
+<li>This makes it easy to answer “who gained the most ELO at this LAN?” without resetting everyone’s long-term rating.</li>
+<li><strong>Why this matters for LANs</strong>:</li>
+<li>You can run multiple shuffle events over time while still letting players build up a long-term rating history.</li>
+<li>At the same time, each event has a clear <strong>per-event delta</strong> so you can crown winners based on performance in that LAN only.</li>
+</ul>
+<h3 id="player-pages">Player Pages<a class="headerlink" href="#player-pages" title="Permanent link">¶</a></h3>
+<p>Each player has a public profile page at <code>/player/:steamId</code></p>
+<p><strong>Displays:</strong></p>
+<ul>
+<li>Player name, avatar, and current ELO</li>
+<li>ELO progression chart (visual history)</li>
+<li>Match history with detailed stats</li>
+<li>Performance metrics (wins, losses, win rate, ADR)</li>
+</ul>
+<p><strong>Finding Your Player Page:</strong></p>
+<ul>
+<li>Navigate to <code>/player</code> (Find Player page)</li>
+<li>Paste your Steam profile URL or Steam ID</li>
+<li>System redirects to your player page</li>
+</ul>
+<h2 id="setting-player-elo-ratings">Setting Player ELO Ratings<a class="headerlink" href="#setting-player-elo-ratings" title="Permanent link">¶</a></h2>
+<p>ELO ratings are crucial for shuffle tournaments as they determine team balancing. You can set ELO in several ways:</p>
+<h3 id="when-adding-players-to-teams">When Adding Players to Teams<a class="headerlink" href="#when-adding-players-to-teams" title="Permanent link">¶</a></h3>
+<ol>
+<li>Go to <strong>Teams</strong> page</li>
+<li>Create or edit a team</li>
+<li>When adding a player via Steam URL:</li>
+<li>Enter Steam ID/URL</li>
+<li>Enter player name</li>
+<li><strong>Enter ELO rating (optional)</strong> - Defaults to 3000 if not specified</li>
+<li>Click <strong>"Add"</strong> to add player to team</li>
+</ol>
+<h3 id="bulk-import-teams-with-elo">Bulk Import Teams with ELO<a class="headerlink" href="#bulk-import-teams-with-elo" title="Permanent link">¶</a></h3>
+<p>Import teams with player ELO ratings included. Teams must be imported in JSON format (CSV is not supported due to nested player structure):</p>
+<p><strong>Download JSON Template:</strong> <a href="../../TEAM_IMPORT_EXAMPLE.json">team-import-example.json</a></p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">[</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="p">{</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Team Alpha"</span><span class="p">,</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="nt">"tag"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ALPHA"</span><span class="p">,</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="nt">"players"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nt">"steamId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"76561198012345678"</span><span class="p">,</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Player One"</span><span class="p">,</span><span class="w"> </span><span class="nt">"elo"</span><span class="p">:</span><span class="w"> </span><span class="mi">3200</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nt">"steamId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"76561198012345679"</span><span class="p">,</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Player Two"</span><span class="p">,</span><span class="w"> </span><span class="nt">"elo"</span><span class="p">:</span><span class="w"> </span><span class="mi">3100</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nt">"steamId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"76561198012345680"</span><span class="p">,</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Player Three"</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nt">"steamId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"76561198012345681"</span><span class="p">,</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Player Four"</span><span class="p">,</span><span class="w"> </span><span class="nt">"elo"</span><span class="p">:</span><span class="w"> </span><span class="mi">3000</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span><span class="p">]</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">]</span>
+</span></code></pre></div>
+<p><strong>Note:</strong> The <code>elo</code> field is optional. If omitted, players default to 3000 ELO.</p>
+<h3 id="bulk-import-players-with-elo">Bulk Import Players with ELO<a class="headerlink" href="#bulk-import-players-with-elo" title="Permanent link">¶</a></h3>
+<p>Import players directly via the Players page. Both JSON and CSV formats are supported.</p>
+<p><strong>JSON Format:</strong></p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">[</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="p">{</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">"steamId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"76561198012345678"</span><span class="p">,</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Player One"</span><span class="p">,</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="nt">"initialELO"</span><span class="p">:</span><span class="w"> </span><span class="mi">3200</span><span class="p">,</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="nt">"avatarUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/fe/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg"</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">  </span><span class="p">{</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="nt">"steamId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"76561198012345679"</span><span class="p">,</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Player Two"</span><span class="p">,</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="nt">"initialELO"</span><span class="p">:</span><span class="w"> </span><span class="mi">3100</span><span class="p">,</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">    </span><span class="nt">"avatarUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/ab/abcdef1234567890abcdef1234567890abcdef12_full.jpg"</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">  </span><span class="p">{</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">    </span><span class="nt">"steamId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"76561198012345680"</span><span class="p">,</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Player Three"</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="p">]</span>
+</span></code></pre></div>
+<p><strong>CSV Format:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>steamId,name,initialELO,avatarUrl
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>76561198012345678,Player One,3200,https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/fe/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>76561198012345679,Player Two,3100,
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>76561198012345680,Player Three,3000,
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>76561198012345681,Player Four,,
+</span></code></pre></div>
+<p><strong>CSV Column Headers:</strong></p>
+<ul>
+<li><code>steamId</code> or <code>steamid</code> or <code>steam_id</code> (required)</li>
+<li><code>name</code> (required)</li>
+<li><code>initialELO</code> or <code>initialelo</code> or <code>initial_elo</code> or <code>elo</code> (optional, defaults to 1500)</li>
+<li><code>avatarUrl</code> or <code>avatarurl</code> or <code>avatar_url</code> or <code>avatar</code> (optional)</li>
+</ul>
+<p><strong>Note:</strong> The <code>initialELO</code> field is optional. If omitted, players default to a Skill Rating of 1500. Empty CSV cells are treated as optional fields.</p>
+<p><strong>Download CSV Template:</strong> <a href="../../PLAYER_IMPORT_EXAMPLE.csv">player-import-example.csv</a></p>
+<h2 id="tournament-winner">Tournament Winner<a class="headerlink" href="#tournament-winner" title="Permanent link">¶</a></h2>
+<p>The tournament winner is determined by:</p>
+<ol>
+<li><strong>Primary</strong>: Most match wins</li>
+<li><strong>Tie-breaker</strong>: Highest ELO</li>
+<li><strong>Additional</strong>: Average ADR or other performance metrics</li>
+</ol>
+<h2 id="tips-and-best-practices">Tips and Best Practices<a class="headerlink" href="#tips-and-best-practices" title="Permanent link">¶</a></h2>
+<h3 id="player-management">Player Management<a class="headerlink" href="#player-management" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Bulk Import</strong>: Use the Players page to bulk import players before tournament creation</li>
+<li><strong>Initial ELO</strong>: Set accurate initial ELO for better team balancing</li>
+<li><strong>Editing ELO</strong>: You can edit a player's ELO after creation by clicking on their player card and updating the ELO field. <strong>Warning</strong>: Changing a player's ELO will reset their stats and rating history. A confirmation dialog will appear before the change is applied.</li>
+<li><strong>Player Names</strong>: Ensure player names are correct (they appear in match views)</li>
+</ul>
+<h3 id="tournament-configuration">Tournament Configuration<a class="headerlink" href="#tournament-configuration" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Map Selection</strong>: Choose maps that work well for your player skill level</li>
+<li><strong>Round Limits</strong>: Consider your time constraints when selecting round limit type</li>
+<li><strong>Overtime</strong>: Enable overtime for standard CS2 experience, or disable for faster matches</li>
+</ul>
+<h3 id="during-tournament">During Tournament<a class="headerlink" href="#during-tournament" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Monitor Progress</strong>: Use the public standings page to track tournament progress</li>
+<li><strong>Round Status</strong>: Check the Bracket page for round completion status</li>
+<li><strong>Player Stats</strong>: Players can view their individual stats on their player pages</li>
+</ul>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">¶</a></h2>
+<h3 id="not-enough-players-registered">"Not enough players registered"<a class="headerlink" href="#not-enough-players-registered" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Solution</strong>: Register at least 10 players before starting the tournament</li>
+<li>Use the Players page to create/import players</li>
+<li>Then register them to the tournament</li>
+</ul>
+<h3 id="odd-number-of-players-warning">"Odd number of players" warning<a class="headerlink" href="#odd-number-of-players-warning" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Normal</strong>: This is expected if you have an odd number of players</li>
+<li><strong>Rotation</strong>: System automatically rotates players who sit out</li>
+<li><strong>Impact</strong>: One player sits out per round (rotates each round)</li>
+</ul>
+<h3 id="players-cant-connect-to-server">Players can't connect to server<a class="headerlink" href="#players-cant-connect-to-server" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Check</strong>: Players must be registered to the tournament</li>
+<li><strong>Whitelisting</strong>: Registered players are automatically whitelisted</li>
+<li><strong>Verify</strong>: Check that player Steam IDs are correct</li>
+</ul>
+<h3 id="round-not-advancing">Round not advancing<a class="headerlink" href="#round-not-advancing" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Check</strong>: All matches in the round must be completed</li>
+<li><strong>Status</strong>: Verify all matches show "completed" status</li>
+<li><strong>Automatic</strong>: Round advancement happens automatically (no manual trigger needed)</li>
+</ul>
+<h2 id="technical-details">Technical Details<a class="headerlink" href="#technical-details" title="Permanent link">¶</a></h2>
+<h3 id="team-balancing-algorithm">Team Balancing Algorithm<a class="headerlink" href="#team-balancing-algorithm" title="Permanent link">¶</a></h3>
+<ul>
+<li>Uses greedy algorithm with optimization step</li>
+<li>Balances teams by average ELO (OpenSkill ordinal value)</li>
+<li>Handles edge cases (odd players, extreme ELO values)</li>
+</ul>
+<h3 id="server-allocation">Server Allocation<a class="headerlink" href="#server-allocation" title="Permanent link">¶</a></h3>
+<ul>
+<li>Servers are automatically allocated when rounds advance</li>
+<li>If no servers available, system polls every 10 seconds</li>
+<li>Matches load automatically when servers are allocated</li>
+</ul>
+<h3 id="match-configuration">Match Configuration<a class="headerlink" href="#match-configuration" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Format</strong>: Always BO1 (Best of 1)</li>
+<li><strong>Veto</strong>: Disabled (no map voting)</li>
+<li><strong>Sides</strong>: Randomly assigned (no knife round)</li>
+<li><strong>Round Limits</strong>: Single configurable <strong>Max Rounds</strong> value (default: 24) applied to every map via <code>mp_maxrounds</code> and passed to MatchZy as <code>maxRounds</code> in the match JSON.</li>
+<li><strong>Overtime Mode</strong>:</li>
+<li><strong>Enable Overtime</strong>: Standard CS2 overtime is played when the score is tied at max rounds. We send <code>overtimeMode: "enabled"</code> in the match JSON and MatchZy sets <code>mp_overtime_enable 1</code>.</li>
+<li><strong>Disable Overtime</strong>: No overtime is played. We send <code>overtimeMode: "disabled"</code> and MatchZy sets <code>mp_overtime_enable 0</code>.</li>
+<li><strong>Overtime Segments (optional)</strong>:</li>
+<li>Configured as <code>overtimeSegments</code> on the tournament and passed through in the match JSON.</li>
+<li>Used by MatchZy as a <strong>policy hint</strong> for how ties should be handled (e.g. whether to allow a draw vs. use a performance tiebreak), not as a hard cap on the number of OT segments. When unset or 0, MatchZy’s default “unlimited OT until someone wins” behavior is used.</li>
+</ul>
+<h3 id="winner-decision-ties-when-using-performance-tiebreaks">Winner decision &amp; ties (when using performance tiebreaks)<a class="headerlink" href="#winner-decision-ties-when-using-performance-tiebreaks" title="Permanent link">¶</a></h3>
+<p>When the MatchZy plugin is configured to use a <strong>performance-based tiebreak</strong> (total team damage),
+the winner is decided using the following rule. This applies equally to shuffle tournaments and
+manual matches that use the same plugin behavior.</p>
+<h4 id="inputs">Inputs<a class="headerlink" href="#inputs" title="Permanent link">¶</a></h4>
+<ul>
+<li><code>t1Score</code>, <code>t2Score</code>: final <strong>map score</strong> (team1 vs team2).</li>
+<li><code>maxRounds</code>, <code>overtimeMode</code>, <code>overtimeSegments</code> from the match config JSON:</li>
+<li><code>overtimeMode</code>: <code>"enabled"</code> or <code>"disabled"</code> (or missing).</li>
+<li><code>overtimeSegments</code>: integer or <code>null</code>.</li>
+<li><code>team1Damage</code>, <code>team2Damage</code>: <strong>total damage dealt</strong> by each team over the map (sum of all players’ damage).</li>
+</ul>
+<h4 id="step-1-normal-scorebased-winner">Step 1 – Normal score‑based winner<a class="headerlink" href="#step-1-normal-scorebased-winner" title="Permanent link">¶</a></h4>
+<p>If scores are not tied, the higher score wins:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>if t1Score &gt; t2Score:       winner = team1
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>else if t2Score &gt; t1Score:  winner = team2
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>else:                       // scores are equal → go to tiebreak logic
+</span></code></pre></div>
+<h4 id="step-2-decide-if-we-allow-a-draw-or-force-a-tiebreak">Step 2 – Decide if we allow a draw or force a tiebreak<a class="headerlink" href="#step-2-decide-if-we-allow-a-draw-or-force-a-tiebreak" title="Permanent link">¶</a></h4>
+<p>When <code>t1Score == t2Score</code>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>overtimeDisabled = (overtimeMode == "disabled")
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>hasSegments      = (overtimeSegments is not null)
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>Case A – "No OT, no draws" (regulation only, force winner)
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>  if overtimeDisabled &amp;&amp; hasSegments &amp;&amp; overtimeSegments == 0:
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    use performance tiebreak (see Step 3)
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>Case B – "OT configured with a cap" (semantic: no draws after OT)
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>  if !overtimeDisabled &amp;&amp; hasSegments &amp;&amp; overtimeSegments &gt; 0:
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>    use performance tiebreak (see Step 3)
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>Case C – Everything else
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>  // missing overtimeSegments, or negative, or overtimeMode not set
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>  result = draw
+</span></code></pre></div>
+<h4 id="step-3-performancebased-tiebreak-damage">Step 3 – Performance‑based tiebreak (damage)<a class="headerlink" href="#step-3-performancebased-tiebreak-damage" title="Permanent link">¶</a></h4>
+<p>When a performance tiebreak is requested (cases A or B):</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>if team1Damage &gt; team2Damage:       winner = team1
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>else if team2Damage &gt; team1Damage:  winner = team2
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>else:
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>  // damage also tied → still a true draw
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>  result = draw
+</span></code></pre></div>
+<p>In words:</p>
+<ul>
+<li><strong>Primary winner</strong>: higher final map score.</li>
+<li><strong>If scores are tied</strong>:</li>
+<li>If <code>overtimeMode: "disabled"</code> and <code>overtimeSegments: 0</code>: no OT; force a winner by higher total team damage (or draw if damage is also equal).</li>
+<li>If OT is enabled and <code>overtimeSegments &gt; 0</code>: if a tie persists, force a winner by higher total team damage (or draw if damage is also equal).</li>
+<li>Otherwise: treat as a <strong>draw</strong>.</li>
+</ul>
+<h2 id="api-endpoints">API Endpoints<a class="headerlink" href="#api-endpoints" title="Permanent link">¶</a></h2>
+<p>For programmatic access, the following endpoints are available. All endpoints require Bearer token authentication unless otherwise noted. Full OpenAPI documentation is available at <code>/api-docs</code> when the server is running.</p>
+<h3 id="tournament-management">Tournament Management<a class="headerlink" href="#tournament-management" title="Permanent link">¶</a></h3>
+<p><strong>Create Shuffle Tournament</strong></p>
+<ul>
+<li><code>POST /api/tournament/shuffle</code></li>
+<li>Creates a new shuffle tournament</li>
+<li>Required fields: <code>name</code>, <code>mapSequence</code>, <code>maxRounds</code>, <code>overtimeMode</code></li>
+<li>Optional field: <code>overtimeSegments</code> (integer, &gt;= 0)</li>
+</ul>
+<p><strong>Get Tournament</strong></p>
+<ul>
+<li><code>GET /api/tournament</code></li>
+<li>Returns current tournament details</li>
+</ul>
+<h3 id="player-registration">Player Registration<a class="headerlink" href="#player-registration" title="Permanent link">¶</a></h3>
+<p><strong>Register Players</strong></p>
+<ul>
+<li><code>POST /api/tournament/:id/register-players</code></li>
+<li>Register one or more players to the tournament</li>
+<li>Body: <code>{ "playerIds": ["steamId1", "steamId2", ...] }</code></li>
+<li>Returns: <code>{ "success": boolean, "registered": number, "errors": [...] }</code></li>
+<li>Status 207 (Multi-Status) if some players failed to register</li>
+</ul>
+<p><strong>Get Registered Players</strong></p>
+<ul>
+<li><code>GET /api/tournament/:id/players</code></li>
+<li>Returns list of all registered players with their current ELO</li>
+</ul>
+<h3 id="leaderboards-standings">Leaderboards &amp; Standings<a class="headerlink" href="#leaderboards-standings" title="Permanent link">¶</a></h3>
+<p><strong>Get Leaderboard</strong></p>
+<ul>
+<li><code>GET /api/tournament/:id/leaderboard</code></li>
+<li>Returns player leaderboard sorted by wins, then ELO</li>
+<li>Includes: wins, losses, win rate, ELO change</li>
+</ul>
+<p><strong>Get Standings (Public)</strong></p>
+<ul>
+<li><code>GET /api/tournament/:id/standings</code></li>
+<li>Public endpoint (no auth required)</li>
+<li>Returns: tournament info, leaderboard, current round status</li>
+</ul>
+<p><strong>Get Round Status</strong></p>
+<ul>
+<li><code>GET /api/tournament/:id/round-status</code></li>
+<li>Returns current round number, map, match completion status</li>
+<li>Used for round progress indicators</li>
+</ul>
+<h3 id="player-management_1">Player Management<a class="headerlink" href="#player-management_1" title="Permanent link">¶</a></h3>
+<ul>
+<li><code>GET /api/players</code> - List all players</li>
+<li><code>POST /api/players</code> - Create player</li>
+<li><code>PUT /api/players/:playerId</code> - Update player (name, avatar, ELO)</li>
+<li><strong>Warning</strong>: Updating ELO will reset the player's stats and rating history</li>
+<li><code>GET /api/players/:playerId</code> - Get player details (public)</li>
+<li><code>GET /api/players/:playerId/rating-history</code> - Get rating history</li>
+<li><code>GET /api/players/:playerId/matches</code> - Get match history</li>
+<li><code>GET /api/players/find</code> - Find player by Steam URL/ID</li>
+</ul>
+<h3 id="example-api-usage">Example API Usage<a class="headerlink" href="#example-api-usage" title="Permanent link">¶</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Create shuffle tournament</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:3000/api/tournament/shuffle<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">"Authorization: Bearer YOUR_TOKEN"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">"Content-Type: application/json"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">'{</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="s1">    "name": "LAN Party 2025",</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="s1">    "mapSequence": ["de_dust2", "de_mirage", "de_inferno"],</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="s1">    "maxRounds": 24,</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="s1">    "overtimeMode": "enabled"</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="s1">  }'</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="c1"># Register players</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:3000/api/tournament/1/register-players<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">"Authorization: Bearer YOUR_TOKEN"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">"Content-Type: application/json"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">'{</span>
+</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a><span class="s1">    "playerIds": ["76561198000000000", "76561198000000001"]</span>
+</span><span id="__span-6-18"><a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="s1">  }'</span>
+</span><span id="__span-6-19"><a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a>
+</span><span id="__span-6-20"><a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a><span class="c1"># Get standings (public, no auth)</span>
+</span><span id="__span-6-21"><a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a>curl<span class="w"> </span>http://localhost:3000/api/tournament/1/standings
+</span></code></pre></div>
+<h2 id="see-also">See Also<a class="headerlink" href="#see-also" title="Permanent link">¶</a></h2>
+<ul>
+<li><a href="./managing-teams.md">Managing Teams</a> - Managing teams and players</li>
+<li><a href="../running-matches/">Running Matches</a> - Match flow and controls</li>
+<li><a href="../team-pages/">Team Pages</a> - Team page features</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer">
+        
+          
+          <a href="../how-to-set-up-a-tournament/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Set up a Tournament">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Set up a Tournament
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../managing-maps/" class="md-footer__link md-footer__link--next" aria-label="Next: Managing Maps">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Managing Maps
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright © 2025 Sivert Gullberg Hansen
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/sivert-io/matchzy-auto-tournament" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://discord.gg/n7gHYau7aW" target="_blank" rel="noopener" title="discord.gg" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M492.5 69.8c-.2-.3-.4-.6-.8-.7-38.1-17.5-78.4-30-119.7-37.1-.4-.1-.8 0-1.1.1s-.6.4-.8.8c-5.5 9.9-10.5 20.2-14.9 30.6-44.6-6.8-89.9-6.8-134.4 0-4.5-10.5-9.5-20.7-15.1-30.6-.2-.3-.5-.6-.8-.8s-.7-.2-1.1-.2C162.5 39 122.2 51.5 84.1 69c-.3.1-.6.4-.8.7C7.1 183.5-13.8 294.6-3.6 404.2c0 .3.1.5.2.8s.3.4.5.6c44.4 32.9 94 58 146.8 74.2.4.1.8.1 1.1 0s.7-.4.9-.7c11.3-15.4 21.4-31.8 30-48.8.1-.2.2-.5.2-.8s0-.5-.1-.8-.2-.5-.4-.6-.4-.3-.7-.4c-15.8-6.1-31.2-13.4-45.9-21.9-.3-.2-.5-.4-.7-.6s-.3-.6-.3-.9 0-.6.2-.9.3-.5.6-.7c3.1-2.3 6.2-4.7 9.1-7.1.3-.2.6-.4.9-.4s.7 0 1 .1c96.2 43.9 200.4 43.9 295.5 0 .3-.1.7-.2 1-.2s.7.2.9.4c2.9 2.4 6 4.9 9.1 7.2.2.2.4.4.6.7s.2.6.2.9-.1.6-.3.9-.4.5-.6.6c-14.7 8.6-30 15.9-45.9 21.8-.2.1-.5.2-.7.4s-.3.4-.4.7-.1.5-.1.8.1.5.2.8c8.8 17 18.8 33.3 30 48.8.2.3.6.6.9.7s.8.1 1.1 0c52.9-16.2 102.6-41.3 147.1-74.2.2-.2.4-.4.5-.6s.2-.5.2-.8c12.3-126.8-20.5-236.9-86.9-334.5zm-302 267.7c-29 0-52.8-26.6-52.8-59.2s23.4-59.2 52.8-59.2c29.7 0 53.3 26.8 52.8 59.2 0 32.7-23.4 59.2-52.8 59.2m195.4 0c-29 0-52.8-26.6-52.8-59.2s23.4-59.2 52.8-59.2c29.7 0 53.3 26.8 52.8 59.2 0 32.7-23.2 59.2-52.8 59.2"></path></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>
