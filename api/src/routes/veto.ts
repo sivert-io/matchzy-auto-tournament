@@ -7,6 +7,7 @@ import type { DbMatchRow, DbTournamentRow } from '../types/database.types';
 import type { TournamentResponse } from '../types/tournament.types';
 import { generateMatchConfig } from '../services/matchConfigBuilder';
 import { getVetoOrder } from '../utils/vetoConfig';
+import type { VetoStep } from '../utils/vetoConfig';
 import { settingsService } from '../services/settingsService';
 import { normalizeConfigPlayers } from '../utils/playerTransform';
 import { getVerifiedPlayerSteamId } from '../utils/signedPlayerCookie';
@@ -63,7 +64,7 @@ function resolveViewerTeamForMatch(
 type VetoContext = {
   format: 'bo1' | 'bo3' | 'bo5';
   tournamentMaps: string[];
-  customVetoOrder?: { bo1?: unknown[]; bo3?: unknown[]; bo5?: unknown[] };
+  customVetoOrder?: { bo1?: VetoStep[]; bo3?: VetoStep[]; bo5?: VetoStep[] };
 };
 
 /**
@@ -92,7 +93,7 @@ async function getVetoContext(match: DbMatchRow): Promise<VetoContext | null> {
   return {
     format: tournament.format as 'bo1' | 'bo3' | 'bo5',
     tournamentMaps: JSON.parse(tournament.maps),
-    customVetoOrder: tournamentSettings.customVetoOrder,
+    customVetoOrder: (tournamentSettings as { customVetoOrder?: VetoContext['customVetoOrder'] }).customVetoOrder,
   };
 }
 
@@ -128,8 +129,8 @@ router.get('/:matchSlug', async (req: Request, res: Response) => {
         })
       : {};
 
-    let team1Id: string | null = match.team1_id;
-    let team2Id: string | null = match.team2_id;
+    let team1Id: string | null = match.team1_id ?? null;
+    let team2Id: string | null = match.team2_id ?? null;
     let team1Name = 'Team 1';
     let team2Name = 'Team 2';
 
@@ -284,8 +285,8 @@ router.post('/:matchSlug/action', async (req: Request, res: Response) => {
     }
 
     const isManualMatch = match.round === 0 || match.tournament_id == null;
-    let team1Id: string | null = match.team1_id;
-    let team2Id: string | null = match.team2_id;
+    let team1Id: string | null = match.team1_id ?? null;
+    let team2Id: string | null = match.team2_id ?? null;
     let team1Name = 'Team 1';
     let team2Name = 'Team 2';
 

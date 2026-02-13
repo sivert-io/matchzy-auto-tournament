@@ -26,7 +26,6 @@ import { serverService } from '../services/serverService';
 import { serverInitializationService } from '../services/serverInitializationService';
 import { checkTournamentCompletion } from '../utils/matchProgression';
 import { cs2UpdateService } from '../services/cs2UpdateService';
-import { extractCs2StatusVersionLine, parseCs2BuildId } from '../utils/cs2Version';
 
 const router = Router();
 
@@ -111,56 +110,30 @@ async function preflightServersUpToDateForTournamentStart(): Promise<
     }
 
     try {
-      const versionResult = await rconService.sendCommand(server.id, 'version');
-      if (!versionResult.success || typeof versionResult.response !== 'string') {
-        problems.push({
-          id: server.id,
-          name: server.name,
-          installedBuildId: server.cs2BuildId ?? null,
-          requiredVersion: null,
-          reason: `Could not fetch CS2 version via RCON: ${versionResult.error ?? 'no details'}`,
-        });
-        continue;
-      }
-
-      let installedBuildId = parseCs2BuildId(versionResult.response);
-      let cs2VersionString: string | null = versionResult.response;
+      // Heartbeat-only model: CS2 build ID is provided by RU heartbeat.
+      const installedBuildId =
+        typeof server.cs2BuildId === 'number' && Number.isFinite(server.cs2BuildId)
+          ? server.cs2BuildId
+          : null;
 
       if (!installedBuildId) {
-        // Fallback: some servers do not include BuildID in `version` output, but `status` includes
-        // `version  : 1.41.3.4/14134 ...` where the trailing number matches Steam required_version.
-        const statusResult = await rconService.sendCommand(server.id, 'status');
-        if (statusResult.success && typeof statusResult.response === 'string') {
-          installedBuildId = parseCs2BuildId(statusResult.response);
-          cs2VersionString = extractCs2StatusVersionLine(statusResult.response) ?? statusResult.response;
-        }
-      }
-
-      if (!installedBuildId) {
-        log.warn('[TOURNAMENT] Could not verify CS2 version via RCON for server', {
-          serverId: server.id,
-          versionExcerpt: String(versionResult.response).slice(0, 200),
-        });
         problems.push({
           id: server.id,
           name: server.name,
           installedBuildId: null,
           requiredVersion: null,
-          reason: 'Could not verify CS2 version via RCON (`version`/`status` parsing failed)',
+          reason: 'No CS2 build ID reported by ReadyUp heartbeat yet',
         });
         continue;
       }
 
       const check = await cs2UpdateService.upToDateCheck(installedBuildId);
 
-      // Persist latest known version output + build id (best-effort) and the UpToDateCheck outcome.
       if (check.upToDate) {
         await db.updateAsync(
           'servers',
           {
             cs2_build_id: installedBuildId,
-            cs2_version_string: cs2VersionString,
-            cs2_version_fetched_at: now,
             cs2_required_version: null,
             cs2_update_phase: null,
             cs2_update_required_at: null,
@@ -175,10 +148,8 @@ async function preflightServersUpToDateForTournamentStart(): Promise<
           'servers',
           {
             cs2_build_id: installedBuildId,
-            cs2_version_string: cs2VersionString,
-            cs2_version_fetched_at: now,
             cs2_required_version: check.requiredVersion ?? null,
-            cs2_update_phase: 'available',
+            cs2_update_phase: (server.cs2UpdatePhase === 'shutdown' ? 'shutdown' : 'available'),
             cs2_update_required_at: now,
             cs2_update_checked_at: now,
             updated_at: now,
@@ -304,17 +275,18 @@ router.use(requireAuth);
  *     responses:
  *       200:
  *         description: Tournament retrieved successfully
- *       404:
- *         description: No tournament exists
  */
 router.get('/', async (_req: Request, res: Response) => {
   try {
     const tournament = await tournamentService.getTournament();
 
     if (!tournament) {
-      return res.status(404).json({
-        success: false,
-        error: 'No tournament exists',
+      // Treat "no tournament yet" as an empty state, not an error. This avoids
+      // noisy 404s in the SPA and lets clients handle the null tournament
+      // without try/catch on every poll.
+      return res.json({
+        success: true,
+        tournament: null,
       });
     }
 

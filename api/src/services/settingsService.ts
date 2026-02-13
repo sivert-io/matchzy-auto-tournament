@@ -9,6 +9,9 @@ export type AppSettingKey =
   | 'matchzy_admin_chat_prefix'
   | 'matchzy_knife_enabled_default'
   | 'matchzy_debug_chat'
+  // ReadyUp plugin settings
+  | 'readyup_admins_url'
+  | 'readyup_admins_refresh_seconds'
   | 'ratings_enabled'
   | 'allow_self_register'
   // MatchZy core defaults (persisted convars)
@@ -54,6 +57,9 @@ const ALLOWED_KEYS: AppSettingKey[] = [
   'matchzy_admin_chat_prefix',
   'matchzy_knife_enabled_default',
   'matchzy_debug_chat',
+  // ReadyUp plugin settings
+  'readyup_admins_url',
+  'readyup_admins_refresh_seconds',
   'ratings_enabled',
   'allow_self_register',
   // MatchZy core defaults (persisted convars)
@@ -124,6 +130,26 @@ class SettingsService {
         const normalized = this.normalizeUrl(trimmed);
         await db.setAppSettingAsync(key, normalized);
         log.success(`Webhook URL updated to ${normalized}`);
+        return;
+      }
+
+      if (key === 'readyup_admins_url') {
+        // Allow either an absolute URL or a relative API path (e.g. /api/players/public-selection).
+        const normalized = this.normalizeReadyUpAdminsUrl(trimmed);
+        await db.setAppSettingAsync(key, normalized);
+        log.success('ReadyUp admins URL updated');
+        return;
+      }
+
+      if (key === 'readyup_admins_refresh_seconds') {
+        const parsed = Number(trimmed);
+        if (!Number.isInteger(parsed)) {
+          throw new Error('readyup_admins_refresh_seconds must be an integer');
+        }
+        // 0 disables periodic polling (ReadyUp will refresh on server init + match load).
+        const clamped = parsed <= 0 ? 0 : Math.max(10, Math.min(3600, parsed));
+        await db.setAppSettingAsync(key, String(clamped));
+        log.success(`readyup_admins_refresh_seconds updated to ${clamped}`);
         return;
       }
 
@@ -354,6 +380,31 @@ class SettingsService {
     }
 
     return null;
+  }
+
+  async getReadyUpAdminsUrl(): Promise<string | null> {
+    const value = await this.getSetting('readyup_admins_url');
+    if (!value) return null;
+    const trimmed = value.trim();
+    return trimmed !== '' ? trimmed : null;
+  }
+
+  async getReadyUpAdminsRefreshSeconds(): Promise<number> {
+    const value = await this.getSetting('readyup_admins_refresh_seconds');
+    // Default to "no periodic polling" (ReadyUp refreshes on server init + match load).
+    if (!value) return 0;
+    const parsed = Number(value);
+    if (!Number.isInteger(parsed)) return 0;
+    if (parsed <= 0) return 0;
+    return Math.max(10, Math.min(3600, parsed));
+  }
+
+  private normalizeReadyUpAdminsUrl(v: string): string {
+    const s = v.trim();
+    if (s.startsWith('/')) return s;
+    // Absolute URL
+    this.validateWebhookUrl(s);
+    return this.normalizeUrl(s);
   }
 
   async requireWebhookUrl(): Promise<string> {

@@ -13,9 +13,8 @@ import { emitMatchUpdate, emitBracketUpdate } from '../services/socketService';
 import { generateMatchConfig } from '../services/matchConfigBuilder';
 import { enrichMatch } from '../utils/matchEnrichment';
 import { matchLiveStatsService } from '../services/matchLiveStatsService';
-import { normalizeConfigPlayers } from '../utils/playerTransform';
+import { attachAndSortPlayersByElo, normalizeConfigPlayers } from '../utils/playerTransform';
 import { teamService } from '../services/teamService';
-import { playerService } from '../services/playerService';
 import { getMapResults } from '../services/matchMapResultService';
 import { serverAllocationTracker } from '../services/serverAllocationTracker';
 
@@ -64,13 +63,6 @@ async function getMatchDetailsBySlug(slug: string): Promise<MatchListItem | null
   if (!row) {
     return null;
   }
-
-  // Determine if this is a shuffle tournament (enables ELO enrichment)
-  const tournamentType = await db.queryOneAsync<{ type: string }>(
-    'SELECT type FROM tournament WHERE id = ?',
-    [row.tournament_id || 1]
-  );
-  const isShuffleTournament = tournamentType?.type === 'shuffle';
 
   // For bracket-managed matches (round >= 1) rebuild the config on demand so
   // team rosters and settings always reflect the latest DB state instead of a
@@ -127,21 +119,23 @@ async function getMatchDetailsBySlug(slug: string): Promise<MatchListItem | null
   }
   const vetoState = row.veto_state ? JSON.parse(row.veto_state as string) : null;
 
+  const cfg = config as Partial<MatchConfig>;
+
   // Normalize players from config
-  const normalizedTeam1Players = config.team1
-    ? normalizeConfigPlayers(config.team1.players)
+  const normalizedTeam1Players = cfg.team1
+    ? normalizeConfigPlayers(cfg.team1.players)
     : [];
-  const normalizedTeam2Players = config.team2
-    ? normalizeConfigPlayers(config.team2.players)
+  const normalizedTeam2Players = cfg.team2
+    ? normalizeConfigPlayers(cfg.team2.players)
     : [];
 
   // Enrich players with avatars from team records if team IDs are available
   let enrichedTeam1Players = normalizedTeam1Players;
   let enrichedTeam2Players = normalizedTeam2Players;
 
-  if (config.team1?.id && row.team1_id) {
+  if (cfg.team1?.id && row.team1_id) {
     try {
-      const team1Data = await teamService.getTeamById(config.team1.id);
+      const team1Data = await teamService.getTeamById(cfg.team1.id);
       if (team1Data?.players) {
         const avatarMap = new Map(
           team1Data.players.map((p) => [p.steamId.toLowerCase(), p.avatar])
@@ -160,9 +154,9 @@ async function getMatchDetailsBySlug(slug: string): Promise<MatchListItem | null
     }
   }
 
-  if (config.team2?.id && row.team2_id) {
+  if (cfg.team2?.id && row.team2_id) {
     try {
-      const team2Data = await teamService.getTeamById(config.team2.id);
+      const team2Data = await teamService.getTeamById(cfg.team2.id);
       if (team2Data?.players) {
         const avatarMap = new Map(
           team2Data.players.map((p) => [p.steamId.toLowerCase(), p.avatar])
@@ -304,45 +298,19 @@ async function getMatchDetailsBySlug(slug: string): Promise<MatchListItem | null
   // Enrich match with player stats and scores from events
   await enrichMatch(match, row.slug);
 
-  // For shuffle tournaments, enrich players with ELO
-  if (
-    isShuffleTournament &&
-    (enrichedTeam1Players.length > 0 || enrichedTeam2Players.length > 0)
-  ) {
+  // Attach ELO + sort rosters (highest-rated first) for UI responses.
+  // We do this for all match types so manual/tournament/shuffle behave consistently.
+  if (enrichedTeam1Players.length > 0 || enrichedTeam2Players.length > 0) {
     try {
-      const allSteamIds = [
-        ...enrichedTeam1Players.map((p) => p.steamid),
-        ...enrichedTeam2Players.map((p) => p.steamid),
-      ];
+      enrichedTeam1Players = await attachAndSortPlayersByElo(enrichedTeam1Players);
+      enrichedTeam2Players = await attachAndSortPlayersByElo(enrichedTeam2Players);
 
-      if (allSteamIds.length > 0) {
-        const players = await playerService.getPlayersByIds(allSteamIds);
-        const eloMap = new Map(players.map((p) => [p.id.toLowerCase(), p.current_elo]));
-
-        // Add ELO to team1 players
-        enrichedTeam1Players = enrichedTeam1Players.map((p) => ({
-          ...p,
-          elo: eloMap.get(p.steamid.toLowerCase()),
-        }));
-
-        // Add ELO to team2 players
-        enrichedTeam2Players = enrichedTeam2Players.map((p) => ({
-          ...p,
-          elo: eloMap.get(p.steamid.toLowerCase()),
-        }));
-
-        // Update config with enriched players
-        if (transformedConfig.team1) {
-          transformedConfig.team1.players = enrichedTeam1Players;
-        }
-        if (transformedConfig.team2) {
-          transformedConfig.team2.players = enrichedTeam2Players;
-        }
-        match.config = transformedConfig;
-      }
+      if (transformedConfig.team1) transformedConfig.team1.players = enrichedTeam1Players;
+      if (transformedConfig.team2) transformedConfig.team2.players = enrichedTeam2Players;
+      match.config = transformedConfig;
     } catch (error) {
       log.debug(
-        `Failed to enrich players with ELO: ${
+        `Failed to enrich/sort players by ELO: ${
           error instanceof Error ? error.message : String(error)
         }`
       );
@@ -485,6 +453,22 @@ router.get('/:slug.json', async (req: Request, res: Response) => {
                 players: {},
               },
       };
+
+      // ReadyUp knife + captain-only commands require captains in match config.
+      // For manual matches, default captain_steamid64 to the first roster SteamID when missing.
+      const pickFirstSteamId = (players: MatchPlayer): string | null => {
+        const keys = Object.keys(players);
+        return keys.length > 0 ? keys[0] : null;
+      };
+
+      if (safeConfig.team1) {
+        const cap = safeConfig.team1.captain_steamid64;
+        if (!cap) safeConfig.team1.captain_steamid64 = pickFirstSteamId(safeConfig.team1.players);
+      }
+      if (safeConfig.team2) {
+        const cap = safeConfig.team2.captain_steamid64;
+        if (!cap) safeConfig.team2.captain_steamid64 = pickFirstSteamId(safeConfig.team2.players);
+      }
 
       return res.json(safeConfig);
     }
@@ -717,13 +701,6 @@ router.get('/', async (req: Request, res: Response) => {
       }
     >(query, params);
 
-    // Get tournament type once (optimization to avoid N+1 queries)
-    const tournamentType = await db.queryOneAsync<{ type: string }>(
-      'SELECT type FROM tournament WHERE id = ?',
-      [rows[0]?.tournament_id || 1]
-    );
-    const isShuffleTournament = tournamentType?.type === 'shuffle';
-
     // Transform players from dictionary to array for frontend
     const matches: MatchListItem[] = await Promise.all(
       rows.map(async (row) => {
@@ -784,21 +761,23 @@ router.get('/', async (req: Request, res: Response) => {
 
         const vetoState = row.veto_state ? JSON.parse(row.veto_state as string) : null;
 
+        const cfg = config as Partial<MatchConfig>;
+
         // Normalize players and enrich with avatars from team data
-        const normalizedTeam1Players = config.team1
-          ? normalizeConfigPlayers(config.team1.players)
+        const normalizedTeam1Players = cfg.team1
+          ? normalizeConfigPlayers(cfg.team1.players)
           : [];
-        const normalizedTeam2Players = config.team2
-          ? normalizeConfigPlayers(config.team2.players)
+        const normalizedTeam2Players = cfg.team2
+          ? normalizeConfigPlayers(cfg.team2.players)
           : [];
 
         // Enrich players with avatars from team records if team IDs are available
         let enrichedTeam1Players = normalizedTeam1Players;
         let enrichedTeam2Players = normalizedTeam2Players;
 
-        if (config.team1?.id && row.team1_id) {
+        if (cfg.team1?.id && row.team1_id) {
           try {
-            const team1Data = await teamService.getTeamById(config.team1.id);
+            const team1Data = await teamService.getTeamById(cfg.team1.id);
             if (team1Data?.players) {
               const avatarMap = new Map(
                 team1Data.players.map((p) => [p.steamId.toLowerCase(), p.avatar])
@@ -817,9 +796,9 @@ router.get('/', async (req: Request, res: Response) => {
           }
         }
 
-        if (config.team2?.id && row.team2_id) {
+        if (cfg.team2?.id && row.team2_id) {
           try {
-            const team2Data = await teamService.getTeamById(config.team2.id);
+            const team2Data = await teamService.getTeamById(cfg.team2.id);
             if (team2Data?.players) {
               const avatarMap = new Map(
                 team2Data.players.map((p) => [p.steamId.toLowerCase(), p.avatar])
@@ -840,16 +819,16 @@ router.get('/', async (req: Request, res: Response) => {
 
         // Transform config to include properly formatted team players with avatars
         const transformedConfig = {
-          ...config,
-          team1: config.team1
+          ...cfg,
+          team1: cfg.team1
             ? {
-                ...config.team1,
+                ...cfg.team1,
                 players: enrichedTeam1Players,
               }
             : undefined,
-          team2: config.team2
+          team2: cfg.team2
             ? {
-                ...config.team2,
+                ...cfg.team2,
                 players: enrichedTeam2Players,
               }
             : undefined,
@@ -968,45 +947,18 @@ router.get('/', async (req: Request, res: Response) => {
           }
         }
 
-        // For shuffle tournaments, enrich players with ELO
-        if (
-          isShuffleTournament &&
-          (enrichedTeam1Players.length > 0 || enrichedTeam2Players.length > 0)
-        ) {
+        // Attach ELO + sort rosters (highest-rated first) for UI responses.
+        if (enrichedTeam1Players.length > 0 || enrichedTeam2Players.length > 0) {
           try {
-            const allSteamIds = [
-              ...enrichedTeam1Players.map((p) => p.steamid),
-              ...enrichedTeam2Players.map((p) => p.steamid),
-            ];
+            enrichedTeam1Players = await attachAndSortPlayersByElo(enrichedTeam1Players);
+            enrichedTeam2Players = await attachAndSortPlayersByElo(enrichedTeam2Players);
 
-            if (allSteamIds.length > 0) {
-              const players = await playerService.getPlayersByIds(allSteamIds);
-              const eloMap = new Map(players.map((p) => [p.id.toLowerCase(), p.current_elo]));
-
-              // Add ELO to team1 players
-              enrichedTeam1Players = enrichedTeam1Players.map((p) => ({
-                ...p,
-                elo: eloMap.get(p.steamid.toLowerCase()),
-              }));
-
-              // Add ELO to team2 players
-              enrichedTeam2Players = enrichedTeam2Players.map((p) => ({
-                ...p,
-                elo: eloMap.get(p.steamid.toLowerCase()),
-              }));
-
-              // Update config with enriched players
-              if (transformedConfig.team1) {
-                transformedConfig.team1.players = enrichedTeam1Players;
-              }
-              if (transformedConfig.team2) {
-                transformedConfig.team2.players = enrichedTeam2Players;
-              }
-              match.config = transformedConfig;
-            }
+            if (transformedConfig.team1) transformedConfig.team1.players = enrichedTeam1Players;
+            if (transformedConfig.team2) transformedConfig.team2.players = enrichedTeam2Players;
+            match.config = transformedConfig;
           } catch (error) {
             log.debug(
-              `Failed to enrich players with ELO: ${
+              `Failed to enrich/sort players by ELO: ${
                 error instanceof Error ? error.message : String(error)
               }`
             );
@@ -1493,7 +1445,7 @@ router.post('/:slug/force-cancel', requireAuth, async (req: Request, res: Respon
     if (serverId) {
       try {
         const { rconService } = await import('../services/rconService');
-        await rconService.executeCommand(serverId, 'get5_endmatch');
+        await rconService.sendCommand(serverId, 'get5_endmatch');
         log.info(`Successfully sent end match command to server ${serverId} for match ${slug}`);
       } catch (rconError) {
         // Don't fail the whole operation if RCON fails - this is the whole point

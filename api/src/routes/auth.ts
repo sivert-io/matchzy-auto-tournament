@@ -64,6 +64,15 @@ function setPlayerSteamCookie(req: Request, res: Response, steamId: string): voi
   });
 }
 
+function clearPlayerSteamCookie(req: Request, res: Response): void {
+  res.clearCookie('player_steam_id', {
+    path: '/',
+    httpOnly: true,
+    secure: shouldUseSecureCookie(req),
+    sameSite: 'lax',
+  });
+}
+
 /**
  * Returns minimal HTML that redirects via meta refresh.
  * Use instead of 302 when setting cookies (e.g. OAuth callback): some browsers
@@ -373,14 +382,7 @@ router.get('/steam/callback', (req: Request, res: Response, _next) => {
  */
 router.post('/logout', (_req: Request, res: Response) => {
   try {
-    res.clearCookie('player_steam_id', {
-      path: '/',
-      httpOnly: true,
-      // Clearing cookies does not require matching secure=true, but browsers can be picky.
-      // Use the common case here; if running HTTPS, this will still clear correctly.
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-    });
+    clearPlayerSteamCookie(_req, res);
 
     return res.status(204).end();
   } catch (error) {
@@ -805,6 +807,13 @@ router.get('/providers', async (_req: Request, res: Response) => {
     if (steamProvider && steamProvider.enabled) {
       const health = await steamService.checkSteamWebApiHealth();
       if (!health.ok) {
+        const statusCode = 'statusCode' in health ? health.statusCode : undefined;
+        log.warn('[AUTH] Steam provider disabled by health check', {
+          configured: health.configured,
+          errorType: health.errorType,
+          statusCode,
+          error: health.error,
+        });
         providers = providers.map((p) => (p.id === 'steam' ? { ...p, enabled: false } : p));
       }
     }
@@ -850,20 +859,32 @@ router.get('/me', async (req: Request, res: Response) => {
       });
     }
 
-    let hasPlayerRecord = false;
-    try {
-      const player = await playerService.getPlayerById(steamId);
-      hasPlayerRecord = !!player;
-    } catch {
-      // treat lookup failure as no record
+    const player = await playerService.getPlayerById(steamId);
+    if (!player) {
+      // Session cookie exists but user doesn't. This happens frequently after
+      // DB resets (e.g. docker compose restart with ephemeral volumes).
+      // Clear the cookie so the frontend doesn't appear "stuck signed in".
+      clearPlayerSteamCookie(req, res);
+      log.info('/api/auth/me: Steam cookie present but no player record; cleared cookie', {
+        steamId,
+      });
+      return res.json({
+        authenticated: false,
+      });
     }
-
-    log.info('/api/auth/me: returning authenticated Steam identity', { steamId, hasPlayerRecord });
+    log.info('/api/auth/me: returning authenticated Steam identity', {
+      steamId,
+      hasPlayerRecord: true,
+    });
 
     return res.json({
       authenticated: true,
       steamId,
-      hasPlayerRecord,
+      hasPlayerRecord: true,
+      avatarUrl:
+        typeof player.avatar === 'string' && player.avatar.trim().length > 0
+          ? player.avatar
+          : undefined,
     });
   } catch (error) {
     log.warn('Failed to read player_steam_id cookie', error as Error);
@@ -1077,6 +1098,21 @@ router.get('/admin/me', async (req: Request, res: Response) => {
     if (steamId) {
       try {
         const player = await playerService.getPlayerById(steamId);
+        if (!player) {
+          // Stale session/cookie referencing a missing user (common after DB reset).
+          clearPlayerSteamCookie(req, res);
+          const logoutFn = (req as Request & { logout?: (cb: (err: unknown) => void) => void }).logout;
+          const sessionDestroy = (req as Request & { session?: { destroy?: (cb: (err: unknown) => void) => void } })
+            .session?.destroy;
+          if (logoutFn) {
+            logoutFn(() => {
+              if (sessionDestroy) sessionDestroy(() => {});
+            });
+          } else if (sessionDestroy) {
+            sessionDestroy(() => {});
+          }
+        }
+
         if (player?.isAdmin) {
           log.info('/api/auth/admin/me: returning authenticated admin identity (session)', {
             provider,
@@ -1098,6 +1134,13 @@ router.get('/admin/me', async (req: Request, res: Response) => {
   if (cookieSteamId) {
     try {
       const player = await playerService.getPlayerById(cookieSteamId);
+      if (!player) {
+        clearPlayerSteamCookie(req, res);
+        log.info('/api/auth/admin/me: cookie Steam ID has no player record; cleared cookie', {
+          steamId: cookieSteamId,
+        });
+        return res.json({ authenticated: false });
+      }
       if (player?.isAdmin) {
         steamId = cookieSteamId;
         profileName = player.name ?? null;
@@ -1132,23 +1175,25 @@ router.get('/admin/me', async (req: Request, res: Response) => {
 /**
  * Admin logout – destroys the Passport session.
  */
-router.post('/admin/logout', (req: Request, res: Response) => {
+router.post('/admin/logout', (req: Request, res: Response): void => {
   const anyReq = req as Request & {
     logout?: (cb: (err: unknown) => void) => void;
     session?: { destroy?: (cb: (err: unknown) => void) => void };
   };
 
   if (!anyReq.logout) {
-    return res.status(204).end();
+    res.status(204).end();
+    return;
   }
 
   anyReq.logout((err) => {
     if (err) {
       log.error('Error during admin logout', err as Error);
-      return res.status(500).json({
+      res.status(500).json({
         success: false,
         error: 'Failed to log out admin session',
       });
+      return;
     }
 
     if (anyReq.session && anyReq.session.destroy) {
@@ -1156,12 +1201,14 @@ router.post('/admin/logout', (req: Request, res: Response) => {
         if (destroyErr) {
           log.warn('Failed to destroy session during admin logout', destroyErr as Error);
         }
-        return res.status(204).end();
+        res.status(204).end();
       });
     } else {
-      return res.status(204).end();
+      res.status(204).end();
     }
   });
+
+  return;
 });
 
 export default router;

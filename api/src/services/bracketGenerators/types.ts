@@ -19,8 +19,9 @@ export interface BracketGeneratorResult {
      * - 'LB'       → losers bracket
      * - 'GF'       → grand final
      * - 'GF_RESET' → optional reset grand final (if supported)
+     * - 'SE'       → single-elimination bracket
      */
-    bracket?: 'WB' | 'LB' | 'GF' | 'GF_RESET';
+    bracket?: 'WB' | 'LB' | 'GF' | 'GF_RESET' | 'SE';
     team1Id: string | null;
     team2Id: string | null;
     winnerId: string | null;

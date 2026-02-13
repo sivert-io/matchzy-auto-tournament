@@ -18,14 +18,18 @@ import { VetoMapCard } from './VetoMapCard';
 import { getMapData } from '../../constants/maps';
 import { getVetoOrder } from '../../constants/vetoOrders';
 import { api } from '../../utils/api';
+import { normalizeConfigPlayers } from '../../utils/playerUtils';
 import type { VetoState, MapSide } from '../../types';
 import type { MapsResponse } from '../../types/api.types';
 import { FadeInImage } from '../common/FadeInImage';
+import { PlayerAvatar } from '../player/PlayerAvatar';
 
 interface VetoInterfaceProps {
   matchSlug: string;
   team1Name?: string;
   team2Name?: string;
+  team1Players?: unknown;
+  team2Players?: unknown;
   currentTeamSlug?: string; // For security - which team is viewing this
   onComplete?: (vetoState: VetoState) => void;
 }
@@ -34,6 +38,8 @@ export const VetoInterface: React.FC<VetoInterfaceProps> = ({
   matchSlug,
   team1Name: propTeam1Name,
   team2Name: propTeam2Name,
+  team1Players,
+  team2Players,
   currentTeamSlug,
   onComplete,
 }) => {
@@ -43,6 +49,9 @@ export const VetoInterface: React.FC<VetoInterfaceProps> = ({
   const [allMaps, setAllMaps] = useState<
     Map<string, { id: string; displayName: string; imageUrl: string | null }>
   >(new Map());
+
+  const team1Roster = useMemo(() => normalizeConfigPlayers(team1Players), [team1Players]);
+  const team2Roster = useMemo(() => normalizeConfigPlayers(team2Players), [team2Players]);
 
   // Keep a stable reference to the latest onComplete callback so veto effects
   // don't restart (socket reconnect + loading flashes) when parents re-render.
@@ -403,6 +412,102 @@ export const VetoInterface: React.FC<VetoInterfaceProps> = ({
           Best of {vetoState.format === 'bo1' ? '1' : vetoState.format === 'bo3' ? '3' : '5'}
         </Typography>
       </Paper>
+
+      {/* Rosters */}
+      {(team1Roster.length > 0 || team2Roster.length > 0) && (
+        <Paper
+          elevation={1}
+          sx={{
+            mb: 3,
+            p: 3,
+            bgcolor: 'background.paper',
+            border: '1px solid',
+            borderColor: 'divider',
+          }}
+        >
+          <Typography variant="h6" fontWeight={700} mb={2}>
+            Rosters
+          </Typography>
+
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>
+                {team1Name}
+              </Typography>
+              <Stack spacing={1}>
+                {team1Roster.map((p) => (
+                  <Box
+                    key={p.steamid}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    sx={{
+                      p: 1,
+                      borderRadius: 1,
+                      border: '1px solid',
+                      borderColor: 'divider',
+                      bgcolor: 'background.default',
+                    }}
+                  >
+                    <Box display="flex" alignItems="center" gap={1.25} minWidth={0}>
+                      <PlayerAvatar id={p.steamid} name={p.name} avatarUrl={p.avatar} size={28} />
+                      <Typography variant="body2" fontWeight={600} noWrap>
+                        {p.name}
+                      </Typography>
+                    </Box>
+                    <Typography variant="caption" color="text.secondary" sx={{ ml: 2, flexShrink: 0 }}>
+                      {typeof p.elo === 'number' ? `ELO ${p.elo}` : '—'}
+                    </Typography>
+                  </Box>
+                ))}
+                {team1Roster.length === 0 && (
+                  <Typography variant="body2" color="text.secondary">
+                    No roster data.
+                  </Typography>
+                )}
+              </Stack>
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>
+                {team2Name}
+              </Typography>
+              <Stack spacing={1}>
+                {team2Roster.map((p) => (
+                  <Box
+                    key={p.steamid}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    sx={{
+                      p: 1,
+                      borderRadius: 1,
+                      border: '1px solid',
+                      borderColor: 'divider',
+                      bgcolor: 'background.default',
+                    }}
+                  >
+                    <Box display="flex" alignItems="center" gap={1.25} minWidth={0}>
+                      <PlayerAvatar id={p.steamid} name={p.name} avatarUrl={p.avatar} size={28} />
+                      <Typography variant="body2" fontWeight={600} noWrap>
+                        {p.name}
+                      </Typography>
+                    </Box>
+                    <Typography variant="caption" color="text.secondary" sx={{ ml: 2, flexShrink: 0 }}>
+                      {typeof p.elo === 'number' ? `ELO ${p.elo}` : '—'}
+                    </Typography>
+                  </Box>
+                ))}
+                {team2Roster.length === 0 && (
+                  <Typography variant="body2" color="text.secondary">
+                    No roster data.
+                  </Typography>
+                )}
+              </Stack>
+            </Grid>
+          </Grid>
+        </Paper>
+      )}
 
       {/* Progress Header */}
       <Paper

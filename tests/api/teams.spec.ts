@@ -70,16 +70,16 @@ test.describe.serial('Teams API', () => {
 
   test('should create two test teams using helper', {
     tag: ['@api', '@teams'],
-  }, async ({ request }) => {
-    const [team1, team2] = await createTestTeams(request, 'api-helper-test');
+  }, async ({ page }) => {
+    const [team1, team2] = await createTestTeams(page.request, 'api-helper-test');
     expect(team1).toBeTruthy();
     expect(team2).toBeTruthy();
     expect(team1.id).toBeTruthy();
     expect(team2.id).toBeTruthy();
 
     // Cleanup
-    await deleteTeam(request, team1.id);
-    await deleteTeam(request, team2.id);
+    await deleteTeam(page.request, team1.id);
+    await deleteTeam(page.request, team2.id);
   });
 });
 

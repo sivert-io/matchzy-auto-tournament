@@ -196,27 +196,16 @@ export function useCreateManualMatchModal({
           currentMatch: string | null;
         }
       >();
-      await Promise.all(
-        list.map(async (server) => {
-          try {
-            const res = await api.get<{
-              success: boolean;
-              status: string;
-              currentMatch: string | null;
-            }>(`/api/servers/${server.id}/status?cached=true`);
-            const isOnline = res.status === 'online';
-            statusMap.set(server.id, {
-              status: isOnline ? 'online' : 'offline',
-              currentMatch: res.currentMatch ?? null,
-            });
-          } catch {
-            statusMap.set(server.id, {
-              status: 'offline',
-              currentMatch: null,
-            });
-          }
-        })
-      );
+      const now = Math.floor(Date.now() / 1000);
+      const HEARTBEAT_FRESH_SECONDS = 20;
+      list.forEach((server) => {
+        const hb = server.heartbeatUpdatedAt ?? null;
+        const isOnline = typeof hb === 'number' && now - hb <= HEARTBEAT_FRESH_SECONDS;
+        statusMap.set(server.id, {
+          status: isOnline ? 'online' : 'offline',
+          currentMatch: server.heartbeatMatchSlug ?? null,
+        });
+      });
       setServerStatuses(statusMap);
     } catch (err) {
       console.error('Failed to load servers for manual match creation', err);
@@ -407,18 +396,17 @@ export function useCreateManualMatchModal({
     }
   }, [team2Mode, team1NewName, team2NewName]);
 
-  const buildAdHocPlayersFromIds = (ids: string[]): Array<{ steamid: string; name: string }> => {
-    return ids
+  const buildAdHocPlayersFromIds = (ids: string[]): Record<string, string> => {
+    const out: Record<string, string> = {};
+    ids
       .map((id) => id.trim())
       .filter((id) => id.length > 0)
-      .map((steamid) => {
+      .forEach((steamid) => {
         const player = players.find((p) => p.id === steamid) || null;
-        return {
-          steamid,
-          // Prefer the known player name; fall back to the SteamID if we don't have it.
-          name: player?.name || steamid,
-        };
+        // Prefer the known player name; fall back to the SteamID if we don't have it.
+        out[steamid] = player?.name || steamid;
       });
+    return out;
   };
 
   const team1DisplayName =
@@ -447,12 +435,19 @@ export function useCreateManualMatchModal({
 
       const toMatchConfigPlayers = (team: Team | null, adHocIds: string[]) => {
         if (team) {
-          return (team.players || []).map((p) => ({
-            steamid: p.steamId,
-            name: p.name,
-          }));
+          const out: Record<string, string> = {};
+          for (const p of team.players || []) {
+            if (!p?.steamId) continue;
+            out[p.steamId] = p.name || p.steamId;
+          }
+          return out;
         }
         return buildAdHocPlayersFromIds(adHocIds);
+      };
+
+      const pickFirstSteamId = (playersMap: Record<string, string>): string | null => {
+        const keys = Object.keys(playersMap);
+        return keys.length > 0 ? keys[0] : null;
       };
 
       const cvars: Record<string, string | number> = {};
@@ -470,6 +465,15 @@ export function useCreateManualMatchModal({
         cvars.mp_overtime_maxrounds = overtimeMaxRounds;
       }
 
+      // ReadyUp uses explicit overtime metadata (overtimeMode/overtimeSegments) for
+      // winner/series logic. Mirror the cvars above so RU behavior matches what
+      // the server is configured to do.
+      const overtimeMode: 'enabled' | 'disabled' = overtimeEnabled ? 'enabled' : 'disabled';
+      const overtimeSegments =
+        overtimeEnabled && typeof overtimeMaxRounds === 'number' && overtimeMaxRounds > 0
+          ? Math.max(1, Math.floor(overtimeMaxRounds / 2))
+          : 3;
+
       let map_sides: Array<'team1_ct' | 'team2_ct' | 'knife'> | undefined;
       if (!useVeto) {
         if (bestOf === 'bo1') {
@@ -480,11 +484,24 @@ export function useCreateManualMatchModal({
         }
       }
 
+      const team1PlayersMap =
+        team1Mode === 'existing'
+          ? toMatchConfigPlayers(existingTeam1, [])
+          : toMatchConfigPlayers(null, team1NewPlayerIds);
+      const team2PlayersMap =
+        team2Mode === 'existing'
+          ? toMatchConfigPlayers(existingTeam2, [])
+          : toMatchConfigPlayers(null, team2NewPlayerIds);
+
       previewConfig = {
         vetoDisabled: !useVeto,
         maplist: maplistForConfig,
         num_maps: requiredMaps,
         players_per_team: safePlayersPerTeam,
+        // Explicit round-limit metadata for ReadyUp (preferred over deriving from cvars).
+        maxRounds: safeMaxRounds,
+        overtimeMode,
+        overtimeSegments: overtimeEnabled ? overtimeSegments : undefined,
         expected_players_total: safePlayersPerTeam * 2,
         expected_players_team1: safePlayersPerTeam,
         expected_players_team2: safePlayersPerTeam,
@@ -494,10 +511,10 @@ export function useCreateManualMatchModal({
           ...(team1Mode === 'existing' && existingTeam1 && existingTeam1.tag
             ? { tag: existingTeam1.tag }
             : {}),
-          players:
-            team1Mode === 'existing'
-              ? toMatchConfigPlayers(existingTeam1, [])
-              : toMatchConfigPlayers(null, team1NewPlayerIds),
+          // ReadyUp expects a steamid64->name map for `players`.
+          players: team1PlayersMap,
+          // Default captain to first roster member when present.
+          captain_steamid64: pickFirstSteamId(team1PlayersMap),
         },
         team2: {
           ...(team2Mode === 'existing' && existingTeam2 ? { id: existingTeam2.id } : {}),
@@ -505,14 +522,12 @@ export function useCreateManualMatchModal({
           ...(team2Mode === 'existing' && existingTeam2 && existingTeam2.tag
             ? { tag: existingTeam2.tag }
             : {}),
-          players:
-            team2Mode === 'existing'
-              ? toMatchConfigPlayers(existingTeam2, [])
-              : toMatchConfigPlayers(null, team2NewPlayerIds),
+          players: team2PlayersMap,
+          captain_steamid64: pickFirstSteamId(team2PlayersMap),
         },
         ...(map_sides ? { map_sides } : {}),
         ...(Object.keys(cvars).length > 0 ? { cvars } : {}),
-      };
+      } as any;
     }
   }
 

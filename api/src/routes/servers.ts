@@ -490,7 +490,7 @@ router.post('/:id/reset-initialization', async (req: Request, res: Response) => 
  * Reset initialization status for ALL servers
  * Useful after global configuration changes
  */
-router.post('/reset-all-initialization', async (req: Request, res: Response) => {
+router.post('/reset-all-initialization', async (_req: Request, res: Response) => {
   try {
     await serverInitializationService.resetAllServers();
 

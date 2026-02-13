@@ -41,7 +41,7 @@ async function getSimulationTimescale(): Promise<number> {
  * - Falls back to 24 (MR24) when missing/invalid.
  */
 function resolveMaxRounds(tournament: TournamentResponse): number {
-  const raw = tournament.maxRounds;
+  const raw: unknown = tournament.maxRounds as unknown;
   const parsed =
     typeof raw === 'number'
       ? raw
@@ -128,6 +128,32 @@ export const generateMatchConfig = async (
   const team2Players = team2 ? convertPlayersToMatchZyFormat(team2.players) : {};
   const team1Count = Object.keys(team1Players).length;
   const team2Count = Object.keys(team2Players).length;
+
+  const resolveCaptainByElo = async (playersMap: Record<string, string>): Promise<string | null> => {
+    const ids = Object.keys(playersMap);
+    if (ids.length === 0) return null;
+
+    try {
+      const placeholders = ids.map(() => '?').join(', ');
+      const rows = await db.queryAsync<{ id: string; current_elo: number }>(
+        `SELECT id, current_elo FROM players WHERE id IN (${placeholders})`,
+        ids
+      );
+      if (!rows || rows.length === 0) return ids[0] ?? null;
+
+      // Highest-rated becomes captain. Tie-break by steamid for determinism.
+      const sorted = [...rows].sort((a, b) => {
+        if (b.current_elo !== a.current_elo) return b.current_elo - a.current_elo;
+        return a.id.localeCompare(b.id);
+      });
+      return sorted[0]?.id ?? (ids[0] ?? null);
+    } catch {
+      return ids[0] ?? null;
+    }
+  };
+
+  const team1Captain = await resolveCaptainByElo(team1Players);
+  const team2Captain = await resolveCaptainByElo(team2Players);
 
   const playersPerTeam = Math.max(team1Count, team2Count, 1);
 
@@ -249,6 +275,24 @@ export const generateMatchConfig = async (
     ...matchzyEnhancedCvars,
   };
 
+  // Ensure CS2 overtime rules match the explicit overtime metadata.
+  // (ReadyUp consumes overtimeMode/overtimeSegments for logic, but the server still needs mp_overtime_*.)
+  if (tournament.overtimeMode === 'enabled') {
+    cvars.mp_overtime_enable = 1;
+    const seg = Math.max(1, Math.min(60, tournament.overtimeSegments ?? 3));
+    // CS2 expects total overtime rounds (both halves). For common 3-round halves: 6 total.
+    cvars.mp_overtime_maxrounds = seg * 2;
+  } else if (tournament.overtimeMode === 'disabled') {
+    cvars.mp_overtime_enable = 0;
+  }
+
+  // Reuse MatchZy Enhanced side-selection timer as the ReadyUp knife decision timer.
+  // (RU consumes this as a dedicated JSON field, not as a convar.)
+  const knifeDecisionSeconds =
+    typeof matchzyEnhancedCvars.matchzy_side_selection_time === 'number'
+      ? matchzyEnhancedCvars.matchzy_side_selection_time
+      : 20;
+
   const config: MatchConfig = {
     // MatchZy expects numeric matchid; fall back to 0 only if we somehow
     // don't have a DB row yet (should be rare, but keeps config valid).
@@ -277,6 +321,7 @@ export const generateMatchConfig = async (
     maxRounds,
     overtimeMode: tournament.overtimeMode,
     overtimeSegments: tournament.overtimeSegments,
+    knifeDecisionSeconds,
 
     // Custom fields used by your frontend
     expected_players_total: team1Count + team2Count,
@@ -287,6 +332,7 @@ export const generateMatchConfig = async (
           id: team1.id,
           name: team1.name,
           tag: team1.tag || team1.name.substring(0, 4).toUpperCase(),
+          captain_steamid64: team1Captain,
           players: team1Players,
           series_score: 0,
         }
@@ -296,6 +342,7 @@ export const generateMatchConfig = async (
           id: team2.id,
           name: team2.name,
           tag: team2.tag || team2.name.substring(0, 4).toUpperCase(),
+          captain_steamid64: team2Captain,
           players: team2Players,
           series_score: 0,
         }
@@ -415,6 +462,29 @@ async function generateShuffleMatchConfig(
   const team1Count = Object.keys(team1Players).length;
   const team2Count = Object.keys(team2Players).length;
 
+  const resolveCaptainByElo = async (playersMap: Record<string, string>): Promise<string | null> => {
+    const ids = Object.keys(playersMap);
+    if (ids.length === 0) return null;
+    try {
+      const placeholders = ids.map(() => '?').join(', ');
+      const rows = await db.queryAsync<{ id: string; current_elo: number }>(
+        `SELECT id, current_elo FROM players WHERE id IN (${placeholders})`,
+        ids
+      );
+      if (!rows || rows.length === 0) return ids[0] ?? null;
+      const sorted = [...rows].sort((a, b) => {
+        if (b.current_elo !== a.current_elo) return b.current_elo - a.current_elo;
+        return a.id.localeCompare(b.id);
+      });
+      return sorted[0]?.id ?? (ids[0] ?? null);
+    } catch {
+      return ids[0] ?? null;
+    }
+  };
+
+  const team1Captain = await resolveCaptainByElo(team1Players);
+  const team2Captain = await resolveCaptainByElo(team2Players);
+
   // Shuffle tournaments: BO1, single map, random side, no veto
   const maplist = mapForRound ? [mapForRound] : null;
   const map_sides: Array<'team1_ct' | 'team2_ct'> = [Math.random() > 0.5 ? 'team1_ct' : 'team2_ct'];
@@ -432,6 +502,12 @@ async function generateShuffleMatchConfig(
     // Add MatchZy Enhanced cvars
     ...matchzyEnhancedCvars,
   };
+
+  // Reuse MatchZy Enhanced side-selection timer as the ReadyUp knife decision timer.
+  const knifeDecisionSeconds =
+    typeof matchzyEnhancedCvars.matchzy_side_selection_time === 'number'
+      ? matchzyEnhancedCvars.matchzy_side_selection_time
+      : 20;
 
   const simulation = await getSimulationFlag();
   const simulationTimescale = simulation ? await getSimulationTimescale() : undefined;
@@ -467,6 +543,7 @@ async function generateShuffleMatchConfig(
     maxRounds,
     overtimeMode: tournament.overtimeMode,
     overtimeSegments: tournament.overtimeSegments,
+    knifeDecisionSeconds,
 
     spectators: { players: {} },
 
@@ -480,6 +557,7 @@ async function generateShuffleMatchConfig(
           id: team1.id,
           name: team1.name,
           tag: team1.tag || team1.name.substring(0, 4).toUpperCase(),
+          captain_steamid64: team1Captain,
           players: team1Players,
           series_score: 0,
         }
@@ -489,6 +567,7 @@ async function generateShuffleMatchConfig(
           id: team2.id,
           name: team2.name,
           tag: team2.tag || team2.name.substring(0, 4).toUpperCase(),
+          captain_steamid64: team2Captain,
           players: team2Players,
           series_score: 0,
         }

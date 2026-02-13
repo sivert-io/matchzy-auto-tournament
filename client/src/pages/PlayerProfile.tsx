@@ -155,6 +155,8 @@ function normalizeMatchForPlayerView(rawMatch: TeamMatchInfo, steamId: string): 
         team2Score: rawMatch.liveStats.team1Score,
         team1SeriesScore: rawMatch.liveStats.team2SeriesScore,
         team2SeriesScore: rawMatch.liveStats.team1SeriesScore,
+        team1Side: rawMatch.liveStats.team2Side ?? null,
+        team2Side: rawMatch.liveStats.team1Side ?? null,
         playerStats: rawMatch.liveStats.playerStats
           ? {
               team1: [...rawMatch.liveStats.playerStats.team2],
@@ -1041,6 +1043,7 @@ export default function PlayerProfile() {
               onVetoComplete={handleVetoComplete}
               getRoundLabel={getRoundLabel}
               highlightPlayerId={player.id}
+              showSides
               // Only allow veto and server controls on the player page when the
               // signed‑in Steam ID matches the profile being viewed. Teammates
               // visiting this URL can still *see* the page, but cannot drive

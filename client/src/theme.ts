@@ -2,6 +2,8 @@ import { createTheme } from '@mui/material/styles';
 import type {} from '@mui/lab/themeAugmentation';
 
 // Material Design 3 Purple theme with maximum roundness
+const INPUT_BG = 'rgba(0, 0, 0, 0.26)'; // Same as accordion summary background
+
 export const theme = createTheme({
   palette: {
     mode: 'dark',
@@ -181,6 +183,28 @@ export const theme = createTheme({
           '& .MuiOutlinedInput-root': {
             borderRadius: 28, // Rounded text fields
           },
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          backgroundColor: INPUT_BG,
+          borderRadius: 28,
+          transition: 'background-color 120ms ease, border-color 120ms ease',
+          '&:hover': {
+            backgroundColor: INPUT_BG,
+          },
+          '&.Mui-focused': {
+            backgroundColor: INPUT_BG,
+          },
+          '&.Mui-disabled': {
+            // Slightly reduce contrast for disabled inputs while preserving separation from cards
+            backgroundColor: 'rgba(0, 0, 0, 0.18)',
+          },
+        },
+        notchedOutline: {
+          borderColor: 'rgba(255, 255, 255, 0.10)',
         },
       },
     },

@@ -20,12 +20,59 @@ class TeamService {
     };
   }
 
+  private sortPlayersUsingEloMap(players: Player[], eloMap: Map<string, number>): Player[] {
+    return [...players]
+      .map((p) => {
+        const mapped = eloMap.get(p.steamId.toLowerCase());
+        return {
+          ...p,
+          // Always prefer the DB-backed rating when present.
+          elo: typeof mapped === 'number' ? mapped : p.elo,
+        };
+      })
+      .sort((a, b) => {
+        const ae = a.elo ?? -Infinity;
+        const be = b.elo ?? -Infinity;
+        if (be !== ae) return be - ae;
+        return a.steamId.localeCompare(b.steamId);
+      });
+  }
+
   /**
    * Get all teams
    */
   async getAllTeams(): Promise<TeamResponse[]> {
     const teams = await db.getAllAsync<Team>('teams');
-    return teams.map((team) => this.toResponse(team));
+    const responses = teams.map((team) => this.toResponse(team));
+
+    // Attach DB-backed ELO and sort rosters (highest rated first) across all teams.
+    const allIds = Array.from(
+      new Set(
+        responses
+          .flatMap((t) => (Array.isArray(t.players) ? t.players : []))
+          .map((p) => p.steamId)
+          .filter((s): s is string => typeof s === 'string' && s.length > 0)
+      )
+    );
+
+    let eloMap = new Map<string, number>();
+    if (allIds.length > 0) {
+      try {
+        const placeholders = allIds.map(() => '?').join(', ');
+        const rows = await db.queryAsync<{ id: string; current_elo: number }>(
+          `SELECT id, current_elo FROM players WHERE id IN (${placeholders})`,
+          allIds
+        );
+        eloMap = new Map(rows.map((r) => [r.id.toLowerCase(), r.current_elo]));
+      } catch {
+        // Best-effort: if the query fails, keep whatever ordering/elo the team JSON had.
+      }
+    }
+
+    return responses.map((t) => ({
+      ...t,
+      players: this.sortPlayersUsingEloMap(t.players || [], eloMap),
+    }));
   }
 
   /**
@@ -33,7 +80,32 @@ class TeamService {
    */
   async getTeamById(id: string): Promise<TeamResponse | null> {
     const team = await db.getOneAsync<Team>('teams', 'id = ?', [id]);
-    return team ? this.toResponse(team) : null;
+    if (!team) return null;
+    const resp = this.toResponse(team);
+
+    // Attach DB-backed ELO and sort roster (highest rated first).
+    const ids = (resp.players || [])
+      .map((p) => p.steamId)
+      .filter((s): s is string => typeof s === 'string' && s.length > 0);
+
+    let eloMap = new Map<string, number>();
+    if (ids.length > 0) {
+      try {
+        const placeholders = ids.map(() => '?').join(', ');
+        const rows = await db.queryAsync<{ id: string; current_elo: number }>(
+          `SELECT id, current_elo FROM players WHERE id IN (${placeholders})`,
+          ids
+        );
+        eloMap = new Map(rows.map((r) => [r.id.toLowerCase(), r.current_elo]));
+      } catch {
+        // ignore; best-effort
+      }
+    }
+
+    return {
+      ...resp,
+      players: this.sortPlayersUsingEloMap(resp.players || [], eloMap),
+    };
   }
 
   /**

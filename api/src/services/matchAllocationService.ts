@@ -4,10 +4,9 @@ import { rconService } from './rconService';
 import { tournamentService } from './tournamentService';
 import { emitTournamentUpdate, emitBracketUpdate, emitMatchUpdate } from './socketService';
 import { loadMatchOnServer } from './matchLoadingService';
-import { serverStatusService, ServerStatus } from './serverStatusService';
+import { ServerStatus } from './serverStatusService';
 import { generateRoundMatches, advanceToNextRound } from './shuffleTournamentService';
 import { log } from '../utils/logger';
-import { getLastServerTestEvent } from './serverConnectivityService';
 import { settingsService } from './settingsService';
 import { autoCompleteVetoForMatch } from './vetoSimulationService';
 import type { ServerResponse } from '../types/server.types';
@@ -93,39 +92,21 @@ export class MatchAllocationService {
   }> {
     const enabledServers = await serverService.getAllServers(true);
 
-    // Filter out unconfigured servers from allocation status
-    // These servers haven't sent any events yet and cannot be used
-    const configuredServers = enabledServers.filter((server) => server.lastSeen !== null);
+    // Filter out unconfigured servers from allocation status.
+    // In the heartbeat-driven model, "configured" simply means we've received at least one heartbeat.
+    const configuredServers = enabledServers.filter((server) => server.heartbeatUpdatedAt !== null);
 
-    // For the high‑level allocation *status* view we intentionally include all
-    // configured servers, even if the in‑memory allocation tracker currently
-    // considers them "busy" or "preparing". The tracker is an optimisation
-    // aid for the allocator itself, but the authoritative truth about whether
-    // a server is actually idle comes from MatchZy's ConVars plus our DB
-    // (loaded/live matches). By not filtering on `serverAllocationTracker` here
-    // we ensure that UIs – including the manual match creator – always see a
-    // complete snapshot of online servers together with their allocatable flag.
-    const statusChecks = await Promise.all(
-      configuredServers.map(async (server) => {
-        try {
-          // Use the short-lived status cache for availability checks so we don't
-          // block the entire API on fresh RCON calls every time the UI polls.
-          const serverStatus = await serverStatusService.getServerStatus(server.id, true);
-          return {
-            server,
-            ...serverStatus,
-          };
-        } catch {
-          return {
-            server,
-            status: null as ServerStatus | null,
-            matchSlug: null as string | null,
-            updatedAt: null as number | null,
-            online: false,
-          };
-        }
-      })
-    );
+    // Snapshot from the heartbeat fields on the server row.
+    // `online` is derived from heartbeat freshness (not from RCON).
+    const HEARTBEAT_FRESH_SECONDS = 15;
+    const now = Math.floor(Date.now() / 1000);
+    const statusChecks = configuredServers.map((server) => {
+      const updatedAt = server.heartbeatUpdatedAt ?? null;
+      const online = typeof updatedAt === 'number' ? now - updatedAt <= HEARTBEAT_FRESH_SECONDS : false;
+      const status = server.heartbeatStatus as ServerStatus | null;
+      const matchSlug = server.heartbeatMatchSlug ?? null;
+      return { server, status, matchSlug, updatedAt, online };
+    });
 
     // For the status view we primarily trust the MatchZy tournament status
     // (convars) as the source of truth about whether a server is actually idle.
@@ -164,7 +145,6 @@ export class MatchAllocationService {
     const GRACE_PERIOD_SECONDS = isSimulation
       ? MatchAllocationService.SIMULATION_GRACE_PERIOD_SECONDS
       : MatchAllocationService.ALLOCATION_GRACE_PERIOD_SECONDS;
-    const now = Math.floor(Date.now() / 1000);
 
     let availableServerCount = 0;
     let nextAllocationInSeconds: number | null = null;
@@ -196,15 +176,16 @@ export class MatchAllocationService {
       const dbBusy = dbBusyByServer.get(server.id) || null;
       const effectiveMatchSlug = matchSlug || dbBusy?.slug || null;
 
-      // Determine if server is truly idle:
-      // - Plugin must report IDLE status
-      // - AND database must not show a loaded/live match
-      // This prevents servers from showing as "Available" when they have
-      // a match in warmup but the plugin hasn't updated the ConVar yet.
-      const pluginSaysIdle = status === ServerStatus.IDLE;
+      // Heartbeat-driven status view:
+      // - `status` comes from the server heartbeat snapshot
+      // - DB still acts as a guardrail: if DB says a match is loaded/live on this server,
+      //   we do not treat it as idle/allocatable even if the heartbeat is wrong.
       const dbSaysBusy = dbBusy !== null;
-      const isIdle = pluginSaysIdle && !dbSaysBusy;
-      
+      const isIdle = status === ServerStatus.IDLE && !dbSaysBusy;
+
+      // Heartbeat already encodes any server-side cooldown logic via this flag.
+      const heartbeatReady = server.heartbeatReadyForAllocation === true;
+
       let inGraceWindow = false;
       let secondsUntilReady: number | null = null;
       let allocatable = false;
@@ -216,26 +197,9 @@ export class MatchAllocationService {
       const isCs2Verified =
         typeof server.cs2BuildId === 'number' && typeof server.cs2UpdateCheckedAt === 'number';
 
-      if (isIdle) {
-        if (updatedAt) {
-          const age = now - updatedAt;
-          if (age < GRACE_PERIOD_SECONDS) {
-            inGraceWindow = true;
-            secondsUntilReady = GRACE_PERIOD_SECONDS - age;
-            graceWindowCount += 1;
-
-            // Track the *minimum* remaining time so the UI can show a single
-            // countdown until the next allocation attempt is allowed.
-            if (nextAllocationInSeconds === null || secondsUntilReady < nextAllocationInSeconds) {
-              nextAllocationInSeconds = secondsUntilReady;
-            }
-          } else {
-            allocatable = !isOutOfDate && isCs2Verified;
-          }
-        } else {
-          // No timestamp – treat as long‑idle and allocatable.
-          allocatable = !isOutOfDate && isCs2Verified;
-        }
+      // Allocatable now = online + heartbeat says ready + idle (after DB guardrails).
+      if (online && isIdle && heartbeatReady) {
+        allocatable = !isOutOfDate && isCs2Verified;
       }
 
       if (!isIdle && online) {
@@ -292,240 +256,58 @@ export class MatchAllocationService {
 
   /**
    * Get all available servers (enabled, online, and ready for allocation)
-   * Uses MatchZy's matchzy_tournament_status convar to determine availability
    *
-   * According to MatchZy server allocation status documentation:
-   * - Only allocate when status is effectively idle (idle / postgame)
-   * - Wait a short grace period after status becomes idle/postgame
-   * - Check `matchzy_tournament_match` and `matchzy_tournament_updated` convars
+   * Heartbeat-driven model:
+   * - Servers self-report a small heartbeat payload to MAT every ~5s
+   * - MAT treats the heartbeat snapshot as the authoritative view of server allocatability
    */
   async getAvailableServers(): Promise<ServerResponse[]> {
-    const enabledServers = await serverService.getAllServers(true); // Get only enabled servers
+    const enabledServers = await serverService.getAllServers(true);
+    const now = Math.floor(Date.now() / 1000);
+    const HEARTBEAT_FRESH_SECONDS = 15;
 
-    // Filter out unconfigured servers (never sent server_configured event)
-    // These servers cannot be used for matches until they've been initialized
-    // and have sent their first event (which sets lastSeen timestamp)
-    const configuredServers = enabledServers.filter((server) => {
-      if (!server.lastSeen) {
-        log.debug(
-          `[ALLOCATION] Skipping unconfigured server ${server.id} (${server.name}) - no events received yet`
-        );
-        return false;
-      }
-      return true;
+    // Filter out servers that have never heartbeated or are stale.
+    const heartbeatServers = enabledServers.filter((s) => {
+      if (!s.heartbeatUpdatedAt) return false;
+      return now - s.heartbeatUpdatedAt <= HEARTBEAT_FRESH_SECONDS;
     });
 
-    // We intentionally do NOT pre‑filter enabled servers by DB "busy" state
-    // here. Instead we trust the MatchZy tournament status convars as the
-    // authoritative view: if the plugin reports the server as idle, we allow
-    // allocation even if our DB still has legacy loaded/live matches attached.
-    const candidateServers = configuredServers;
+    // Avoid allocating to servers currently being allocated, or marked busy.
+    const candidateServers = heartbeatServers
+      .filter((s) => !this.allocatingServers.has(s.id))
+      .filter((s) => !serverAllocationTracker.isBusy(s.id));
 
-    // Check each server's MatchZy tournament status
-    const statusChecks = await Promise.all(
-      candidateServers.map(async (server) => {
-        try {
-          // First, perform a lightweight connectivity check using the standard
-          // `status` command. This mirrors the manual "Test server" check in
-          // the UI and avoids trying to allocate obviously-dead servers.
-          const connectionResult = await rconService.testConnection(server.id);
-
-          if (!connectionResult.success) {
-            log.warn(
-              `[ALLOCATION] Server ${server.id} (${server.name}) is offline or unreachable, skipping from allocation`,
-              { error: connectionResult.error }
-            );
-
-            return {
-              server,
-              status: null,
-              matchSlug: null,
-              updatedAt: null,
-              online: false,
-            };
-          }
-
-          // If the basic RCON connection works, query the MatchZy tournament
-          // status convars to determine whether the server is actually idle
-          // and ready to be used for a match.
-          const serverStatus = await serverStatusService.getServerStatus(server.id);
-          return {
-            server,
-            ...serverStatus,
-          };
-        } catch (error) {
-          log.error(`Failed to check server status for ${server.id}`, error);
-          return {
-            server,
-            status: null,
-            matchSlug: null,
-            updatedAt: null,
-            online: false,
-          };
-        }
-      })
-    );
-
-    // Filter out offline servers
-    let onlineServers = statusChecks.filter((s) => s.online);
-
-    // Also filter out servers that are currently in the process of being allocated
-    // a match. This prevents multiple concurrent loads (`matchzy_loadmatch_url`)
-    // from different code paths targeting the same physical server.
-    onlineServers = onlineServers.filter((s) => !this.allocatingServers.has(s.server.id));
-
-    // Finally, respect our internal allocation tracker so that once we decide a
-    // server is "busy" for a match, *no other* match will be allocated to it
-    // until the match lifecycle handler explicitly marks it as idle again.
-    onlineServers = onlineServers.filter((s) => !serverAllocationTracker.isBusy(s.server.id));
-
-    const isSimulation = await settingsService.isSimulationModeEnabled();
-    const GRACE_PERIOD_SECONDS = isSimulation
-      ? MatchAllocationService.SIMULATION_GRACE_PERIOD_SECONDS
-      : MatchAllocationService.ALLOCATION_GRACE_PERIOD_SECONDS;
-    const now = Math.floor(Date.now() / 1000);
-
-    // Check database for matches that are currently loaded/live on servers
-    const dbBusyRows = await db.queryAsync<{ server_id: string; slug: string }>(
-      `SELECT server_id, slug
+    // DB guard: never allocate onto a server with a loaded/live match.
+    const dbBusyRows = await db.queryAsync<{ server_id: string }>(
+      `SELECT server_id
          FROM matches
         WHERE server_id IS NOT NULL
           AND server_id != ''
           AND status IN ('loaded', 'live')`
     );
-    const dbBusyServers = new Set(dbBusyRows.map((row) => row.server_id));
+    const dbBusy = new Set(dbBusyRows.map((r) => r.server_id));
 
-    // Filter servers based on MatchZy tournament status
-    const availableServers: ServerResponse[] = [];
-    for (const check of onlineServers) {
-      const { server, status, matchSlug, updatedAt } = check;
-
-      if (typeof server.cs2RequiredVersion === 'number') {
-        log.debug(
-          `[ALLOCATION] Skipping out-of-date server ${server.id} (${server.name}) - cs2RequiredVersion=${server.cs2RequiredVersion}`
-        );
-        continue;
-      }
-
+    const available: ServerResponse[] = [];
+    for (const server of candidateServers) {
+      if (typeof server.cs2RequiredVersion === 'number') continue;
       const isCs2Verified =
         typeof server.cs2BuildId === 'number' && typeof server.cs2UpdateCheckedAt === 'number';
-      if (!isCs2Verified) {
-        log.debug(
-          `[ALLOCATION] Skipping unverified server ${server.id} (${server.name}) - cs2BuildId=${server.cs2BuildId ?? null}, cs2UpdateCheckedAt=${server.cs2UpdateCheckedAt ?? null}`
-        );
-        continue;
-      }
+      if (!isCs2Verified) continue;
 
-      // Follow MatchZy spec: ONLY allocate when status is "idle". All other
-      // states, including "postgame", are considered busy.
-      if (status !== ServerStatus.IDLE) {
-        log.debug(
-          `Server ${server.id} (${server.name}) not available: status is '${status}' (not idle)`
-        );
-        continue;
-      }
+      if (dbBusy.has(server.id)) continue;
 
-      // Also check database - if DB shows a loaded/live match, don't allocate
-      // even if plugin says idle (prevents race conditions during warmup)
-      if (dbBusyServers.has(server.id)) {
-        log.debug(
-          `Server ${server.id} (${server.name}) not available: database shows loaded/live match`
-        );
-        continue;
-      }
+      // Heartbeat snapshot is authoritative.
+      if (server.heartbeatStatus !== ServerStatus.IDLE) continue;
+      if (server.heartbeatReadyForAllocation !== true) continue;
 
-      // Check grace period: if status was recently updated to idle, wait before allocating.
-      // This ensures demo uploads complete and match reset finishes.
-      if (updatedAt) {
-        const age = now - updatedAt;
-
-        // If status was recently updated to idle (within grace period), wait
-        if (age < GRACE_PERIOD_SECONDS) {
-          const timeUntilReady = GRACE_PERIOD_SECONDS - age;
-
-          // Additional check: if match ID exists and is recent, definitely wait
-          if (matchSlug && matchSlug.trim() !== '') {
-            log.debug(
-              `Server ${server.id} (${server.name}) recently ended match '${matchSlug}' (${age}s ago), waiting ${timeUntilReady}s more for grace period`
-            );
-            continue;
-          }
-
-          // Even without match ID, if status was recently updated, wait a bit
-          // (might be server restart or status reset)
-          log.debug(
-            `Server ${server.id} (${server.name}) recently became idle (${age}s ago), waiting ${timeUntilReady}s more for grace period`
-          );
-          continue;
-        }
-
-        // Status is idle and timestamp is old enough, proceed to connectivity checks
-        if (matchSlug && matchSlug.trim() !== '') {
-          log.debug(
-            `Server ${server.id} (${server.name}) is idle with old match ID '${matchSlug}' (${age}s old), proceeding to connectivity checks`
-          );
-        }
-      } else {
-        // No timestamp available - server might have been idle for a long time
-        // Allow allocation but log it
-        log.debug(
-          `Server ${server.id} (${server.name}) is idle (no timestamp available), assuming ready for allocation`
-        );
-      }
-
-      // Bi-directional connectivity safeguard:
-      // Only allocate servers that have sent a recent connectivity test event
-      // so we know they can reach our /api/events webhook.
-      //
-      // If we haven't seen a recent test event, actively trigger css_te here so the
-      // admin doesn't need to manually hit "Test server" in the UI.
-      let lastTestEvent = getLastServerTestEvent(server.id);
-      const TEST_EVENT_MAX_AGE_MS = 5 * 60 * 1000; // 5 minutes
-      const nowMs = Date.now();
-      if (!lastTestEvent || nowMs - lastTestEvent > TEST_EVENT_MAX_AGE_MS) {
-        const previousTestEventTs = lastTestEvent ?? 0;
-        try {
-          // Ask the server to send a test event back to /api/events
-          await rconService.sendCommand(server.id, 'css_te');
-
-          const timeoutMs = 5000;
-          const pollIntervalMs = 250;
-          const deadline = Date.now() + timeoutMs;
-
-          while (Date.now() < deadline) {
-            const ts = getLastServerTestEvent(server.id) ?? 0;
-            if (ts > previousTestEventTs) {
-              lastTestEvent = ts;
-              break;
-            }
-            await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
-          }
-        } catch (error) {
-          log.warn(`[ALLOCATION] Failed to send css_te connectivity test to server ${server.id}`, {
-            error,
-          });
-        }
-
-        // If we still don't have a fresh test event after the active check, skip this server.
-        if (!lastTestEvent || Date.now() - lastTestEvent > TEST_EVENT_MAX_AGE_MS) {
-          log.warn(
-            `[ALLOCATION] Skipping server ${server.id} (${server.name}) because no recent connectivity test event was received from it.`
-          );
-          continue;
-        }
-      }
-
-      // Server is available!
-      availableServers.push(server);
+      available.push(server);
       serverAllocationTracker.markIdle(server.id);
-      log.debug(`Server ${server.id} (${server.name}) is available for allocation (idle)`);
     }
 
     log.debug(
-      `Found ${availableServers.length} available servers out of ${enabledServers.length} enabled (${onlineServers.length} online)`
+      `[ALLOCATION] Found ${available.length} available servers out of ${enabledServers.length} enabled (${candidateServers.length} heartbeat-fresh)`
     );
-
-    return availableServers;
+    return available;
   }
 
   /**
@@ -568,19 +350,33 @@ export class MatchAllocationService {
     const ctxLabel = context === 'specific' ? ' (specific)' : '';
 
     try {
-      // Final live status check right before allocation so we don't rely on
-      // the older snapshot returned from getAvailableServers.
-      const statusInfo = await serverStatusService.getServerStatus(server.id);
+      // Final heartbeat check right before allocation so we don't rely on an older snapshot.
+      const now = Math.floor(Date.now() / 1000);
+      const HEARTBEAT_FRESH_SECONDS = 15;
+      const hb = await db.queryOneAsync<{
+        heartbeat_status: string | null;
+        heartbeat_ready_for_allocation: number | null;
+        heartbeat_updated_at: number | null;
+      }>(
+        `SELECT heartbeat_status, heartbeat_ready_for_allocation, heartbeat_updated_at
+           FROM servers
+          WHERE id = ?
+          LIMIT 1`,
+        [server.id]
+      );
 
-      if (!statusInfo.online || statusInfo.status !== ServerStatus.IDLE) {
+      const hbFresh = hb?.heartbeat_updated_at ? now - hb.heartbeat_updated_at <= HEARTBEAT_FRESH_SECONDS : false;
+      const hbReady = typeof hb?.heartbeat_ready_for_allocation === 'number' ? hb.heartbeat_ready_for_allocation === 1 : false;
+      const hbIdle = hb?.heartbeat_status === ServerStatus.IDLE;
+      if (!hbFresh || !hbReady || !hbIdle) {
         log.debug(
-          `[ALLOCATION]${ctxLabel} Refusing to allocate match ${match.slug} to server ${server.id} (${server.name}) because it is not idle (status=${statusInfo.status}, matchSlug=${statusInfo.matchSlug})`
+          `[ALLOCATION]${ctxLabel} Refusing to allocate match ${match.slug} to server ${server.id} (${server.name}) because heartbeat says not allocatable (fresh=${hbFresh}, idle=${hbIdle}, ready=${hbReady})`
         );
         return {
           matchSlug: match.slug,
           success: false,
           serverId: server.id,
-          error: `Server ${server.id} is not idle (status=${statusInfo.status})`,
+          error: `Server ${server.id} heartbeat not allocatable`,
         };
       }
 
@@ -1541,7 +1337,7 @@ export class MatchAllocationService {
   }
 
   /**
-   * Restart tournament - run css_restart on all servers with loaded matches, then reallocate
+   * Restart tournament - end matches on all servers with loaded matches, then reallocate
    */
   async restartTournament(baseUrl: string): Promise<{
     success: boolean;
@@ -1604,7 +1400,7 @@ export class MatchAllocationService {
     for (const serverId of serverIds) {
       try {
         log.info(`[RESTART] Ending match on server: ${serverId}`);
-        const result = await rconService.sendCommand(serverId, 'css_restart');
+        const result = await rconService.sendCommand(serverId, 'ru end');
 
         if (result.success) {
           log.success(`[RESTART] Match ended on server ${serverId}`);
@@ -1663,7 +1459,7 @@ export class MatchAllocationService {
    */
   async restartMatch(
     matchSlug: string,
-    baseUrl: string
+    _baseUrl: string
   ): Promise<{
     success: boolean;
     message: string;
@@ -1704,45 +1500,31 @@ export class MatchAllocationService {
 
       const serverId = match.server_id;
 
-      // Step 1: End the current match
-      log.info(`Ending match ${matchSlug} on server ${serverId}`);
-      const endResult = await rconService.sendCommand(serverId, 'css_restart');
+      // ReadyUp restart: keep match loaded, return to warmup gating.
+      log.info(`Restarting match ${matchSlug} on server ${serverId} (ReadyUp)`);
+      const restartResult = await rconService.sendCommand(serverId, 'ru restart');
 
-      if (!endResult.success) {
+      if (!restartResult.success) {
         return {
           success: false,
-          message: `Failed to end match: ${endResult.error}`,
-          error: endResult.error,
+          message: `Failed to restart match: ${restartResult.error}`,
+          error: restartResult.error,
         };
       }
 
-      log.success(`[RESTART] Match ${matchSlug} ended successfully`);
+      // Keep match as loaded; RU remains assigned to the same server.
+      await db.updateAsync(
+        'matches',
+        { status: 'loaded', loaded_at: Math.floor(Date.now() / 1000) },
+        'slug = ?',
+        [matchSlug]
+      );
 
-      // Step 2: Wait a few seconds for server to clean up
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-
-      // Step 3: Reset match status to 'ready'
-      await db.updateAsync('matches', { status: 'ready', loaded_at: null }, 'slug = ?', [
-        matchSlug,
-      ]);
-
-      // Step 4: Reload the match on the same server
-      log.info(`Reloading match ${matchSlug} on server ${serverId}`);
-      const loadResult = await loadMatchOnServer(matchSlug, serverId, { baseUrl });
-
-      if (loadResult.success) {
-        log.success(`[RESTART] Match ${matchSlug} restarted successfully`);
-        return {
-          success: true,
-          message: 'Match restarted successfully',
-        };
-      } else {
-        return {
-          success: false,
-          message: `Match ended but failed to reload: ${loadResult.error}`,
-          error: loadResult.error,
-        };
-      }
+      log.success(`[RESTART] Match ${matchSlug} restarted successfully`);
+      return {
+        success: true,
+        message: 'Match restarted successfully',
+      };
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       log.error(`Error restarting match ${matchSlug}`, error);

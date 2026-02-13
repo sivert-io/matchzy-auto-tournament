@@ -35,7 +35,7 @@ import type { Player } from '../types/team.types';
  * Main event handler - routes events to specific handlers
  */
 export async function handleMatchEvent(event: MatchZyEvent): Promise<void> {
-  const eventData = event as unknown as Record<string, unknown>;
+  const eventData = event;
 
   switch (event.event) {
     // Match Lifecycle Events
@@ -86,6 +86,10 @@ export async function handleMatchEvent(event: MatchZyEvent): Promise<void> {
 
     case 'series_end':
       await handleSeriesEnd(event);
+      break;
+
+    case 'match_forfeit':
+      await handleMatchForfeit(event);
       break;
 
     // Map Events
@@ -287,6 +291,46 @@ export async function handleMatchEvent(event: MatchZyEvent): Promise<void> {
       break;
     }
 
+    case 'warmup_ended': {
+      log.info(`Warmup ended`, {
+        matchId: event.matchid,
+        mapNumber: eventData.map_number,
+      });
+      const match = await resolveMatch(event.matchid);
+      if (match) {
+        // Treat warmup_ended as fully LIVE (same semantics as going_live).
+        await updateMatchStatus(match, 'live');
+        updateLiveStats(match, parseScorePayload(eventData, 'live'));
+      }
+      break;
+    }
+
+    case 'side_swap': {
+      const team1Side = (eventData.team1_side as string | undefined) ?? undefined;
+      const team2Side = (eventData.team2_side as string | undefined) ?? undefined;
+      log.info(`Side swap`, {
+        matchId: event.matchid,
+        mapNumber: eventData.map_number,
+        team1Side,
+        team2Side,
+      });
+      const match = await resolveMatch(event.matchid);
+      if (match) {
+        const normalizeSide = (s?: string): 'CT' | 'T' | null => {
+          if (!s) return null;
+          const v = s.toUpperCase();
+          if (v === 'CT') return 'CT';
+          if (v === 'T') return 'T';
+          return null;
+        };
+        updateLiveStats(match, {
+          team1Side: normalizeSide(team1Side),
+          team2Side: normalizeSide(team2Side),
+        });
+      }
+      break;
+    }
+
     // Pause System Events
     case 'match_paused':
       log.warn(`Match paused by ${(eventData.paused_by as { name?: string })?.name}`, {
@@ -316,6 +360,50 @@ export async function handleMatchEvent(event: MatchZyEvent): Promise<void> {
       log.debug(`Event: ${event.event}`, { matchId: event.matchid });
       break;
   }
+}
+
+async function handleMatchForfeit(event: MatchZyEvent): Promise<void> {
+  const eventData = event;
+  const match = await resolveMatch(event.matchid);
+  if (!match) {
+    log.error(`Match not found for match_forfeit event: ${event.matchid}`);
+    return;
+  }
+
+  if (match.status === 'completed' && match.winner_id) {
+    log.warn('Ignoring match_forfeit for already completed match', {
+      matchId: event.matchid,
+      slug: match.slug,
+    });
+    return;
+  }
+
+  const team = String(eventData.team || '');
+  if (team !== 'team1' && team !== 'team2') {
+    log.warn('match_forfeit received with invalid team', { matchId: event.matchid, team });
+    return;
+  }
+
+  // Reuse the existing series_end completion path so we get consistent
+  // bracket progression + server release behavior.
+  const syntheticSeriesEnd: import('../types/matchzy-events.types').SeriesEndEvent = {
+    event: 'series_end',
+    matchid: event.matchid,
+    team1_name: match.team1_name ?? undefined,
+    team2_name: match.team2_name ?? undefined,
+    team1_series_score: team === 'team1' ? 0 : 1,
+    team2_series_score: team === 'team1' ? 1 : 0,
+    winner: team === 'team1' ? 'team2' : 'team1',
+    time_until_restore: 0,
+  };
+
+  log.warn(`Match forfeited by ${team}`, {
+    matchId: event.matchid,
+    slug: match.slug,
+    by: (eventData.forfeit_by as { steamid?: string; name?: string })?.steamid,
+  });
+
+  await handleSeriesEnd(syntheticSeriesEnd);
 }
 
 async function resolveMatch(identifier: string | number): Promise<DbMatchRow | null> {
@@ -740,7 +828,7 @@ function extractNestedNumber(
  * Handle series end event - update match status, ratings, and advance tournament
  */
 async function handleSeriesEnd(event: MatchZyEvent): Promise<void> {
-  const eventData = event as unknown as Record<string, unknown>;
+  const eventData = event;
   const match = await resolveMatch(event.matchid);
   if (!match) {
     log.error(`Match not found for series_end event: ${event.matchid}`);

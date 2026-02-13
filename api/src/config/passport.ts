@@ -256,13 +256,18 @@ function configureKeycloakStrategy(): void {
   if (idpHint && idpHint.trim().length > 0) {
     try {
       const hint = encodeURIComponent(idpHint.trim());
-      const anyStrategy = keycloakStrategy as unknown as {
-        _oauth2?: { _authorizeUrl?: string };
-      };
-      if (anyStrategy._oauth2 && typeof anyStrategy._oauth2._authorizeUrl === 'string') {
-        const original = anyStrategy._oauth2._authorizeUrl;
+      const isRecord = (v: unknown): v is Record<string, unknown> =>
+        typeof v === 'object' && v !== null;
+
+      const strategyUnknown: unknown = keycloakStrategy;
+      if (!isRecord(strategyUnknown)) return;
+      const oauth2 = strategyUnknown['_oauth2'];
+      if (!isRecord(oauth2)) return;
+      const authorizeUrl = oauth2['_authorizeUrl'];
+      if (typeof authorizeUrl === 'string') {
+        const original = authorizeUrl;
         const separator = original.includes('?') ? '&' : '?';
-        anyStrategy._oauth2._authorizeUrl = `${original}${separator}kc_idp_hint=${hint}`;
+        oauth2['_authorizeUrl'] = `${original}${separator}kc_idp_hint=${hint}`;
       }
     } catch {
       // If internals change, fail softly and continue without idp hint.

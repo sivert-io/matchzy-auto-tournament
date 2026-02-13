@@ -32,10 +32,12 @@ import {
 import type { DbMatchRow, DbEventRow } from '../types/database.types';
 import {
   serverTrackingService,
-  type ServerConfiguredEvent,
-  type Cs2UpdateRequiredEvent,
-  type ServerHealthEvent,
 } from '../services/serverTrackingService';
+import type {
+  ServerConfiguredEvent,
+  Cs2UpdateRequiredEvent,
+  ServerHealthEvent,
+} from '../types/server-tracking-events.types';
 
 const router = Router();
 
@@ -149,9 +151,14 @@ async function handleEventRequest(
   res: Response,
   matchSlugOrServerIdFromUrl?: string
 ): Promise<Response> {
-  const body = req.body as MatchZyEvent | undefined;
-  const eventType = body?.event;
-  const payloadServerId = (body as { server_id?: string })?.server_id;
+  const body: unknown = req.body;
+  const isRecord = (v: unknown): v is Record<string, unknown> =>
+    typeof v === 'object' && v !== null;
+
+  const eventType =
+    isRecord(body) && typeof body.event === 'string' ? body.event : undefined;
+  const payloadServerId =
+    isRecord(body) && typeof body.server_id === 'string' ? body.server_id : undefined;
 
   log.info('[EVENTS] Incoming webhook', {
     path: req.path,
@@ -161,15 +168,15 @@ async function handleEventRequest(
   });
 
   try {
-    const event: MatchZyEvent = body;
-
-    if (!event?.event) {
+    if (!isRecord(body) || typeof body.event !== 'string') {
       log.warn('[EVENTS] Rejected: missing event type', { path: req.path });
       return res.status(400).json({
         success: false,
         error: 'Invalid event: missing event type',
       });
     }
+
+    const event = body as { event: string } & Record<string, unknown>;
 
     // Determine match slug from URL or payload
     const matchFromUrl = matchSlugOrServerIdFromUrl
@@ -181,10 +188,12 @@ async function handleEventRequest(
         ]))
       : null;
 
-    const matchFromPayload = await findMatchByIdentifier(event.matchid);
+    const matchid =
+      typeof event.matchid === 'string' || typeof event.matchid === 'number' ? event.matchid : undefined;
+    const matchFromPayload = matchid === undefined ? null : await findMatchByIdentifier(matchid);
     const resolvedMatch = matchFromUrl || matchFromPayload;
 
-    const actualMatchSlug = resolvedMatch?.slug || String(event.matchid);
+    const actualMatchSlug = resolvedMatch?.slug || String(matchid ?? 'unknown');
     const isNoMatch = actualMatchSlug === '-1';
 
     log.webhookReceived(event.event, actualMatchSlug);
@@ -194,7 +203,20 @@ async function handleEventRequest(
     // Handle server_configured event from MatchZy Enhanced
     // Sent when server is configured with webhook URL or on startup
     if (event.event === 'server_configured') {
-      const ev = event as ServerConfiguredEvent;
+      const isServerConfiguredEvent = (v: Record<string, unknown>): v is ServerConfiguredEvent =>
+        v.event === 'server_configured' &&
+        typeof v.server_id === 'string' &&
+        typeof v.hostname === 'string' &&
+        typeof v.plugin_version === 'string' &&
+        typeof v.remote_log_url === 'string' &&
+        typeof v.timestamp === 'number' &&
+        (v.configured_by === 'Console' || v.configured_by === 'Startup');
+
+      if (!isServerConfiguredEvent(event)) {
+        return res.status(400).json({ success: false, error: 'Invalid server_configured payload' });
+      }
+
+      const ev = event;
       await serverTrackingService.handleServerConfigured(ev);
 
       log.info('[EVENTS] server_configured handled', {
@@ -226,7 +248,19 @@ async function handleEventRequest(
     // Handle CS2 update-required marker from MatchZy Enhanced safe auto-updater.
     // This is a server-level signal (matchid=-1) and should not enter the match event pipeline.
     if (event.event === 'cs2_update_required') {
-      const ev = event as Cs2UpdateRequiredEvent;
+      const isCs2UpdateRequiredEvent = (v: Record<string, unknown>): v is Cs2UpdateRequiredEvent =>
+        v.event === 'cs2_update_required' &&
+        v.matchid === -1 &&
+        typeof v.server_id === 'string' &&
+        typeof v.required_version === 'number' &&
+        typeof v.timestamp === 'number' &&
+        (v.phase === undefined || v.phase === 'available' || v.phase === 'shutdown');
+
+      if (!isCs2UpdateRequiredEvent(event)) {
+        return res.status(400).json({ success: false, error: 'Invalid cs2_update_required payload' });
+      }
+
+      const ev = event;
       const effectiveServerId = ev.server_id || serverId;
       if (effectiveServerId && effectiveServerId !== 'unknown') {
         await serverTrackingService.setCs2UpdateRequired(effectiveServerId, ev.required_version, {
@@ -252,7 +286,20 @@ async function handleEventRequest(
     // Handle server health signals (DB connectivity etc).
     // This is a server-level signal and should not enter the match event pipeline.
     if (event.event === 'server_health') {
-      const ev = event as ServerHealthEvent;
+      const isServerHealthEvent = (v: Record<string, unknown>): v is ServerHealthEvent =>
+        v.event === 'server_health' &&
+        typeof v.server_id === 'string' &&
+        typeof v.plugin_version === 'string' &&
+        typeof v.timestamp === 'number' &&
+        typeof v.db_ok === 'boolean' &&
+        typeof v.db_type === 'string' &&
+        (v.db_error === undefined || v.db_error === null || typeof v.db_error === 'string');
+
+      if (!isServerHealthEvent(event)) {
+        return res.status(400).json({ success: false, error: 'Invalid server_health payload' });
+      }
+
+      const ev = event;
       const effectiveServerId = ev.server_id || serverId;
       if (effectiveServerId && effectiveServerId !== 'unknown') {
         await serverTrackingService.setServerHealth(effectiveServerId, {
@@ -329,6 +376,15 @@ async function handleEventRequest(
     // Add to event buffer
 
     // Process the event
+    const isMatchZyEvent = (v: Record<string, unknown>): v is MatchZyEvent =>
+      typeof v.event === 'string' &&
+      (typeof v.matchid === 'string' || typeof v.matchid === 'number');
+
+    if (!isMatchZyEvent(event)) {
+      // Server-level events already returned above; anything else must include a matchid.
+      return res.status(400).json({ success: false, error: 'Invalid event payload (missing matchid)' });
+    }
+
     await handleMatchEvent(event);
 
     // Emit real-time event via Socket.io

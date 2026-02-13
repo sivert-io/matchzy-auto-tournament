@@ -38,6 +38,8 @@ export interface Match {
 export interface MatchConfigPlayer {
   steamid: string;
   name: string;
+  avatar?: string;
+  elo?: number;
 }
 
 export interface MatchConfigTeam {

@@ -16,11 +16,19 @@ export function getSchemaSQL(): string {
       password TEXT NOT NULL,
       enabled INTEGER NOT NULL DEFAULT 1,
       matchzy_config TEXT, -- JSON blob with per-server MatchZy ConVar overrides
+      readyup_config TEXT, -- JSON blob with per-server ReadyUp settings (warmup/practice)
       persistent_config_sent INTEGER, -- Unix timestamp when persistent config was last sent (NULL = never sent)
       plugin_version TEXT, -- MatchZy Enhanced version (e.g., "1.3.6")
       hostname TEXT, -- Server hostname from CS2 (from hostname convar)
       last_seen INTEGER, -- Unix timestamp of last event received (heartbeat)
       status TEXT DEFAULT 'unknown', -- 'online', 'offline', 'unknown'
+      -- Heartbeat snapshot (ReadyUp-driven server state; allocator uses these)
+      heartbeat_status TEXT, -- 'idle'|'loading'|'warmup'|'live'|'postgame'|'error'
+      heartbeat_match_slug TEXT,
+      heartbeat_matchid INTEGER,
+      heartbeat_ready_for_allocation INTEGER, -- 1/0
+      heartbeat_updated_at INTEGER, -- Unix timestamp when heartbeat was last received
+      heartbeat_plugin_version TEXT,
       cs2_required_version INTEGER, -- If set, server has reported CS2 update required
       cs2_update_phase TEXT, -- 'available' | 'shutdown' (best-effort)
       cs2_update_required_at INTEGER, -- Unix timestamp when update was last reported
@@ -40,6 +48,16 @@ export function getSchemaSQL(): string {
     
     CREATE INDEX IF NOT EXISTS idx_servers_status ON servers(status);
     CREATE INDEX IF NOT EXISTS idx_servers_last_seen ON servers(last_seen);
+    CREATE INDEX IF NOT EXISTS idx_servers_hb_updated_at ON servers(heartbeat_updated_at);
+
+    -- Ensure existing databases get the heartbeat snapshot columns.
+    ALTER TABLE servers ADD COLUMN IF NOT EXISTS heartbeat_status TEXT;
+    ALTER TABLE servers ADD COLUMN IF NOT EXISTS heartbeat_match_slug TEXT;
+    ALTER TABLE servers ADD COLUMN IF NOT EXISTS heartbeat_matchid INTEGER;
+    ALTER TABLE servers ADD COLUMN IF NOT EXISTS heartbeat_ready_for_allocation INTEGER;
+    ALTER TABLE servers ADD COLUMN IF NOT EXISTS heartbeat_updated_at INTEGER;
+    ALTER TABLE servers ADD COLUMN IF NOT EXISTS heartbeat_plugin_version TEXT;
+    ALTER TABLE servers ADD COLUMN IF NOT EXISTS readyup_config TEXT;
 
     -- Application settings table
     CREATE TABLE IF NOT EXISTS app_settings (

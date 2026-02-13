@@ -1,9 +1,10 @@
 import { Router, Request, Response } from 'express';
 import { db } from '../config/database';
-import { serverStatusService } from '../services/serverStatusService';
+import { serverService } from '../services/serverService';
+import { ServerStatus, serverStatusService } from '../services/serverStatusService';
 import { playerConnectionService } from '../services/playerConnectionService';
 import { refreshConnectionsFromServer } from '../services/connectionSnapshotService';
-import { normalizeConfigPlayers } from '../utils/playerTransform';
+import { attachAndSortPlayersByElo, normalizeConfigPlayers } from '../utils/playerTransform';
 import { teamService } from '../services/teamService';
 import { matchLiveStatsService, type MatchLiveStats } from '../services/matchLiveStatsService';
 import type { DbMatchRow } from '../types/database.types';
@@ -80,6 +81,35 @@ router.get('/:teamId/match', async (req: Request, res: Response) => {
       } catch (err) {
         console.error('[TeamMatch] Failed to parse players JSON:', err);
       }
+    }
+
+    // Sort this team's roster by current ELO (highest first).
+    try {
+      const ids = parsedPlayers
+        .map((p) => p.steamId)
+        .filter((s): s is string => typeof s === 'string' && s.length > 0 && s !== 'unknown');
+      if (ids.length > 0) {
+        const placeholders = ids.map(() => '?').join(', ');
+        const rows = await db.queryAsync<{ id: string; current_elo: number }>(
+          `SELECT id, current_elo FROM players WHERE id IN (${placeholders})`,
+          ids
+        );
+        const eloMap = new Map(rows.map((r) => [r.id.toLowerCase(), r.current_elo]));
+        parsedPlayers = [...parsedPlayers]
+          .map((p) => ({
+            ...p,
+            // Attach elo for UI consumers (extra field is safe).
+            elo: eloMap.get(p.steamId.toLowerCase()),
+          }))
+          .sort((a, b) => {
+            const ae = (a as { elo?: number }).elo ?? -Infinity;
+            const be = (b as { elo?: number }).elo ?? -Infinity;
+            if (be !== ae) return be - ae;
+            return a.steamId.localeCompare(b.steamId);
+          }) as any;
+      }
+    } catch {
+      // Best-effort; ignore ELO failures.
     }
 
     // Find active match (loaded or live)
@@ -258,34 +288,19 @@ router.get('/:teamId/match', async (req: Request, res: Response) => {
     // If you want to add join passwords, add a separate field to servers table
     const serverPassword = null;
 
-    // Get real-time server status from custom plugin ConVars (with 2s timeout)
-    // The CS2 plugin manages these ConVars; we just query them for real-time status
-    let realServerStatus = null;
-    let serverStatusDescription = null;
+    // Heartbeat-only model: use ReadyUp heartbeat snapshot for server status.
+    let realServerStatus: ServerStatus | null = null;
+    let serverStatusDescription: ReturnType<typeof serverStatusService.getStatusDescription> | null = null;
     if (match.server_id) {
       try {
-        // 2 second timeout - fail fast if server is unreachable or ConVars don't exist yet
-        const statusInfo = await Promise.race([
-          serverStatusService.getServerStatus(match.server_id),
-          new Promise<{ status: null; matchSlug: null; updatedAt: null; online: false }>(
-            (resolve) =>
-              setTimeout(
-                () => resolve({ status: null, matchSlug: null, updatedAt: null, online: false }),
-                2000
-              )
-          ),
-        ]);
-
-        if (statusInfo.online && statusInfo.status) {
-          realServerStatus = statusInfo.status;
-          serverStatusDescription = serverStatusService.getStatusDescription(statusInfo.status);
+        const srv = await serverService.getServerById(match.server_id);
+        const hb = (srv?.heartbeatStatus ?? null) as ServerStatus | null;
+        if (hb) {
+          realServerStatus = hb;
+          serverStatusDescription = serverStatusService.getStatusDescription(hb);
         }
-      } catch (error) {
-        // Silently fail - server status is nice-to-have, not critical
-        console.debug(
-          '[TeamMatch] Server status check failed (plugin ConVars may not exist yet):',
-          error
-        );
+      } catch {
+        // Best-effort only.
       }
     }
 
@@ -354,10 +369,18 @@ router.get('/:teamId/match', async (req: Request, res: Response) => {
     };
 
     // Enrich both teams in parallel
-    const [enrichedTeam1Players, enrichedTeam2Players] = await Promise.all([
+    let [enrichedTeam1Players, enrichedTeam2Players] = await Promise.all([
       enrichPlayers(normalizedTeam1Players, config.team1?.id),
       enrichPlayers(normalizedTeam2Players, config.team2?.id),
     ]);
+
+    // Attach ELO + sort rosters (highest-rated first) for UI responses.
+    try {
+      enrichedTeam1Players = await attachAndSortPlayersByElo(enrichedTeam1Players);
+      enrichedTeam2Players = await attachAndSortPlayersByElo(enrichedTeam2Players);
+    } catch {
+      // ignore
+    }
 
     return res.json({
       success: true,

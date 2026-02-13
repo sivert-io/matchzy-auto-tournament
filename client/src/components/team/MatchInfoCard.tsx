@@ -30,6 +30,11 @@ interface MatchInfoCardProps {
   // Optional: when provided, this player's row will be highlighted and not linked
   highlightPlayerId?: string;
   /**
+   * When true, display current CT/T side mapping (when available).
+   * Defaults to false so we don't clutter other pages.
+   */
+  showSides?: boolean;
+  /**
    * Optional override for whether the current viewer is allowed to act as a
    * member of this team (for example, on the public player page we only want
    * the *same* player to control veto/connect, even if other teammates can
@@ -67,6 +72,7 @@ export function MatchInfoCard({
   onVetoComplete,
   getRoundLabel,
   highlightPlayerId,
+  showSides = false,
   viewerIsTeamMemberOverride,
 }: MatchInfoCardProps) {
   const [copied, setCopied] = useState(false);
@@ -445,6 +451,8 @@ export function MatchInfoCard({
             matchSlug={match.slug}
             team1Name={match.team1?.name ?? match.config?.team1?.name}
             team2Name={match.team2?.name ?? match.config?.team2?.name}
+            team1Players={match.config?.team1?.players}
+            team2Players={match.config?.team2?.players}
             currentTeamSlug={
               team?.id ?? (match.isTeam1 ? 'team1' : 'team2')
             }
@@ -509,6 +517,13 @@ export function MatchInfoCard({
               }
               hideMapRounds={hideMapRounds}
             />
+
+            {showSides && liveStats && (
+              <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
+                {(team?.name ?? 'Team 1')}: {liveStats.team1Side ?? '—'} •{' '}
+                {(match.opponent?.name ?? 'Team 2')}: {liveStats.team2Side ?? '—'}
+              </Typography>
+            )}
 
             {liveStats?.status === 'postgame' && match.status !== 'completed' && (
               <Typography variant="body2" color="text.secondary" mt={1}>

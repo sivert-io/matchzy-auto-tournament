@@ -19,6 +19,8 @@
 import { db } from '../config/database';
 import { rconService } from './rconService';
 import { log } from '../utils/logger';
+import { getReadyUpServerInitCommands, redactReadyUpCommand } from '../utils/readyupRconCommands';
+import { settingsService } from './settingsService';
 // NOTE: Remaining MatchZy configuration is fetched by the server itself
 // via /api/servers/:id/bootstrap to avoid RCON command churn.
 
@@ -118,22 +120,24 @@ class ServerInitializationService {
         };
       }
 
-      log.info(`[SERVER-INIT] Initializing server ${serverId} via bootstrap URL`);
-
-      const bootstrapUrl = `${baseUrl}/api/servers/${serverId}/bootstrap`;
+      log.info(`[SERVER-INIT] Initializing server ${serverId} for ReadyUp`);
       const errors: string[] = [];
 
-      const commands = [
-        'matchzy_clear_event_queue',
-        `matchzy_server_id "${serverId}"`,
-        `matchzy_bootstrap_url "${bootstrapUrl}"`,
-        `matchzy_bootstrap_token "${serverToken}"`,
-      ];
+      const readyupAdminsUrl = await settingsService.getReadyUpAdminsUrl();
+      const readyupAdminsRefreshSeconds = await settingsService.getReadyUpAdminsRefreshSeconds();
+
+      const commands = getReadyUpServerInitCommands({
+        baseUrl,
+        serverId,
+        serverToken,
+        adminsUrl: readyupAdminsUrl,
+        adminsRefreshSeconds: readyupAdminsRefreshSeconds,
+      });
 
       for (const cmd of commands) {
         const result = await rconService.sendCommand(serverId, cmd);
         if (!result.success) {
-          errors.push(`${cmd}: ${result.error ?? 'no details'}`);
+          errors.push(`${redactReadyUpCommand(cmd)}: ${result.error ?? 'no details'}`);
         }
       }
 
@@ -153,7 +157,7 @@ class ServerInitializationService {
         };
       }
 
-      log.success(`[SERVER-INIT] Server ${serverId} bootstrap initialization scheduled`);
+      log.success(`[SERVER-INIT] Server ${serverId} ReadyUp configuration applied`);
       return {
         success: true,
         alreadyInitialized: false,

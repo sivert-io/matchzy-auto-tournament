@@ -49,6 +49,17 @@ docker compose up -d
 - Install [MatchZy Enhanced v1.3.0+](https://github.com/sivert-io/matchzy-Enhanced/releases)
 - Add server in the platform: Settings → Servers
 
+**Option C: ReadyUp (heartbeat-driven)**
+- Install the ReadyUp shim plugin on your CS2 server
+- Add server in the platform: Settings → Servers
+- Configure the server once via MAT (RCON):
+  - `POST /api/rcon/readyup/reconfigure` with `{ "serverId": "<id>" }`
+- Live control (optional, via RCON):
+  - `POST /api/rcon/readyup/mode` with `{ "serverId": "<id>", "mode": "idle"|"practice" }`
+  - `POST /api/rcon/readyup/settings` with `{ "serverId": "<id>", "warmupEnabled": true|false, "warmupMessageHtml": "<html>" }`
+- The allocator will only use servers that are sending a fresh heartbeat to:
+  - `POST /api/servers/:serverId/heartbeat`
+
 ### 3. Create Tournament
 
 Dashboard → New Tournament → Select format → Add teams → Start!

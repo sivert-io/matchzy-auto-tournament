@@ -15,12 +15,12 @@ import { log, logger, LOG_HTTP_REQUESTS, LOG_DB_VERBOSE, LOG_DB_VALUES } from '.
 import { cleanupOldLogs } from './utils/eventLogger';
 import { initializeSocket } from './services/socketService';
 import { serverService } from './services/serverService';
-import { rconService } from './services/rconService';
 import { settingsService } from './services/settingsService';
 import { serverInitializationService } from './services/serverInitializationService';
 import serverRoutes from './routes/servers';
 import serverStatusRoutes from './routes/serverStatus';
 import serverBootstrapRoutes from './routes/serverBootstrap';
+import serverHeartbeatRoutes from './routes/serverHeartbeat';
 import teamRoutes from './routes/teams';
 import rconRoutes from './routes/rcon';
 import matchRoutes from './routes/matches';
@@ -45,9 +45,12 @@ import testRoutes from './routes/test';
 import authRoutes from './routes/auth';
 import matchzyRoutes from './routes/matchzy';
 import { initMatchZyVersionService } from './services/matchzyVersionService';
+import readyupRoutes from './routes/readyup';
+import { initReadyUpVersionService } from './services/readyupVersionService';
 import { recoverActiveMatches } from './services/matchRecoveryService';
 import { matchAllocationService } from './services/matchAllocationService';
 import { healthMonitoringService } from './services/healthMonitoringService';
+import publicRoutes from './routes/public';
 import packageJson from '../package.json';
 import { configurePassportAuth, passport } from './config/passport';
 import session from 'express-session';
@@ -281,6 +284,9 @@ app.get('/', (_req: Request, res: Response) => {
   });
 });
 
+// Server heartbeat (token-authenticated; no admin session required)
+app.use('/api/servers', serverHeartbeatRoutes);
+
 /**
  * @openapi
  * /health:
@@ -327,10 +333,12 @@ app.get('/api/health/fleet', async (_req: Request, res: Response) => {
   const now = Math.floor(Date.now() / 1000);
   const servers = await serverService.getAllServers(true);
 
-  const enabled = servers.filter((s) => s.enabled === 1 && s.host !== '0.0.0.0');
-  const outdated = enabled.filter((s) => typeof s.cs2_required_version === 'number');
-  const stale = enabled.filter((s) => !s.cs2_update_checked_at || now - s.cs2_update_checked_at >= 30 * 60);
-  const neverChecked = enabled.filter((s) => !s.cs2_update_checked_at);
+  const enabled = servers.filter((s) => s.enabled && s.host !== '0.0.0.0');
+  const outdated = enabled.filter((s) => typeof s.cs2RequiredVersion === 'number');
+  const stale = enabled.filter(
+    (s) => !s.cs2UpdateCheckedAt || now - s.cs2UpdateCheckedAt >= 30 * 60
+  );
+  const neverChecked = enabled.filter((s) => !s.cs2UpdateCheckedAt);
 
   res.json({
     status: 'ok',
@@ -345,13 +353,13 @@ app.get('/api/health/fleet', async (_req: Request, res: Response) => {
       id: s.id,
       name: s.name,
       status: s.status ?? null,
-      lastSeen: s.last_seen ?? null,
-      cs2BuildId: s.cs2_build_id ?? null,
-      cs2RequiredVersion: s.cs2_required_version ?? null,
-      cs2UpdatePhase: s.cs2_update_phase ?? null,
-      cs2UpdateRequiredAt: s.cs2_update_required_at ?? null,
-      cs2UpdateCheckedAt: s.cs2_update_checked_at ?? null,
-      cs2VersionFetchedAt: s.cs2_version_fetched_at ?? null,
+      lastSeen: s.lastSeen ?? null,
+      cs2BuildId: s.cs2BuildId ?? null,
+      cs2RequiredVersion: s.cs2RequiredVersion ?? null,
+      cs2UpdatePhase: s.cs2UpdatePhase ?? null,
+      cs2UpdateRequiredAt: s.cs2UpdateRequiredAt ?? null,
+      cs2UpdateCheckedAt: s.cs2UpdateCheckedAt ?? null,
+      cs2VersionFetchedAt: s.cs2VersionFetchedAt ?? null,
     })),
   });
 });
@@ -383,6 +391,8 @@ app.use('/api/generation', generationRoutes); // Shared name/code generators (e.
 app.use('/api/test', testRoutes); // Test utilities (log markers, etc.)
 app.use('/api/auth', authRoutes); // Authentication (Steam, Keycloak, Discord)
 app.use('/api/matchzy', matchzyRoutes); // MatchZy Enhanced version info
+app.use('/api/readyup', readyupRoutes); // ReadyUp version info
+app.use('/api/public', publicRoutes); // Public minimal endpoints (e.g. ReadyUp admins.json)
 
 // Serve frontend at /app (built client lives under api/public)
 const publicPath = path.join(__dirname, '..', 'public');
@@ -476,6 +486,9 @@ cleanupOldLogs(30);
         
         // Fetch latest MatchZy Enhanced version (fire-and-forget, cached for 1 hour)
         initMatchZyVersionService();
+
+        // Fetch latest ReadyUp version (fire-and-forget, cached for 1 hour)
+        initReadyUpVersionService();
         
         // Start health monitoring for server tracking
         // Checks every minute to mark inactive servers as offline
@@ -590,6 +603,12 @@ async function bootstrapServerWebhooks(): Promise<void> {
     }
   }
 
+  // Type safety: ensure baseUrl is always a concrete string here.
+  if (!baseUrl) {
+    log.warn('Webhook URL is still unset after bootstrap; skipping automatic webhook bootstrap.');
+    return;
+  }
+
   const enabledServers = await serverService.getAllServers(true);
   if (enabledServers.length === 0) {
     log.info('No enabled servers found for webhook bootstrap.');
@@ -602,15 +621,8 @@ async function bootstrapServerWebhooks(): Promise<void> {
   await Promise.allSettled(
     enabledServers.map(async (serverInfo) => {
       try {
-        // Quick RCON ping to check if server is reachable
-        const statusResult = await rconService.sendCommand(serverInfo.id, 'status');
-        if (!statusResult.success) {
-          log.warn(`[STARTUP] ${serverInfo.id}: Unreachable (${statusResult.error})`);
-          return;
-        }
-
         const needsInit = !serverInfo.persistentConfigSent;
-        const needsRetry = !!serverInfo.persistentConfigSent && !serverInfo.lastSeen;
+        const needsRetry = !!serverInfo.persistentConfigSent && !serverInfo.heartbeatUpdatedAt;
 
         if (needsInit || needsRetry) {
           // Server needs (re)configuration
@@ -618,18 +630,20 @@ async function bootstrapServerWebhooks(): Promise<void> {
             force: needsRetry,
           });
           log.success(
-            `[STARTUP] ${serverInfo.id}: ${needsInit ? 'Configured' : 'Retry sent'} – waiting for MatchZy events`
+            `[STARTUP] ${serverInfo.id}: ${needsInit ? 'Configured' : 'Retry sent'} – waiting for RU heartbeat`
           );
         } else {
           // Server is already configured and has sent events - just log status
-          const timeSinceLastSeen = serverInfo.lastSeen
-            ? Math.floor(Date.now() / 1000) - serverInfo.lastSeen
+          const timeSinceLastSeen = serverInfo.heartbeatUpdatedAt
+            ? Math.floor(Date.now() / 1000) - serverInfo.heartbeatUpdatedAt
             : null;
           
           if (timeSinceLastSeen !== null && timeSinceLastSeen < 300) {
-            log.info(`[STARTUP] ${serverInfo.id}: Online (last event ${timeSinceLastSeen}s ago)`);
+            log.info(`[STARTUP] ${serverInfo.id}: Online (last heartbeat ${timeSinceLastSeen}s ago)`);
           } else {
-            log.info(`[STARTUP] ${serverInfo.id}: Configured but inactive (${timeSinceLastSeen ? `${timeSinceLastSeen}s` : 'never'} since last event)`);
+            log.info(
+              `[STARTUP] ${serverInfo.id}: Configured but inactive (${timeSinceLastSeen ? `${timeSinceLastSeen}s` : 'never'} since last heartbeat)`
+            );
           }
         }
       } catch (error) {

@@ -20,8 +20,9 @@ test.describe.serial('Veto API', () => {
   let team2Id: string;
   const maps = ['de_mirage', 'de_inferno', 'de_ancient', 'de_anubis', 'de_dust2', 'de_vertigo', 'de_nuke'];
 
-  test.beforeEach(async ({ page, request }) => {
+  test.beforeEach(async ({ page }) => {
     await ensureSignedIn(page);
+    const request = page.request;
     
     // Setup tournament with all prerequisites (webhook, servers, teams)
     const setup = await setupTournament(request, {
@@ -40,7 +41,8 @@ test.describe.serial('Veto API', () => {
 
   test.skip('should complete CS Major BO1 veto and assign sides correctly', {
     tag: ['@api', '@veto', '@cs-major', '@bo1'],
-  }, async ({ request }) => {
+  }, async ({ page }) => {
+    const request = page.request;
     // Create and start BO1 tournament
     const tournament = await createAndStartTournament(request, {
       name: `BO1 Veto Test ${Date.now()}`,
@@ -73,7 +75,8 @@ test.describe.serial('Veto API', () => {
 
   test('should complete CS Major BO3 veto with multiple side picks', {
     tag: ['@api', '@veto', '@cs-major', '@bo3'],
-  }, async ({ request }) => {
+  }, async ({ page }) => {
+    const request = page.request;
     // Create and start BO3 tournament
     const tournament = await createAndStartTournament(request, {
       name: `BO3 Veto Test ${Date.now()}`,
@@ -133,7 +136,8 @@ test.describe.serial('Veto API', () => {
 
   test('should handle side picks for CT and T correctly', {
     tag: ['@api', '@veto', '@sides'],
-  }, async ({ request }) => {
+  }, async ({ page }) => {
+    const request = page.request;
     // Create BO1 tournament
     const tournament = await createAndStartTournament(request, {
       name: `Side Pick Test ${Date.now()}`,
@@ -190,7 +194,8 @@ test.describe.serial('Veto API', () => {
   // Once validation is implemented, uncomment and complete this test
   test.skip('should validate and reject invalid custom veto orders', {
     tag: ['@api', '@veto', '@custom'],
-  }, async ({ request }) => {
+  }, async ({ page }) => {
+    const request = page.request;
     // Create tournament with invalid custom veto order (missing side pick)
     const invalidOrder = {
       bo1: [
@@ -226,7 +231,8 @@ test.describe.serial('Veto API', () => {
 
   test('should use custom veto order when valid', {
     tag: ['@api', '@veto', '@custom'],
-  }, async ({ request }) => {
+  }, async ({ page }) => {
+    const request = page.request;
     // Create valid custom BO1 veto order (same as CS Major format)
     const customVetoOrder = {
       bo1: [

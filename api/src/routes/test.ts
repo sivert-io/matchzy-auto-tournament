@@ -98,7 +98,7 @@ router.post('/marker', requireAuth, (req: Request, res: Response): void => {
  *       500:
  *         description: Failed to reset database
  */
-router.post('/reset-database', requireAuth, async (req: Request, res: Response): Promise<void> => {
+router.post('/reset-database', requireAuth, async (_req: Request, res: Response): Promise<void> => {
   if (process.env.NODE_ENV === 'production' && !isE2eTestHelperEnabled()) {
     res.status(403).json({
       success: false,

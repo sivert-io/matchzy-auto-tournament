@@ -55,6 +55,7 @@ import { isShuffleMatch, isVetoDisabledForMatch } from '../../utils/matchFlags';
 import { normalizeConfigPlayers } from '../../utils/playerUtils';
 import { PlayerAvatar } from '../player/PlayerAvatar';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../contexts/AuthContext';
 import {
   CURRENT_MAP_SCORE_LABEL,
   SERIES_SCORE_LABEL,
@@ -78,6 +79,7 @@ const InnerMatchDetailsModal: React.FC<Required<MatchDetailsModalProps>> = ({
   onDeleted,
 }) => {
   const { t } = useTranslation();
+  const { isAuthenticated } = useAuth();
   const [matchTimer, setMatchTimer] = useState<number>(0);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -696,6 +698,11 @@ const InnerMatchDetailsModal: React.FC<Required<MatchDetailsModalProps>> = ({
                       <Typography variant="caption" color="text.secondary">
                         {CURRENT_MAP_SCORE_LABEL}
                       </Typography>
+                      {isAuthenticated && liveStats && (
+                        <Typography variant="caption" color="text.secondary" display="block" mt={0.25}>
+                          Sides: {liveStats.team1Side ?? '—'} / {liveStats.team2Side ?? '—'}
+                        </Typography>
+                      )}
                     </>
                   )}
                   {(normalizedTeam1Players.length > 0 || normalizedTeam2Players.length > 0) && (

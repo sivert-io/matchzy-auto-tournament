@@ -11,6 +11,7 @@ export interface PlayerRecord {
   id: string; // Steam ID
   name: string;
   avatar_url?: string;
+  is_admin?: number | null;
   current_elo: number;
   starting_elo: number;
   openskill_mu: number;
@@ -66,7 +67,7 @@ class PlayerService {
       matchCount: player.match_count,
       createdAt: player.created_at,
       updatedAt: player.updated_at,
-      isAdmin: (player as unknown as { is_admin?: number | boolean }).is_admin === 1,
+      isAdmin: player.is_admin === 1,
     };
   }
 
@@ -99,7 +100,11 @@ class PlayerService {
    * Get all players
    */
   async getAllPlayers(): Promise<PlayerResponse[]> {
-    const players = await db.getAllAsync<PlayerRecord>('players', undefined, undefined);
+    // Always return highest-rated players first so UIs can rely on consistent ordering.
+    const players = await db.queryAsync<PlayerRecord>(
+      'SELECT * FROM players ORDER BY current_elo DESC, name ASC',
+      []
+    );
 
     // Pre-compute distinct match counts for all players to avoid one query per
     // row when rendering the admin Players table.
@@ -396,7 +401,7 @@ class PlayerService {
    */
   async searchPlayers(query: string, limit: number = 50): Promise<PlayerResponse[]> {
     const players = await db.queryAsync<PlayerRecord>(
-      `SELECT * FROM players WHERE name ILIKE ? ORDER BY name LIMIT ?`,
+      `SELECT * FROM players WHERE name ILIKE ? ORDER BY current_elo DESC, name LIMIT ?`,
       [`%${query}%`, limit]
     );
 

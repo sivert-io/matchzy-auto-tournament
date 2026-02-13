@@ -95,13 +95,13 @@ export interface TeamMatchInfo {
       id?: string;
       name: string;
       tag?: string;
-      players?: Array<{ steamid: string; name: string }>;
+      players?: Array<{ steamid: string; name: string; avatar?: string; elo?: number }>;
     };
     team2?: {
       id?: string;
       name: string;
       tag?: string;
-      players?: Array<{ steamid: string; name: string }>;
+      players?: Array<{ steamid: string; name: string; avatar?: string; elo?: number }>;
     };
   };
   veto?: TeamMatchVetoSummary | null;
@@ -137,6 +137,10 @@ export interface MatchLiveStats {
   mapName?: string | null;
   totalMaps: number;
   playerStats?: MatchPlayerStatsSnapshot | null;
+
+  // Optional side mapping (updated via side_swap events).
+  team1Side?: 'CT' | 'T' | null;
+  team2Side?: 'CT' | 'T' | null;
 }
 
 export interface MatchPlayerStatsSnapshot {

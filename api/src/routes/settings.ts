@@ -29,6 +29,8 @@ const mapSettingsResponse = async () => {
   const matchzyDebugChatEnabled = await settingsService.isMatchzyDebugChatEnabled();
   const allowSelfRegister = await settingsService.isSelfRegistrationAllowed();
   const matchzyCore = await settingsService.getMatchzyCoreDefaults();
+  const readyupAdminsUrl = await settingsService.getReadyUpAdminsUrl();
+  const readyupAdminsRefreshSeconds = await settingsService.getReadyUpAdminsRefreshSeconds();
   
   // MatchZy Enhanced v1.3.0 settings
   const matchzyEnhanced = await settingsService.getMatchzyEnhancedSettings();
@@ -47,6 +49,9 @@ const mapSettingsResponse = async () => {
     ratingsEnabled,
     matchzyDebugChatEnabled,
     allowSelfRegister,
+    // ReadyUp plugin settings
+    readyupAdminsUrl,
+    readyupAdminsRefreshSeconds,
     // MatchZy core defaults
     matchzyAutostartMode: matchzyCore.autostartMode,
     matchzyMinimumReadyRequired: matchzyCore.minimumReadyRequired,
@@ -96,6 +101,8 @@ router.put('/', async (req: Request, res: Response) => {
     ratingsEnabled,
     matchzyDebugChatEnabled,
     allowSelfRegister,
+    readyupAdminsUrl,
+    readyupAdminsRefreshSeconds,
     // MatchZy core defaults
     matchzyAutostartMode,
     matchzyMinimumReadyRequired,
@@ -134,6 +141,8 @@ router.put('/', async (req: Request, res: Response) => {
     ratingsEnabled?: unknown;
     matchzyDebugChatEnabled?: unknown;
     allowSelfRegister?: unknown;
+    readyupAdminsUrl?: unknown;
+    readyupAdminsRefreshSeconds?: unknown;
     // MatchZy core defaults
     matchzyAutostartMode?: unknown;
     matchzyMinimumReadyRequired?: unknown;
@@ -310,6 +319,35 @@ router.put('/', async (req: Request, res: Response) => {
         allowSelfRegister === null ? null : allowSelfRegister === true ? '1' : '0';
 
       await settingsService.setSetting('allow_self_register', value);
+    }
+
+    if (readyupAdminsUrl !== undefined) {
+      if (typeof readyupAdminsUrl !== 'string' && readyupAdminsUrl !== null) {
+        return res.status(400).json({
+          success: false,
+          error: 'readyupAdminsUrl must be a string or null',
+        });
+      }
+      await settingsService.setSetting(
+        'readyup_admins_url',
+        typeof readyupAdminsUrl === 'string' ? readyupAdminsUrl : null
+      );
+    }
+
+    if (readyupAdminsRefreshSeconds !== undefined) {
+      if (
+        typeof readyupAdminsRefreshSeconds !== 'number' &&
+        readyupAdminsRefreshSeconds !== null
+      ) {
+        return res.status(400).json({
+          success: false,
+          error: 'readyupAdminsRefreshSeconds must be a number or null',
+        });
+      }
+      await settingsService.setSetting(
+        'readyup_admins_refresh_seconds',
+        readyupAdminsRefreshSeconds === null ? null : String(readyupAdminsRefreshSeconds)
+      );
     }
 
     if (matchzyMinimumReadyRequired !== undefined) {

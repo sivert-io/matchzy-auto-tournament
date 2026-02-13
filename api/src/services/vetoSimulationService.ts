@@ -153,9 +153,9 @@ export async function autoCompleteVetoForMatch(
   const format = tournament.format as 'bo1' | 'bo3' | 'bo5';
   const tournamentMaps: string[] = tournament.maps;
   const tournamentSettings = tournament.settings || {};
-  const customVetoOrder = (tournamentSettings as { customVetoOrder?: unknown })
+  const customVetoOrder = (tournamentSettings as { customVetoOrder?: { bo1?: VetoStep[]; bo3?: VetoStep[]; bo5?: VetoStep[] } })
     .customVetoOrder;
-  const vetoOrder = getVetoOrder(format, customVetoOrder, tournamentMaps.length) as VetoStep[];
+  const vetoOrder = getVetoOrder(format, customVetoOrder, tournamentMaps.length);
 
   if (!vetoOrder.length) {
     log.warn(

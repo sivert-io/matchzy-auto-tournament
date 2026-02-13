@@ -14,9 +14,14 @@ import { steamService } from '../services/steamService';
 import { requireAuth } from '../middleware/auth';
 import { log } from '../utils/logger';
 import { db } from '../config/database';
-import { serverStatusService } from '../services/serverStatusService';
+import { serverService } from '../services/serverService';
+import { ServerStatus, serverStatusService } from '../services/serverStatusService';
 import { playerConnectionService } from '../services/playerConnectionService';
-import { normalizeConfigPlayers, type NormalizedServerPlayer } from '../utils/playerTransform';
+import {
+  attachAndSortPlayersByElo,
+  normalizeConfigPlayers,
+  type NormalizedServerPlayer,
+} from '../utils/playerTransform';
 import { teamService } from '../services/teamService';
 import { matchLiveStatsService } from '../services/matchLiveStatsService';
 import type { DbMatchRow, DbTournamentRow } from '../types/database.types';
@@ -26,6 +31,7 @@ import type { TournamentResponse } from '../types/tournament.types';
 import type { MatchConfig } from '../types/match.types';
 import { generateAvatarSvg } from '../generation/avatar';
 import { getVerifiedPlayerSteamId } from '../utils/signedPlayerCookie';
+import { settingsService } from '../services/settingsService';
 
 const router = Router();
 
@@ -157,6 +163,17 @@ router.get('/find', async (req: Request, res: Response) => {
  */
 router.get('/public-selection', async (_req: Request, res: Response) => {
   try {
+    // Privacy guard: avoid exposing the full player directory unless explicitly enabled.
+    // This route was originally used by ReadyUp to infer admins, but ReadyUp should now
+    // use `/api/public/admins.json` instead.
+    const allowPublic = await settingsService.isSelfRegistrationAllowed();
+    if (!allowPublic) {
+      return res.status(403).json({
+        success: false,
+        error: 'Public player directory is disabled',
+      });
+    }
+
     const players = await playerService.getAllPlayers();
 
     // Return only the fields needed for public selection/autocomplete
@@ -860,32 +877,19 @@ router.get('/:playerId/current-match', async (req: Request, res: Response) => {
     // Note: We're NOT exposing RCON password to players
     const serverPassword = null;
 
-    // Get real-time server status from custom plugin ConVars (with 2s timeout)
-    let realServerStatus = null;
-    let serverStatusDescription = null;
+    // Heartbeat-only model: use ReadyUp heartbeat snapshot for server status.
+    let realServerStatus: ServerStatus | null = null;
+    let serverStatusDescription: ReturnType<typeof serverStatusService.getStatusDescription> | null = null;
     if (match.server_id) {
       try {
-        const statusInfo = await Promise.race([
-          serverStatusService.getServerStatus(match.server_id),
-          new Promise<{ status: null; matchSlug: null; updatedAt: null; online: false }>(
-            (resolve) =>
-              setTimeout(
-                () => resolve({ status: null, matchSlug: null, updatedAt: null, online: false }),
-                2000
-              )
-          ),
-        ]);
-
-        if (statusInfo.online && statusInfo.status) {
-          realServerStatus = statusInfo.status;
-          serverStatusDescription = serverStatusService.getStatusDescription(statusInfo.status);
+        const srv = await serverService.getServerById(match.server_id);
+        const hb = (srv?.heartbeatStatus ?? null) as ServerStatus | null;
+        if (hb) {
+          realServerStatus = hb;
+          serverStatusDescription = serverStatusService.getStatusDescription(hb);
         }
-      } catch (error) {
-        // Silently fail - server status is nice-to-have, not critical
-        console.debug(
-          '[PlayerMatch] Server status check failed (plugin ConVars may not exist yet):',
-          error
-        );
+      } catch {
+        // Best-effort only.
       }
     }
 
@@ -969,6 +973,14 @@ router.get('/:playerId/current-match', async (req: Request, res: Response) => {
           console.debug('[PlayerMatch] Failed to enrich manual-match players with avatars:', error);
         }
       }
+    }
+
+    // Attach ELO + sort rosters (highest-rated first) for UI responses.
+    try {
+      enrichedTeam1Players = await attachAndSortPlayersByElo(enrichedTeam1Players);
+      enrichedTeam2Players = await attachAndSortPlayersByElo(enrichedTeam2Players);
+    } catch (error) {
+      console.debug('[PlayerMatch] Failed to enrich/sort players by ELO:', error);
     }
 
     return res.json({

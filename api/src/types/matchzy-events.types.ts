@@ -8,6 +8,7 @@
 export interface MatchZyBaseEvent {
   event: string;
   matchid: string | number;
+  [key: string]: unknown;
 }
 
 // Series Events
@@ -270,6 +271,18 @@ export interface MatchUnpausedEvent extends MatchZyBaseEvent {
   pause_duration: number;
 }
 
+// ReadyUp extension: match forfeit (captain-only)
+export interface MatchForfeitEvent extends MatchZyBaseEvent {
+  event: 'match_forfeit';
+  map_number: number;
+  team: 'team1' | 'team2';
+  forfeit_by: {
+    steamid: string;
+    name: string;
+    team: 'team1' | 'team2';
+  };
+}
+
 // Backup Loaded
 export interface BackupLoadedEvent extends MatchZyBaseEvent {
   event: 'backup_loaded';
@@ -328,6 +341,7 @@ export type MatchZyEvent =
   | MatchPausedEvent
   | UnpauseRequestedEvent
   | MatchUnpausedEvent
+  | MatchForfeitEvent
   | BackupLoadedEvent
   | PlayerStatsUpdateEvent;
 

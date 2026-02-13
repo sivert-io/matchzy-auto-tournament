@@ -94,6 +94,13 @@ export default function Settings() {
   const [initialMatchzyDebugChatEnabled, setInitialMatchzyDebugChatEnabled] = useState(false);
   const [allowSelfRegister, setAllowSelfRegister] = useState(false);
   const [initialAllowSelfRegister, setInitialAllowSelfRegister] = useState(false);
+  // ReadyUp plugin settings
+  const [readyupAdminsUrl, setReadyupAdminsUrl] = useState<string>('');
+  const [initialReadyupAdminsUrl, setInitialReadyupAdminsUrl] = useState<string>('');
+  const [readyupAdminsRefreshSeconds, setReadyupAdminsRefreshSeconds] = useState<number>(60);
+  const [initialReadyupAdminsRefreshSeconds, setInitialReadyupAdminsRefreshSeconds] =
+    useState<number>(60);
+  const [resettingAllServerInit, setResettingAllServerInit] = useState(false);
   // MatchZy core defaults
   const [matchzyAutostartMode, setMatchzyAutostartMode] = useState<0 | 1 | 2>(1);
   const [initialMatchzyAutostartMode, setInitialMatchzyAutostartMode] = useState<0 | 1 | 2>(1);
@@ -227,6 +234,8 @@ export default function Settings() {
         response.settings.allowSelfRegister !== undefined
           ? response.settings.allowSelfRegister
           : false;
+      const ruAdminsUrl = response.settings.readyupAdminsUrl ?? '';
+      const ruAdminsRefresh = response.settings.readyupAdminsRefreshSeconds ?? 60;
       // MatchZy core defaults
       const autostartMode = response.settings.matchzyAutostartMode ?? 1;
       const minimumReadyRequired = response.settings.matchzyMinimumReadyRequired ?? 0;
@@ -276,6 +285,10 @@ export default function Settings() {
       setInitialMatchzyDebugChatEnabled(debugChatEnabled);
       setAllowSelfRegister(allowSelfRegisterValue);
       setInitialAllowSelfRegister(allowSelfRegisterValue);
+      setReadyupAdminsUrl(ruAdminsUrl);
+      setInitialReadyupAdminsUrl(ruAdminsUrl);
+      setReadyupAdminsRefreshSeconds(ruAdminsRefresh);
+      setInitialReadyupAdminsRefreshSeconds(ruAdminsRefresh);
       setRatingsEnabled(ratingsEnabledValue);
       setInitialRatingsEnabled(ratingsEnabledValue);
       setMatchzyAutostartMode(autostartMode);
@@ -373,6 +386,8 @@ export default function Settings() {
           ratingsEnabled,
           matchzyDebugChatEnabled: overrides?.matchzyDebugChatEnabled ?? matchzyDebugChatEnabled,
           allowSelfRegister,
+          readyupAdminsUrl: readyupAdminsUrl.trim() === '' ? null : readyupAdminsUrl.trim(),
+          readyupAdminsRefreshSeconds,
           // MatchZy core defaults
           matchzyAutostartMode,
           matchzyMinimumReadyRequired,
@@ -429,6 +444,8 @@ export default function Settings() {
           response.settings.allowSelfRegister !== undefined
             ? response.settings.allowSelfRegister
             : false;
+        const newReadyupAdminsUrl = response.settings.readyupAdminsUrl ?? '';
+        const newReadyupAdminsRefreshSeconds = response.settings.readyupAdminsRefreshSeconds ?? 60;
         const newAutostartMode = response.settings.matchzyAutostartMode ?? 1;
         const newMinimumReadyRequired = response.settings.matchzyMinimumReadyRequired ?? 0;
         const newAllowForceReady = response.settings.matchzyAllowForceReady ?? true;
@@ -484,6 +501,10 @@ export default function Settings() {
         setInitialMatchzyDebugChatEnabled(newDebugChatEnabled);
         setAllowSelfRegister(newAllowSelfRegister);
         setInitialAllowSelfRegister(newAllowSelfRegister);
+        setReadyupAdminsUrl(newReadyupAdminsUrl);
+        setInitialReadyupAdminsUrl(newReadyupAdminsUrl);
+        setReadyupAdminsRefreshSeconds(newReadyupAdminsRefreshSeconds);
+        setInitialReadyupAdminsRefreshSeconds(newReadyupAdminsRefreshSeconds);
         setMatchzyAutostartMode(newAutostartMode);
         setInitialMatchzyAutostartMode(newAutostartMode);
         setMatchzyMinimumReadyRequired(newMinimumReadyRequired);
@@ -583,6 +604,8 @@ export default function Settings() {
       simulateMatches,
       simulationTimescale,
       allowSelfRegister,
+      readyupAdminsUrl,
+      readyupAdminsRefreshSeconds,
       matchzyAutostartMode,
       matchzyMinimumReadyRequired,
       matchzyAllowForceReady,
@@ -629,6 +652,8 @@ export default function Settings() {
       ratingsEnabled !== initialRatingsEnabled ||
       matchzyDebugChatEnabled !== initialMatchzyDebugChatEnabled ||
       allowSelfRegister !== initialAllowSelfRegister ||
+      readyupAdminsUrl !== initialReadyupAdminsUrl ||
+      readyupAdminsRefreshSeconds !== initialReadyupAdminsRefreshSeconds ||
       matchzyAutostartMode !== initialMatchzyAutostartMode ||
       matchzyMinimumReadyRequired !== initialMatchzyMinimumReadyRequired ||
       matchzyAllowForceReady !== initialMatchzyAllowForceReady ||
@@ -930,7 +955,8 @@ export default function Settings() {
                 <Tab label={t('settingsPage.tabs.players')} {...a11yProps(1)} />
                 <Tab label={t('settingsPage.tabs.matches')} {...a11yProps(2)} />
                 <Tab label={t('settingsPage.tabs.advanced')} {...a11yProps(3)} />
-                {isDev && <Tab label={t('settingsPage.tabs.developer')} {...a11yProps(4)} />}
+                <Tab label={t('settingsPage.tabs.plugin')} {...a11yProps(4)} />
+                {isDev && <Tab label={t('settingsPage.tabs.developer')} {...a11yProps(5)} />}
               </Tabs>
             </Box>
 
@@ -1645,8 +1671,91 @@ export default function Settings() {
               </Stack>
             </TabPanel>
 
+            {/* Plugin settings */}
+            <TabPanel value={tabIndex} index={4}>
+              <Stack spacing={3}>
+                <Accordion defaultExpanded sx={ACCORDION_SX}>
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={ACCORDION_SUMMARY_SX}>
+                    <Box>
+                      <Typography variant="h6" fontWeight={600}>
+                        {t('settingsPage.plugin.readyup.title')}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {t('settingsPage.plugin.readyup.description')}
+                      </Typography>
+                    </Box>
+                  </AccordionSummary>
+                  <AccordionDetails sx={ACCORDION_DETAILS_SX}>
+                    <Stack spacing={2}>
+                      <TextField
+                        label={t('settingsPage.plugin.readyup.adminsUrl.label')}
+                        value={readyupAdminsUrl}
+                        onChange={(e) => setReadyupAdminsUrl(e.target.value)}
+                        onBlur={handleFieldBlur}
+                        onKeyDown={handleFieldKeyDown}
+                        helperText={t('settingsPage.plugin.readyup.adminsUrl.helper')}
+                        placeholder="/api/public/admins.json"
+                        size="small"
+                        fullWidth
+                      />
+
+                      <TextField
+                        label={t('settingsPage.plugin.readyup.adminsRefreshSeconds.label')}
+                        type="number"
+                        value={readyupAdminsRefreshSeconds}
+                        onChange={(e) => {
+                          const v = parseInt(e.target.value, 10);
+                          if (!Number.isFinite(v)) return;
+                          setReadyupAdminsRefreshSeconds(v);
+                        }}
+                        onBlur={handleFieldBlur}
+                        onKeyDown={handleFieldKeyDown}
+                        helperText={t('settingsPage.plugin.readyup.adminsRefreshSeconds.helper')}
+                        inputProps={{ min: 0, max: 3600 }}
+                        size="small"
+                        fullWidth
+                      />
+
+                      <Divider />
+
+                      <Box>
+                        <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+                          {t('settingsPage.plugin.readyup.reconfigure.title')}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" mb={2}>
+                          {t('settingsPage.plugin.readyup.reconfigure.description')}
+                        </Typography>
+                        <Button
+                          variant="outlined"
+                          disabled={resettingAllServerInit}
+                          startIcon={resettingAllServerInit ? <CircularProgress size={16} /> : undefined}
+                          onClick={async () => {
+                            setResettingAllServerInit(true);
+                            try {
+                              await api.post('/api/servers/reset-all-initialization');
+                              showSuccess(t('settingsPage.plugin.readyup.reconfigure.success'));
+                            } catch (err) {
+                              const msg =
+                                err instanceof Error
+                                  ? err.message
+                                  : t('settingsPage.plugin.readyup.reconfigure.error');
+                              showError(msg);
+                            } finally {
+                              setResettingAllServerInit(false);
+                            }
+                          }}
+                        >
+                          {t('settingsPage.plugin.readyup.reconfigure.button')}
+                        </Button>
+                      </Box>
+                    </Stack>
+                  </AccordionDetails>
+                </Accordion>
+              </Stack>
+            </TabPanel>
+
             {isDev && (
-              <TabPanel value={tabIndex} index={4}>
+              <TabPanel value={tabIndex} index={5}>
                 <Stack spacing={3}>
                   <Box>
                     <Typography variant="h6" fontWeight={600} gutterBottom>

@@ -5,12 +5,16 @@ import type {
   SteamAPIResponse,
   SteamPlayerSummaryResponse,
   SteamWebApiHealth,
+  SteamWebApiHealthErrorType,
 } from '../types/steam.types';
 import { settingsService } from './settingsService';
 
 class SteamService {
-  private readonly baseUrl = 'http://api.steampowered.com';
-  private readonly healthCacheTtlMs = 60_000;
+  // Prefer HTTPS; some environments block plain HTTP egress.
+  private readonly baseUrl = 'https://api.steampowered.com';
+  private readonly healthCacheTtlOkMs = 60_000;
+  private readonly healthCacheTtlTransientErrorMs = 10_000;
+  private readonly healthCacheTtlInvalidKeyMs = 5 * 60_000;
   private steamWebApiHealthCache:
     | { value: SteamWebApiHealth; expiresAtMs: number }
     | null = null;
@@ -48,7 +52,7 @@ class SteamService {
         errorType: 'not_configured',
         error: 'Steam Web API key is not configured.',
       };
-      this.steamWebApiHealthCache = { value, expiresAtMs: now + this.healthCacheTtlMs };
+      this.steamWebApiHealthCache = { value, expiresAtMs: now + this.healthCacheTtlTransientErrorMs };
       return value;
     }
 
@@ -57,7 +61,7 @@ class SteamService {
     const url = `${this.baseUrl}/ISteamUser/GetPlayerSummaries/v0002/?key=${apiKey}&steamids=${testSteamId}`;
 
     try {
-      const controller = new AbortController();
+      const controller = new globalThis.AbortController();
       const timeout = setTimeout(() => controller.abort(), 5000);
 
       let response: import('node-fetch').Response;
@@ -69,7 +73,7 @@ class SteamService {
 
       if (!response.ok) {
         const statusCode = response.status;
-        const errorType: SteamWebApiHealth['errorType'] =
+        const errorType: Exclude<SteamWebApiHealthErrorType, 'not_configured'> =
           statusCode === 401 || statusCode === 403 ? 'invalid_key' : 'unknown';
         const value: SteamWebApiHealth = {
           configured: true,
@@ -81,7 +85,11 @@ class SteamService {
               ? 'Steam Web API authentication failed.'
               : `Steam Web API request failed with status ${statusCode}.`,
         };
-        this.steamWebApiHealthCache = { value, expiresAtMs: now + this.healthCacheTtlMs };
+        const ttl =
+          errorType === 'invalid_key'
+            ? this.healthCacheTtlInvalidKeyMs
+            : this.healthCacheTtlTransientErrorMs;
+        this.steamWebApiHealthCache = { value, expiresAtMs: now + ttl };
         return value;
       }
 
@@ -94,12 +102,12 @@ class SteamService {
           errorType: 'unknown',
           error: 'Steam Web API response was not in the expected format.',
         };
-        this.steamWebApiHealthCache = { value, expiresAtMs: now + this.healthCacheTtlMs };
+        this.steamWebApiHealthCache = { value, expiresAtMs: now + this.healthCacheTtlTransientErrorMs };
         return value;
       }
 
       const value: SteamWebApiHealth = { configured: true, ok: true };
-      this.steamWebApiHealthCache = { value, expiresAtMs: now + this.healthCacheTtlMs };
+      this.steamWebApiHealthCache = { value, expiresAtMs: now + this.healthCacheTtlOkMs };
       return value;
     } catch (err) {
       const isAbort =
@@ -113,7 +121,10 @@ class SteamService {
           ? 'Steam Web API request timed out.'
           : 'Steam Web API could not be reached.',
       };
-      this.steamWebApiHealthCache = { value, expiresAtMs: Date.now() + this.healthCacheTtlMs };
+      this.steamWebApiHealthCache = {
+        value,
+        expiresAtMs: Date.now() + this.healthCacheTtlTransientErrorMs,
+      };
       log.warn('Steam Web API health check failed', { error: err });
       return value;
     }

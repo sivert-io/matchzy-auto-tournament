@@ -8,7 +8,29 @@
       "matches": "Matchs & rating",
       "advanced": "Avancé",
       "matchzy": "MatchZy",
+      "plugin": "Plugin",
       "developer": "Développeur / simulation"
+    },
+    "plugin": {
+      "readyup": {
+        "title": "ReadyUp Plugin",
+        "description": "Configure plugin-level ReadyUp behavior (admins source, refresh, and initialization re-send).",
+        "adminsUrl": {
+          "label": "Admins JSON URL (MAT)",
+          "helper": "Relative path (recommended): /api/public/admins.json. ReadyUp will fetch this from MAT and treat SteamIDs in the admins list as admins."
+        },
+        "adminsRefreshSeconds": {
+          "label": "Admins refresh interval (seconds)",
+          "helper": "How often ReadyUp should refresh the admins list from MAT. Use 0 to refresh only on server init + match load. Range: 0 or 10–3600."
+        },
+        "reconfigure": {
+          "title": "Resend to all servers",
+          "description": "If you change plugin settings, reset initialization so servers receive updated ReadyUp configuration on next match load.",
+          "button": "Reset all server initialization",
+          "success": "All servers initialization reset. Config will be resent on next match loads.",
+          "error": "Failed to reset all server initialization"
+        }
+      }
     },
     "integrations": {
       "webhook": {

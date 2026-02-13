@@ -118,7 +118,7 @@ async function recoverMatch(
     if (baseUrl && serverToken) {
       try {
         const { serverInitializationService } = await import('./serverInitializationService');
-        await serverInitializationService.initializeServer(match.server_id, false);
+        await serverInitializationService.initializeServer(match.server_id, baseUrl, { force: false });
         result.webhookReconfigured = true;
         result.demoUploadReconfigured = true;
         log.success(`[Recovery] Verified persistent config for ${match.slug} on server ${match.server_id}`);

@@ -1,5 +1,5 @@
 import { db } from '../config/database';
-import { Match, MatchConfig, CreateMatchInput, MatchResponse } from '../types/match.types';
+import { Match, MatchConfig, CreateMatchInput, MatchResponse, MatchPlayer } from '../types/match.types';
 import { log } from '../utils/logger';
 import { settingsService } from './settingsService';
 import { emitMatchUpdate } from './socketService';
@@ -28,6 +28,61 @@ class MatchService {
     // manual matches behave like tournament-generated matches.
     const config: MatchConfig = {
       ...input.config,
+    };
+
+    // Normalize manual-match roster shapes so stored configs match what ReadyUp expects:
+    // - team.players as map { steamid64: name }
+    // - spectators.players as map { steamid64: name }
+    // - captain_steamid64 defaulted to first roster member when missing
+    const normalizePlayers = (value: unknown): MatchPlayer => {
+      if (!value) return {};
+
+      // Case 1: already a map of steamId -> name
+      if (typeof value === 'object' && !Array.isArray(value)) {
+        const result: MatchPlayer = {};
+        for (const [steamId, name] of Object.entries(value as Record<string, unknown>)) {
+          if (typeof name === 'string') result[steamId] = name;
+        }
+        return result;
+      }
+
+      // Case 2: array of { steamid/name } objects (manual match modal / legacy)
+      if (Array.isArray(value)) {
+        const result: MatchPlayer = {};
+        for (const entry of value as Array<unknown>) {
+          if (!entry || typeof entry !== 'object') continue;
+          const steamid =
+            (entry as { steamid?: string; steamId?: string }).steamid ||
+            (entry as { steamid?: string; steamId?: string }).steamId;
+          const name = (entry as { name?: string }).name;
+          if (steamid && name) result[steamid] = name;
+        }
+        return result;
+      }
+
+      return {};
+    };
+
+    const pickFirstSteamId = (players: MatchPlayer): string | null => {
+      const keys = Object.keys(players);
+      return keys.length > 0 ? keys[0] : null;
+    };
+
+    if (config.team1) {
+      config.team1.players = normalizePlayers((config.team1 as { players?: unknown }).players);
+      if (!config.team1.captain_steamid64) {
+        config.team1.captain_steamid64 = pickFirstSteamId(config.team1.players);
+      }
+    }
+    if (config.team2) {
+      config.team2.players = normalizePlayers((config.team2 as { players?: unknown }).players);
+      if (!config.team2.captain_steamid64) {
+        config.team2.captain_steamid64 = pickFirstSteamId(config.team2.players);
+      }
+    }
+
+    config.spectators = {
+      players: normalizePlayers((config.spectators as { players?: unknown } | undefined)?.players),
     };
 
     try {
@@ -59,7 +114,7 @@ class MatchService {
           [1]
         );
         if (tournament) {
-          const raw = tournament.max_rounds;
+          const raw: unknown = tournament.max_rounds as unknown;
           const parsed =
             typeof raw === 'number'
               ? raw
@@ -95,6 +150,52 @@ class MatchService {
         log.debug('Applied default MatchZy Enhanced cvars to manual match', {
           matchSlug: input.slug,
         });
+      }
+
+      // Ensure ReadyUp overtime metadata is present for manual matches.
+      // RU uses overtimeMode/overtimeSegments/maxRounds for winner logic and will
+      // otherwise default to "no overtime", which can cause matches to end as draws
+      // even when mp_overtime_enable=1 is set.
+      const parseFiniteNumber = (v: unknown): number | null => {
+        if (typeof v === 'number' && Number.isFinite(v)) return v;
+        if (typeof v === 'string' && v.trim() !== '') {
+          const n = Number(v);
+          if (Number.isFinite(n)) return n;
+        }
+        return null;
+      };
+
+      if (
+        typeof config.maxRounds !== 'number' ||
+        !Number.isFinite(config.maxRounds) ||
+        config.maxRounds <= 0
+      ) {
+        const mr = parseFiniteNumber(config.cvars?.mp_maxrounds);
+        if (mr !== null && mr > 0) {
+          config.maxRounds = Math.floor(mr);
+        }
+      }
+
+      if (!config.overtimeMode) {
+        const ot = config.cvars?.mp_overtime_enable as unknown;
+        const enabled = ot === 1 || ot === '1' || ot === true;
+        const disabled = ot === 0 || ot === '0' || ot === false;
+        if (enabled || disabled) {
+          config.overtimeMode = enabled ? 'enabled' : 'disabled';
+        }
+      }
+
+      if (
+        config.overtimeMode === 'enabled' &&
+        (typeof config.overtimeSegments !== 'number' ||
+          !Number.isFinite(config.overtimeSegments) ||
+          config.overtimeSegments <= 0)
+      ) {
+        const otMax = parseFiniteNumber(config.cvars?.mp_overtime_maxrounds);
+        if (otMax !== null && otMax > 0) {
+          // CS2 uses total overtime rounds; ReadyUp expects rounds per OT half.
+          config.overtimeSegments = Math.max(1, Math.floor(otMax / 2));
+        }
       }
     } catch (simError) {
       log.warn(
@@ -154,6 +255,16 @@ class MatchService {
     const match = await db.getOneAsync<Match>('matches', 'slug = ?', [input.slug]);
     if (!match) {
       throw new Error('Failed to create match');
+    }
+
+    // Persist matchid into the stored config now that we have the DB id.
+    // This keeps the stored JSON self-contained (useful for debugging/export) and
+    // aligns with ReadyUp's requirement for a non-zero matchid.
+    try {
+      config.matchid = match.id;
+      await db.updateAsync('matches', { config: JSON.stringify(config) }, 'id = ?', [match.id]);
+    } catch (e) {
+      log.warn('Failed to persist matchid into manual match config JSON', e as Error);
     }
 
     const response = this.toResponse(match, baseUrl);

@@ -40,10 +40,7 @@ export type MatchUpdateEvent = Partial<BracketMatch> | Partial<DbMatchRow> | {
  */
 export interface MatchEventData {
   matchSlug: string;
-  event: {
-    event?: string;
-    [key: string]: unknown;
-  } & Record<string, unknown>;
+  event: { event: string; [key: string]: unknown };
 }
 
 /**
@@ -70,13 +67,12 @@ export interface ServerEvent {
 export interface VetoUpdateEvent {
   matchSlug: string;
   veto: {
-    status?: 'in_progress' | 'completed';
+    status?: 'pending' | 'in_progress' | 'completed';
     pickedMaps?: Array<{
       mapName: string;
       mapNumber: number;
       sideTeam1?: 'CT' | 'T';
     }>;
-    [key: string]: unknown;
   } | null;
 }
 

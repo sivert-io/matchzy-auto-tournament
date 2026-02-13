@@ -51,27 +51,8 @@ export default function FindPlayer() {
     document.title = t('findPlayer.title');
   }, [t]);
 
-  useEffect(() => {
-    const loadPlayers = async () => {
-      try {
-        setPlayersLoading(true);
-        const response = await api.get<{
-          success: boolean;
-          players: PlayerOption[];
-        }>('/api/players/public-selection');
-
-        if (response.success && Array.isArray(response.players)) {
-          setPlayers(response.players);
-        }
-      } catch (err) {
-        console.error('Failed to load player list for autocomplete', err);
-      } finally {
-        setPlayersLoading(false);
-      }
-    };
-
-    loadPlayers();
-  }, []);
+  // NOTE: We intentionally do not fetch a public full player directory for autocomplete.
+  // Users can still search by name / SteamID via `/api/players/find`.
 
   const handleSearch = async (rawQuery?: string) => {
     const effectiveQuery = (rawQuery ?? query).trim();

@@ -6,21 +6,18 @@
  * each server.
  *
  * Strategy:
- * - Periodically check enabled servers via RCON `version` -> BuildID
- * - Verify BuildID via Steam UpToDateCheck
+ * - Periodically verify server BuildID via Steam UpToDateCheck
  * - Persist cs2_required_version (+ timestamps) so allocator/UI can block outdated servers
  *
  * This runs with a low cadence and sequentially to avoid hammering either
- * the servers (RCON) or Steam.
+ * Steam.
  */
 
 import { db } from '../config/database';
 import { log } from '../utils/logger';
 import { serverService } from './serverService';
-import { rconService } from './rconService';
-import { extractCs2StatusVersionLine, parseCs2BuildId } from '../utils/cs2Version';
 import { cs2UpdateService } from './cs2UpdateService';
-import type { Server } from '../types/server.types';
+import type { ServerResponse } from '../types/server.types';
 
 export interface Cs2FleetCycleStats {
   /** Unix timestamp when the cycle ran. */
@@ -55,7 +52,7 @@ class Cs2FleetMonitoringService {
    * This is intentionally sequential to avoid hammering either RCON or Steam.
    * Scheduling/cadence is controlled by the caller (typically health monitoring).
    */
-  async runOnce(params?: { servers?: Server[]; now?: number }): Promise<Cs2FleetCycleStats> {
+  async runOnce(params?: { servers?: ServerResponse[]; now?: number }): Promise<Cs2FleetCycleStats> {
     if (this.inProgress) {
       return {
         now: params?.now ?? Math.floor(Date.now() / 1000),
@@ -76,13 +73,13 @@ class Cs2FleetMonitoringService {
       const now = params?.now ?? Math.floor(Date.now() / 1000);
       const servers = params?.servers ?? (await serverService.getAllServers(true));
 
-      const enabled = servers.filter((s) => s.enabled === 1);
+      const enabled = servers.filter((s) => s.enabled);
       const eligible = enabled.filter((s) => s.host !== '0.0.0.0');
 
       // Prioritize servers that are currently marked out of date.
-      const markedOutOfDate = eligible.filter((s) => typeof s.cs2_required_version === 'number');
+      const markedOutOfDate = eligible.filter((s) => typeof s.cs2RequiredVersion === 'number');
       const stale = eligible.filter(
-        (s) => !s.cs2_update_checked_at || now - s.cs2_update_checked_at >= this.STALE_AFTER_SECONDS
+        (s) => !s.cs2UpdateCheckedAt || now - s.cs2UpdateCheckedAt >= this.STALE_AFTER_SECONDS
       );
 
       // Deduplicate: out-of-date first, then stale.
@@ -116,28 +113,9 @@ class Cs2FleetMonitoringService {
 
       for (const s of queue) {
         try {
-          let cs2VersionString: string | null = null;
-
-          // Prefer the lighter `version` command, but fall back to `status` if it doesn't include a parsable BuildID.
-          const versionResult = await rconService.sendCommand(s.id, 'version');
-          let buildId: number | null =
-            versionResult.success && typeof versionResult.response === 'string'
-              ? parseCs2BuildId(versionResult.response)
-              : null;
-          cs2VersionString =
-            versionResult.success && typeof versionResult.response === 'string'
-              ? versionResult.response
-              : null;
-
+          // Heartbeat-only model: ReadyUp heartbeat is responsible for providing cs2BuildId.
+          const buildId = typeof s.cs2BuildId === 'number' && Number.isFinite(s.cs2BuildId) ? s.cs2BuildId : null;
           if (!buildId) {
-            const statusResult = await rconService.sendCommand(s.id, 'status');
-            if (statusResult.success && typeof statusResult.response === 'string') {
-              buildId = parseCs2BuildId(statusResult.response);
-              cs2VersionString = extractCs2StatusVersionLine(statusResult.response) ?? statusResult.response;
-            }
-          }
-
-          if (!buildId || !cs2VersionString) {
             failed += 1;
             continue;
           }
@@ -149,9 +127,6 @@ class Cs2FleetMonitoringService {
             await db.updateAsync(
               'servers',
               {
-                cs2_build_id: buildId,
-                cs2_version_string: cs2VersionString,
-                cs2_version_fetched_at: now,
                 cs2_required_version: null,
                 cs2_update_phase: null,
                 cs2_update_required_at: null,
@@ -161,18 +136,15 @@ class Cs2FleetMonitoringService {
               'id = ?',
               [s.id]
             );
-            if (typeof s.cs2_required_version === 'number') {
+            if (typeof s.cs2RequiredVersion === 'number') {
               cleared += 1;
             }
           } else {
             await db.updateAsync(
               'servers',
               {
-                cs2_build_id: buildId,
-                cs2_version_string: cs2VersionString,
-                cs2_version_fetched_at: now,
                 cs2_required_version: check.requiredVersion ?? null,
-                cs2_update_phase: (s.cs2_update_phase === 'shutdown' ? 'shutdown' : 'available'),
+                cs2_update_phase: (s.cs2UpdatePhase === 'shutdown' ? 'shutdown' : 'available'),
                 cs2_update_required_at: now,
                 cs2_update_checked_at: now,
                 updated_at: now,
@@ -180,7 +152,7 @@ class Cs2FleetMonitoringService {
               'id = ?',
               [s.id]
             );
-            if (typeof s.cs2_required_version !== 'number') {
+            if (typeof s.cs2RequiredVersion !== 'number') {
               marked += 1;
             }
           }

@@ -51,6 +51,8 @@ export function useLiveStats(matchSlug: string | null) {
             mapName: response.mapName ?? null,
             totalMaps: response.totalMaps ?? 1,
             playerStats: response.playerStats ?? null,
+            team1Side: response.team1Side ?? null,
+            team2Side: response.team2Side ?? null,
           });
         }
       } catch (error) {

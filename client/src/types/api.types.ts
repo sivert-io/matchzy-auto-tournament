@@ -28,7 +28,11 @@ export interface Server {
   isAvailable?: boolean;
   currentMatch?: string | null;
   reachableFromApi?: boolean;
+  /** True when RCON auth succeeded (lightweight command roundtrip). */
+  rconOk?: boolean;
   serverCanReachApi?: boolean;
+  /** Derived by /status: whether heartbeat is fresh (UI hint). */
+  heartbeatRecent?: boolean;
   // Server tracking fields (from MatchZy Enhanced server_configured event)
   pluginVersion?: string | null; // MatchZy Enhanced version (e.g., "1.3.6")
   hostname?: string | null; // CS2 server hostname (from hostname convar)
@@ -59,6 +63,13 @@ export interface Server {
   matchzyDbLastSeenAt?: number | null;
   /** Unix timestamp when server last successfully sent any event to /api/events. */
   serverCanReachApiAt?: number | null;
+  // ReadyUp heartbeat snapshot (source of truth)
+  heartbeatStatus?: string | null;
+  heartbeatMatchSlug?: string | null;
+  heartbeatMatchid?: number | null;
+  heartbeatReadyForAllocation?: boolean | null;
+  heartbeatUpdatedAt?: number | null;
+  heartbeatPluginVersion?: string | null;
   // Optional real-time status values reported by the MatchZy plugin and
   // allocator. These are populated by /api/servers/:id/status and are used
   // purely for UI display on the Servers page.
@@ -103,11 +114,18 @@ export interface ServerStatusResponse extends ApiResponse {
   queuedMatch?: string | null;
   playerCount?: number;
   reachableFromApi?: boolean;
+  rconOk?: boolean;
   serverCanReachApi?: boolean;
   pluginStatus?: string | null;
+  // Heartbeat snapshot fields (source of truth; used by Servers page chips)
+  heartbeatStatus?: string | null;
+  heartbeatUpdatedAt?: number | null;
+  heartbeatPluginVersion?: string | null;
+  heartbeatReadyForAllocation?: boolean | null;
   allocationState?: string | null;
   allocationMatchSlug?: string | null;
   ipBanned?: boolean; // True if server has banned our IP address
+  heartbeatRecent?: boolean;
   cs2BuildId?: number | null;
   cs2VersionString?: string | null;
   cs2VersionFetchedAt?: number | null;
@@ -176,7 +194,7 @@ export interface MatchHistoryResponse extends ApiResponse {
 
 // Tournament types
 export interface TournamentResponse extends ApiResponse {
-  tournament: Tournament;
+  tournament: Tournament | null;
 }
 
 export interface TournamentBracketResponse extends ApiResponse {
@@ -324,6 +342,9 @@ export interface SettingsResponse extends ApiResponse {
     matchzyDebugChatEnabled?: boolean;
     ratingsEnabled?: boolean;
     allowSelfRegister?: boolean;
+    // ReadyUp plugin settings
+    readyupAdminsUrl?: string | null;
+    readyupAdminsRefreshSeconds?: number;
     // MatchZy core defaults
     matchzyAutostartMode?: 0 | 1 | 2;
     matchzyMinimumReadyRequired?: number;

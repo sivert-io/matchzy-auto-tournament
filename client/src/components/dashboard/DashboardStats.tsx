@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useCallback, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import { Card, CardContent, Typography, Chip, CircularProgress, Alert, Box, Stack } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
@@ -44,54 +44,38 @@ interface PlayerCounts {
   waiting: number;
 }
 
+type DashboardServer = Pick<Server, 'id' | 'enabled' | 'heartbeatUpdatedAt'>;
+
 export function DashboardStats({ showOnboarding }: DashboardStatsProps) {
   const theme = useTheme();
-  const [loading, setLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [tournament, setTournament] = useState<Tournament | null>(null);
   const [matches, setMatches] = useState<MatchesResponse['matches']>([]);
-  const [servers, setServers] = useState<Server[]>([]);
+  const [servers, setServers] = useState<DashboardServer[]>([]);
   const [players, setPlayers] = useState<PlayerDetail[]>([]);
-  const [serverStatuses, setServerStatuses] = useState<Record<string, 'online' | 'offline'>>({});
-  const [serverStatusLoading, setServerStatusLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [errorCode, setErrorCode] = useState<'load' | null>(null);
   const { t } = useTranslation();
 
   useEffect(() => {
-    const loadServerStatuses = async (serverList: Server[]) => {
-      if (!serverList.length) {
-        setServerStatuses({});
-        return;
-      }
+    // no-op placeholder to keep file structure stable; real effect below
+  }, []);
 
-      setServerStatusLoading(true);
-      try {
-        const statusPromises = serverList.map(async (server) => {
-          try {
-            const statusRes = await api.get<{ success: boolean; status: string }>(
-              `/api/servers/${server.id}/status?cached=true`
-            );
-            return { id: server.id, status: statusRes.status as 'online' | 'offline' };
-          } catch {
-            return { id: server.id, status: 'offline' as const };
-          }
-        });
-        const statuses = await Promise.all(statusPromises);
-        const statusMap: Record<string, 'online' | 'offline'> = {};
-        statuses.forEach((s) => {
-          statusMap[s.id] = s.status;
-        });
-        setServerStatuses(statusMap);
-      } catch (e) {
-        console.error('Failed to load server statuses for dashboard:', e);
-      } finally {
-        setServerStatusLoading(false);
-      }
-    };
+  const loadInFlightRef = useRef(false);
 
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  const loadData = useCallback(async (options?: { background?: boolean }) => {
+    if (loadInFlightRef.current) return;
+    loadInFlightRef.current = true;
+
+    const background = options?.background === true;
+    if (background) {
+      setRefreshing(true);
+    } else {
+      setInitialLoading(true);
+    }
+
+    try {
+      setErrorCode(null);
 
         // Load tournament
         try {
@@ -119,16 +103,18 @@ export function DashboardStats({ showOnboarding }: DashboardStatsProps) {
         try {
           const serversRes = await api.get<{ success: boolean; servers: Server[] }>('/api/servers');
           if (serversRes.success && serversRes.servers) {
-            setServers(serversRes.servers);
-            void loadServerStatuses(serversRes.servers);
+            const stableServers: DashboardServer[] = serversRes.servers.map((s) => ({
+              id: s.id,
+              enabled: s.enabled,
+              heartbeatUpdatedAt: s.heartbeatUpdatedAt ?? null,
+            }));
+            setServers(stableServers);
           } else {
             setServers([]);
-            setServerStatuses({});
           }
         } catch (e) {
           console.error('Failed to load servers:', e);
           setServers([]);
-          setServerStatuses({});
         }
 
         // Load players (for counts + top players by ELO)
@@ -140,107 +126,82 @@ export function DashboardStats({ showOnboarding }: DashboardStatsProps) {
         } catch (e) {
           console.error('Failed to load players:', e);
         }
-      } catch (e) {
-        setError(t('dashboard.stats.errors.load'));
-        console.error('Error loading dashboard:', e);
-      } finally {
-        setLoading(false);
+    } catch (e) {
+      setErrorCode('load');
+      console.error('Error loading dashboard:', e);
+    } finally {
+      if (background) {
+        setRefreshing(false);
+      } else {
+        setInitialLoading(false);
+        setRefreshing(false);
       }
-    };
+      loadInFlightRef.current = false;
+    }
+  }, []);
 
+  useEffect(() => {
     void loadData();
     const interval = setInterval(() => {
-      void loadData();
+      void loadData({ background: true });
     }, 30000); // Refresh every 30 seconds
     return () => clearInterval(interval);
-  }, [t]);
+  }, [loadData]);
 
-  if (loading) {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
-        <CircularProgress />
-      </Box>
-    );
-  }
+  const matchStatusCount: MatchStatusCount = useMemo(() => {
+    const counts: MatchStatusCount = { pending: 0, ready: 0, loaded: 0, live: 0, completed: 0 };
+    matches.forEach((match) => {
+      if (match.status === 'pending') counts.pending++;
+      else if (match.status === 'ready') counts.ready++;
+      else if (match.status === 'loaded') counts.loaded++;
+      else if (match.status === 'live') counts.live++;
+      else if (match.status === 'completed') counts.completed++;
+    });
+    return counts;
+  }, [matches]);
 
-  if (error) {
-    return (
-      <Alert severity="error" sx={{ mb: 3 }}>
-        {error}
-      </Alert>
-    );
-  }
+  const serverStatusCount: ServerStatusCount = useMemo(() => {
+    const now = Math.floor(Date.now() / 1000);
+    const HEARTBEAT_FRESH_SECONDS = 20;
+    const counts: ServerStatusCount = { online: 0, offline: 0, total: servers.length };
+    servers.forEach((server) => {
+      const hb = server.heartbeatUpdatedAt ?? null;
+      const isOnline = typeof hb === 'number' && now - hb <= HEARTBEAT_FRESH_SECONDS;
+      if (isOnline) counts.online += 1;
+      else counts.offline += 1;
+    });
+    return counts;
+  }, [servers]);
 
-  // Calculate match status counts
-  const matchStatusCount: MatchStatusCount = {
-    pending: 0,
-    ready: 0,
-    loaded: 0,
-    live: 0,
-    completed: 0,
-  };
+  const playerStats: PlayerCounts = useMemo(() => {
+    const stats: PlayerCounts = { total: players.length, inMatches: 0, waiting: players.length };
+    matches.forEach((match) => {
+      if (match.status === 'live' || match.status === 'loaded') {
+        const team1Players = match.config?.team1?.players?.length || 0;
+        const team2Players = match.config?.team2?.players?.length || 0;
+        stats.inMatches += team1Players + team2Players;
+      }
+    });
+    stats.waiting = Math.max(0, stats.total - stats.inMatches);
+    return stats;
+  }, [players.length, matches]);
 
-  matches.forEach((match) => {
-    if (match.status === 'pending') matchStatusCount.pending++;
-    else if (match.status === 'ready') matchStatusCount.ready++;
-    else if (match.status === 'loaded') matchStatusCount.loaded++;
-    else if (match.status === 'live') matchStatusCount.live++;
-    else if (match.status === 'completed') matchStatusCount.completed++;
-  });
+  const topPlayers = useMemo(() => {
+    return [...players]
+      .filter((p) => typeof p.currentElo === 'number')
+      .sort((a, b) => (b.currentElo as number) - (a.currentElo as number))
+      .slice(0, 5);
+  }, [players]);
 
-  // Calculate server status counts
-  const serverStatusCount: ServerStatusCount = {
-    online: 0,
-    offline: 0,
-    total: servers.length,
-  };
-
-  servers.forEach((server) => {
-    const status = serverStatuses[server.id] || 'offline';
-    if (status === 'online') serverStatusCount.online++;
-    else serverStatusCount.offline++;
-  });
-
-  // Calculate player stats
-  const playerStats: PlayerCounts = {
-    total: players.length,
-    inMatches: 0,
-    waiting: players.length,
-  };
-
-  // Count players currently in matches
-  matches.forEach((match) => {
-    if (match.status === 'live' || match.status === 'loaded') {
-      const team1Players = match.config?.team1?.players?.length || 0;
-      const team2Players = match.config?.team2?.players?.length || 0;
-      playerStats.inMatches += team1Players + team2Players;
-    }
-  });
-
-  playerStats.waiting = Math.max(0, playerStats.total - playerStats.inMatches);
-
-  // Top players by ELO (limit 5)
-  const topPlayers = [...players]
-    .filter((p) => typeof p.currentElo === 'number')
-    .sort((a, b) => b.currentElo - a.currentElo)
-    .slice(0, 5);
-
-  // ELO distribution (histogram-style buckets, e.g. 0-200, 200-400, ...)
   const eloBucketSize = 200;
-  const eloValues = players
-    .map((p) => p.currentElo)
-    .filter((elo) => typeof elo === 'number' && Number.isFinite(elo)) as number[];
+  const eloBuckets = useMemo(() => {
+    const eloValues = players
+      .map((p) => p.currentElo)
+      .filter((elo) => typeof elo === 'number' && Number.isFinite(elo)) as number[];
 
-  let eloBuckets:
-    | {
-        label: string;
-        count: number;
-      }[]
-    | null = null;
+    if (eloValues.length === 0) return null;
 
-  if (eloValues.length > 0) {
     let maxElo = Math.max(...eloValues);
-    // Ensure at least one visible bucket even if all players are very low rated.
     if (maxElo < eloBucketSize) {
       maxElo = eloBucketSize;
     }
@@ -253,37 +214,38 @@ export function DashboardStats({ showOnboarding }: DashboardStatsProps) {
       bucketCounts[index] += 1;
     });
 
-    eloBuckets = bucketCounts.map((count, index) => {
+    return bucketCounts.map((count, index) => {
       const from = index * eloBucketSize;
       const to = from + eloBucketSize;
-      return {
-        label: `${from}-${to}`,
-        count,
-      };
+      return { label: `${from}-${to}`, count };
     });
-  }
+  }, [players]);
 
-  // Prepare chart data
-  const matchStatusData = [
-    { id: 0, value: matchStatusCount.pending, label: 'Pending' },
-    { id: 1, value: matchStatusCount.ready, label: 'Ready' },
-    { id: 2, value: matchStatusCount.loaded, label: 'Loaded' },
-    { id: 3, value: matchStatusCount.live, label: 'Live' },
-    { id: 4, value: matchStatusCount.completed, label: 'Completed' },
-  ].filter((item) => item.value > 0);
+  const matchStatusData = useMemo(() => {
+    return [
+      { id: 0, value: matchStatusCount.pending, label: 'Pending' },
+      { id: 1, value: matchStatusCount.ready, label: 'Ready' },
+      { id: 2, value: matchStatusCount.loaded, label: 'Loaded' },
+      { id: 3, value: matchStatusCount.live, label: 'Live' },
+      { id: 4, value: matchStatusCount.completed, label: 'Completed' },
+    ].filter((item) => item.value > 0);
+  }, [matchStatusCount]);
 
-  const serverStatusData = [
-    { id: 0, value: serverStatusCount.online, label: 'Online' },
-    { id: 1, value: serverStatusCount.offline, label: 'Offline' },
-  ].filter((item) => item.value > 0);
+  const serverStatusData = useMemo(() => {
+    return [
+      { id: 0, value: serverStatusCount.online, label: 'Online' },
+      { id: 1, value: serverStatusCount.offline, label: 'Offline' },
+    ].filter((item) => item.value > 0);
+  }, [serverStatusCount]);
 
-  const playerDistributionData = [
-    { id: 0, value: playerStats.inMatches, label: 'In Matches' },
-    { id: 1, value: playerStats.waiting, label: 'Waiting' },
-  ].filter((item) => item.value > 0);
+  const playerDistributionData = useMemo(() => {
+    return [
+      { id: 0, value: playerStats.inMatches, label: 'In Matches' },
+      { id: 1, value: playerStats.waiting, label: 'Waiting' },
+    ].filter((item) => item.value > 0);
+  }, [playerStats]);
 
-  // Match status over time (last 7 matches)
-  const recentMatches = matches.slice(0, 7).reverse();
+  const recentMatches = useMemo(() => matches.slice(0, 7).reverse(), [matches]);
 
   const matchStatusPieColors = [
     theme.palette.info.main,
@@ -299,6 +261,24 @@ export function DashboardStats({ showOnboarding }: DashboardStatsProps) {
 
   const hasData = tournament || matches.length > 0 || servers.length > 0 || players.length > 0;
 
+  // Important: keep all hooks (useMemo etc) above any early returns, otherwise
+  // React may throw "Rendered more hooks than during the previous render" (#310).
+  if (initialLoading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (errorCode) {
+    return (
+      <Alert severity="error" sx={{ mb: 3 }}>
+        {t('dashboard.stats.errors.load')}
+      </Alert>
+    );
+  }
+
   if (!hasData && !showOnboarding) {
     return (
       <Alert severity="info" sx={{ mb: 3 }}>
@@ -309,9 +289,12 @@ export function DashboardStats({ showOnboarding }: DashboardStatsProps) {
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Typography variant="h4" fontWeight={700} mb={3}>
-        {t('dashboard.stats.heading')}
-      </Typography>
+      <Box display="flex" alignItems="center" gap={1} mb={3}>
+        <Typography variant="h4" fontWeight={700}>
+          {t('dashboard.stats.heading')}
+        </Typography>
+        {refreshing && <CircularProgress size={18} />}
+      </Box>
       <Grid container spacing={3}>
         {/* Row 1: Tournament + Summary stats */}
         <Grid size={{ xs: 12, md: 6, lg: 3 }}>
@@ -440,11 +423,6 @@ export function DashboardStats({ showOnboarding }: DashboardStatsProps) {
                 <Typography variant="h6" fontWeight={600}>
                   {t('dashboard.stats.serverStatus.title')}
                 </Typography>
-                {serverStatusLoading && (
-                  <Box ml={1} display="inline-flex" alignItems="center">
-                    <CircularProgress size={16} />
-                  </Box>
-                )}
               </Box>
               <Typography variant="h3" fontWeight={700} mb={1}>
                 {serverStatusCount.online}/{serverStatusCount.total}

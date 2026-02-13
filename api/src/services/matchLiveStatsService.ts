@@ -36,6 +36,11 @@ export interface MatchLiveStats {
   mapName?: string | null;
   totalMaps: number;
   playerStats?: MatchPlayerStatsSnapshot | null;
+
+  // Optional current side mapping for UI rendering (updated via side_swap events).
+  // Values are expected to be "CT" or "T" when known.
+  team1Side?: 'CT' | 'T' | null;
+  team2Side?: 'CT' | 'T' | null;
 }
 
 class MatchLiveStatsService {
@@ -59,6 +64,8 @@ class MatchLiveStatsService {
       mapName: null,
       totalMaps: 1,
       playerStats: null,
+      team1Side: null,
+      team2Side: null,
     };
     this.stats.set(matchSlug, entry);
     return entry;

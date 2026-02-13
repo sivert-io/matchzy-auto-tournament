@@ -8,6 +8,7 @@ export interface MatchTeam {
   tag?: string;
   flag?: string; // Country code (e.g., "US", "EU")
   logo?: string | null; // URL to team logo
+  captain_steamid64?: string | null;
   players: MatchPlayer;
   coaches?: MatchPlayer | null;
   series_score?: number;
@@ -43,6 +44,14 @@ export interface MatchConfig {
   maxRounds?: number;
   overtimeMode?: 'enabled' | 'disabled';
   overtimeSegments?: number;
+  /**
+   * ReadyUp-only knife decider side-pick timeout (seconds).
+   *
+   * When a map uses `map_sides: "knife"`, ReadyUp will run a knife decider and
+   * then wait this many seconds for the knife-winning captain (or an admin) to
+   * pick sides. If they do not, ReadyUp will auto-pick randomly.
+   */
+  knifeDecisionSeconds?: number;
   /**
    * Server ConVars to apply for this match.
    * 

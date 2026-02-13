@@ -33,8 +33,9 @@ test.describe.serial('CS Major BO1 Veto - API E2E', () => {
     'de_nuke',
   ];
 
-  test.beforeEach(async ({ page, request }) => {
+  test.beforeEach(async ({ page }) => {
     await ensureSignedIn(page);
+    const request = page.request;
 
     // Setup tournament with all prerequisites (webhook, servers, teams)
     const setup = await setupTournament(request, {
@@ -82,7 +83,8 @@ test.describe.serial('CS Major BO1 Veto - API E2E', () => {
     {
       tag: ['@api', '@veto', '@cs-major', '@bo1'],
     },
-    async ({ request }) => {
+    async ({ page }) => {
+      const request = page.request;
       // Verify match exists and tournament is started before executing veto
       const matchCheck = await findMatchByTeams(request, team1Id, team2Id);
       expect(matchCheck).toBeTruthy();
@@ -123,7 +125,8 @@ test.describe.serial('CS Major BO1 Veto - API E2E', () => {
     {
       tag: ['@api', '@veto', '@cs-major', '@verification'],
     },
-    async ({ request }) => {
+    async ({ page }) => {
+      const request = page.request;
       // Check if veto is already completed, if not, run it
       let vetoState = await getVetoState(request, matchSlug);
       if (!vetoState || vetoState.status !== 'completed') {
@@ -204,8 +207,9 @@ test.describe.serial('CS Major BO3 Veto - API E2E', () => {
     'de_nuke',
   ];
 
-  test.beforeEach(async ({ page, request }) => {
+  test.beforeEach(async ({ page }) => {
     await ensureSignedIn(page);
+    const request = page.request;
 
     // Setup tournament with all prerequisites (webhook, servers, teams)
     const setup = await setupTournament(request, {
@@ -253,7 +257,8 @@ test.describe.serial('CS Major BO3 Veto - API E2E', () => {
     {
       tag: ['@api', '@veto', '@cs-major', '@bo3'],
     },
-    async ({ request }) => {
+    async ({ page }) => {
+      const request = page.request;
       // Execute CS Major BO3 veto (9 steps)
       const actions = getCSMajorBO3Actions(team1Id, team2Id);
       const finalResponse = await executeVetoActions(request, matchSlug, actions);
@@ -285,7 +290,8 @@ test.describe.serial('CS Major BO3 Veto - API E2E', () => {
     {
       tag: ['@api', '@veto', '@cs-major', '@bo3', '@verification'],
     },
-    async ({ request }) => {
+    async ({ page }) => {
+      const request = page.request;
       // Check if veto is already completed, if not, run it
       let vetoState = await getVetoState(request, matchSlug);
       if (!vetoState || vetoState.status !== 'completed') {

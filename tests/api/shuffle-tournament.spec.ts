@@ -34,14 +34,14 @@ import { createTestServer } from '../helpers/servers';
 test.describe.serial('Shuffle Tournament API', () => {
   let setupResult: ShuffleTournamentSetupResult | null = null;
 
-  test.beforeEach(async ({ page, request }) => {
+  test.beforeEach(async ({ page }) => {
     await ensureSignedIn(page);
   });
 
-  test.afterEach(async ({ request }) => {
+  test.afterEach(async ({ page }) => {
     // Clean up: Delete tournament after each test
     try {
-      await request.delete('/api/tournament', {
+      await page.request.delete('/api/tournament', {
         headers: getAuthHeader(),
       });
     } catch (error) {
@@ -54,7 +54,8 @@ test.describe.serial('Shuffle Tournament API', () => {
     {
       tag: ['@api', '@shuffle', '@tournament'],
     },
-    async ({ request }) => {
+    async ({ page }) => {
+      const request = page.request;
       const tournament = await createShuffleTournament(request, {
         name: 'Test Shuffle Tournament',
         mapSequence: ['de_mirage', 'de_inferno', 'de_ancient'],
@@ -77,7 +78,8 @@ test.describe.serial('Shuffle Tournament API', () => {
     {
       tag: ['@api', '@shuffle', '@tournament'],
     },
-    async ({ request }) => {
+    async ({ page }) => {
+      const request = page.request;
       // Create shuffle tournament with custom team size
       const response = await request.post('/api/tournament/shuffle', {
         headers: getAuthHeader(),
@@ -112,7 +114,8 @@ test.describe.serial('Shuffle Tournament API', () => {
     {
       tag: ['@api', '@shuffle', '@tournament'],
     },
-    async ({ request }) => {
+    async ({ page }) => {
+      const request = page.request;
       // Missing name
       const response1 = await request.post('/api/tournament/shuffle', {
         headers: getAuthHeader(),
@@ -153,7 +156,8 @@ test.describe.serial('Shuffle Tournament API', () => {
     {
       tag: ['@api', '@shuffle', '@players'],
     },
-    async ({ request }) => {
+    async ({ page }) => {
+      const request = page.request;
       // Create tournament
       const tournament = await createShuffleTournament(request, {
         name: 'Test Shuffle Tournament',
@@ -185,7 +189,8 @@ test.describe.serial('Shuffle Tournament API', () => {
     {
       tag: ['@api', '@shuffle', '@players'],
     },
-    async ({ request }) => {
+    async ({ page }) => {
+      const request = page.request;
       // Create and start tournament
       const setup = await setupShuffleTournament(request, {
         playerCount: 10,
@@ -214,7 +219,8 @@ test.describe.serial('Shuffle Tournament API', () => {
     {
       tag: ['@api', '@shuffle', '@leaderboard'],
     },
-    async ({ request }) => {
+    async ({ page }) => {
+      const request = page.request;
       // Setup tournament
       const setup = await setupShuffleTournament(request, {
         playerCount: 20,
@@ -251,7 +257,8 @@ test.describe.serial('Shuffle Tournament API', () => {
     {
       tag: ['@api', '@shuffle', '@leaderboard', '@public'],
     },
-    async ({ request }) => {
+    async ({ page }) => {
+      const request = page.request;
       // Setup tournament
       const setup = await setupShuffleTournament(request, {
         playerCount: 15,
@@ -284,7 +291,8 @@ test.describe.serial('Shuffle Tournament API', () => {
     {
       tag: ['@api', '@shuffle', '@edge-cases'],
     },
-    async ({ request }) => {
+    async ({ page }) => {
+      const request = page.request;
       // Setup tournament with odd number of players
       const setup = await setupShuffleTournament(request, {
         playerCount: 11, // Odd number
@@ -357,7 +365,8 @@ test.describe.serial('Shuffle Tournament API', () => {
     {
       tag: ['@api', '@shuffle', '@round-progression'],
     },
-    async ({ request }) => {
+    async ({ page }) => {
+      const request = page.request;
       // Setup tournament with 2 rounds
       const setup = await setupShuffleTournament(request, {
         playerCount: 10,
@@ -422,7 +431,8 @@ test.describe.serial('Shuffle Tournament API', () => {
       tag: ['@api', '@shuffle', '@match-generation'],
       timeout: 120000, // 2 minutes timeout for this test
     },
-    async ({ request }) => {
+    async ({ page }) => {
+      const request = page.request;
       // Test with different player counts (reduced to avoid timeout)
       const testCases = [
         { playerCount: 10, expectedMatches: 1 }, // 10 players = 1 match (5v5)

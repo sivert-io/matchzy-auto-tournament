@@ -239,7 +239,7 @@ export class RconService {
       serverQueryStatus = 'online';
       log.debug(`Server ${host}:${port} query check successful (gamedig)`, { serverName });
     } catch (queryError) {
-      serverQueryStatus = 'offline';
+      serverQueryStatus = 'unknown';
       // Log but don't fail - query might be disabled/blocked even if server is online
       log.debug(`Server ${host}:${port} query check failed (gamedig) - will try RCON anyway`, { 
         serverName,
@@ -332,8 +332,6 @@ export class RconService {
       const lowerMessage = errorMessage.toLowerCase();
       const queryStatusNote = serverQueryStatus === 'online' 
         ? 'Server is online (verified) but RCON authentication failed.' 
-        : serverQueryStatus === 'offline'
-        ? 'Server query failed and RCON authentication failed.'
         : 'RCON authentication failed (server query status unknown).';
       
       if (lowerMessage.includes('authentication') || lowerMessage.includes('password') || lowerMessage.includes('auth') || lowerMessage.includes('invalid password')) {
@@ -549,21 +547,32 @@ export class RconService {
       this.sendCommand(serverId, `kick "${playerName}"`),
 
     /**
-     * Execute MatchZy command
+     * Execute MatchZy command (legacy; ReadyUp migration)
      */
     matchzy: (serverId: string, matchzyCommand: string) =>
       this.sendCommand(serverId, `matchzy_${matchzyCommand}`),
 
     /**
-     * Load a match config (MatchZy)
+     * Load a match config (legacy MatchZy)
      */
     loadMatch: (serverId: string, configUrl: string) =>
       this.sendCommand(serverId, `matchzy_loadmatch_url "${configUrl}"`),
 
     /**
-     * End current match (MatchZy)
+     * End current match (ReadyUp)
      */
-    endMatch: (serverId: string) => this.sendCommand(serverId, 'css_restart'),
+    endMatch: (serverId: string) => this.sendCommand(serverId, 'ru end'),
+
+    /**
+     * Load a match config (ReadyUp)
+     */
+    loadMatchRu: (serverId: string, configUrl: string) =>
+      this.sendCommand(serverId, `ru match load ${configUrl}`),
+
+    /**
+     * Restart match back to warmup gating (ReadyUp)
+     */
+    restartMatchRu: (serverId: string) => this.sendCommand(serverId, 'ru restart'),
 
     /**
      * Pause match (MatchZy)
