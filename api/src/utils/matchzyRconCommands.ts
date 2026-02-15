@@ -54,6 +54,7 @@ export function redactMatchzyCommand(command: string): string {
   if (command.startsWith('matchzy_match_token ')) return 'matchzy_match_token REDACTED';
   if (command.startsWith('matchzy_report_token ')) return 'matchzy_report_token REDACTED';
   if (command.startsWith('matchzy_bootstrap_token ')) return 'matchzy_bootstrap_token REDACTED';
+  if (command.startsWith('matchzy_demo_upload_header_value ')) return 'matchzy_demo_upload_header_value REDACTED';
   return command;
 }
 

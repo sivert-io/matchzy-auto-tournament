@@ -10,7 +10,11 @@ import { log } from '../utils/logger';
 import type { DbMatchRow } from '../types/database.types';
 import { matchLiveStatsService } from './matchLiveStatsService';
 import { serverInitializationService } from './serverInitializationService';
-import { getMatchzyEnhancedLoadMatchCommands, redactMatchzyCommand } from '../utils/matchzyRconCommands';
+import {
+  getMatchZyDemoUploadCommands,
+  getMatchzyEnhancedLoadMatchCommands,
+  redactMatchzyCommand,
+} from '../utils/matchzyRconCommands';
 
 export interface MatchLoadOptions {
   skipWebhook?: boolean; // Deprecated: Webhooks are now persistent, this param is ignored
@@ -36,7 +40,7 @@ export async function loadMatchOnServer(
 ): Promise<MatchLoadResult> {
   const { baseUrl } = options;
   const results: Array<{ success: boolean; command: string; error?: string }> = [];
-  const demoUploadConfigured = false;
+  let demoUploadConfigured = false;
 
   try {
     log.info(`[MATCH LOADING] Loading match ${matchSlug} on server ${serverId}`);
@@ -78,6 +82,35 @@ export async function loadMatchOnServer(
     // Delay before sending the load command to ensure previous commands are processed
     await delay(500);
 
+    // STEP 2: Configure demo upload for this specific match (per-match URL + auth header).
+    // ME only uploads when matchzy_demo_upload_url is set.
+    const serverToken = process.env.SERVER_TOKEN || '';
+    if (!serverToken) {
+      log.warn('[MATCH LOADING] SERVER_TOKEN is not set; demo uploads will not be configured', { matchSlug, serverId });
+    } else {
+      const normalizedBase = baseUrl.replace(/\/+$/, '');
+      const demoCmds = getMatchZyDemoUploadCommands(normalizedBase, matchSlug, serverToken);
+      let demoOk = true;
+      for (const cmd of demoCmds) {
+        const r = await rconService.sendCommand(serverId, cmd);
+        results.push({
+          success: r.success,
+          command: redactMatchzyCommand(cmd),
+          error: r.error,
+        });
+        if (!r.success) demoOk = false;
+        await delay(120);
+      }
+      demoUploadConfigured = demoOk;
+      if (demoOk) {
+        log.success(`[MATCH LOADING] Demo upload configured for ${matchSlug} on ${serverId}`);
+      } else {
+        log.warn(`[MATCH LOADING] Demo upload config had failures for ${matchSlug} on ${serverId}`);
+      }
+    }
+
+    await delay(250);
+
     // Load match on server
     log.success(`✅ Server ${serverId} ready. Loading match ${matchSlug} via MatchZy Enhanced`);
     log.info(`Sending load command to ${serverId}: matchzy match load ${configUrl}`);
@@ -100,7 +133,7 @@ export async function loadMatchOnServer(
         success: false,
         error: 'MatchZy Enhanced failed to load the match (see rconResponses)',
         webhookConfigured: false,
-        demoUploadConfigured: false,
+        demoUploadConfigured,
         rconResponses: results,
       };
     }
