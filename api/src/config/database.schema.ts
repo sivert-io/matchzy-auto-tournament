@@ -29,6 +29,12 @@ export function getSchemaSQL(): string {
       heartbeat_ready_for_allocation INTEGER, -- 1/0
       heartbeat_updated_at INTEGER, -- Unix timestamp when heartbeat was last received
       heartbeat_plugin_version TEXT,
+      heartbeat_map TEXT, -- Best-effort: current map name or Workshop ID (string)
+      heartbeat_connected_players INTEGER,
+      heartbeat_tracking_players INTEGER,
+      heartbeat_ready_players INTEGER,
+      heartbeat_paused INTEGER, -- 1/0
+      heartbeat_simulated INTEGER, -- 1/0
       cs2_required_version INTEGER, -- If set, server has reported CS2 update required
       cs2_update_phase TEXT, -- 'available' | 'shutdown' (best-effort)
       cs2_update_required_at INTEGER, -- Unix timestamp when update was last reported
@@ -57,6 +63,12 @@ export function getSchemaSQL(): string {
     ALTER TABLE servers ADD COLUMN IF NOT EXISTS heartbeat_ready_for_allocation INTEGER;
     ALTER TABLE servers ADD COLUMN IF NOT EXISTS heartbeat_updated_at INTEGER;
     ALTER TABLE servers ADD COLUMN IF NOT EXISTS heartbeat_plugin_version TEXT;
+    ALTER TABLE servers ADD COLUMN IF NOT EXISTS heartbeat_map TEXT;
+    ALTER TABLE servers ADD COLUMN IF NOT EXISTS heartbeat_connected_players INTEGER;
+    ALTER TABLE servers ADD COLUMN IF NOT EXISTS heartbeat_tracking_players INTEGER;
+    ALTER TABLE servers ADD COLUMN IF NOT EXISTS heartbeat_ready_players INTEGER;
+    ALTER TABLE servers ADD COLUMN IF NOT EXISTS heartbeat_paused INTEGER;
+    ALTER TABLE servers ADD COLUMN IF NOT EXISTS heartbeat_simulated INTEGER;
     -- Legacy migration: rename per-server warmup config column.
     ALTER TABLE servers ADD COLUMN IF NOT EXISTS readyup_config TEXT;
     ALTER TABLE servers ADD COLUMN IF NOT EXISTS matchzy_warmup_config TEXT;

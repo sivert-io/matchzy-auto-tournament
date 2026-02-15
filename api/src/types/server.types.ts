@@ -49,6 +49,12 @@ export interface Server {
   heartbeat_ready_for_allocation?: number | null; // 1/0
   heartbeat_updated_at?: number | null;
   heartbeat_plugin_version?: string | null;
+  heartbeat_map?: string | null;
+  heartbeat_connected_players?: number | null;
+  heartbeat_tracking_players?: number | null;
+  heartbeat_ready_players?: number | null;
+  heartbeat_paused?: number | null; // 1/0
+  heartbeat_simulated?: number | null; // 1/0
   created_at: number;
   updated_at: number;
 }
@@ -128,6 +134,12 @@ export interface ServerResponse {
   heartbeatReadyForAllocation?: boolean | null;
   heartbeatUpdatedAt?: number | null;
   heartbeatPluginVersion?: string | null;
+  heartbeatMap?: string | null;
+  heartbeatConnectedPlayers?: number | null;
+  heartbeatTrackingPlayers?: number | null;
+  heartbeatReadyPlayers?: number | null;
+  heartbeatPaused?: boolean | null;
+  heartbeatSimulated?: boolean | null;
 }
 
 /**

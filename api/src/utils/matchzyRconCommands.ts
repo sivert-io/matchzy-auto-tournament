@@ -57,6 +57,68 @@ export function redactMatchzyCommand(command: string): string {
   return command;
 }
 
+export type MatchzyWarmupSettings = {
+  enable?: boolean | null;
+  messageHtml?: string | null;
+  respawn?: boolean | null;
+  ignoreWinConditions?: boolean | null;
+  roundtimeMinutes?: number | null;
+  startmoney?: number | null;
+  maxmoney?: number | null;
+  buyAnywhere?: boolean | null;
+  infiniteAmmo?: boolean | null;
+};
+
+function quoteRconArg(v: string): string {
+  const escaped = v.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  return `"${escaped}"`;
+}
+
+/**
+ * Get RCON commands for MatchZy Enhanced server-level warmup settings (idle servers only).
+ *
+ * Order matters: send all parameters first, and `matchzy_warmup_enable` last so ME applies
+ * the final value set in one pass.
+ */
+export function getMatchzyWarmupSettingsCommands(settings: MatchzyWarmupSettings): string[] {
+  const cmds: string[] = [];
+
+  if (settings.messageHtml !== undefined && settings.messageHtml !== null) {
+    const v = String(settings.messageHtml);
+    cmds.push(v.trim() ? `matchzy_warmup_message_html ${quoteRconArg(v)}` : 'matchzy_warmup_message_html clear');
+  }
+  if (settings.respawn !== undefined && settings.respawn !== null) {
+    cmds.push(`matchzy_warmup_respawn ${settings.respawn ? '1' : '0'}`);
+  }
+  if (settings.ignoreWinConditions !== undefined && settings.ignoreWinConditions !== null) {
+    cmds.push(`matchzy_warmup_ignore_win_conditions ${settings.ignoreWinConditions ? '1' : '0'}`);
+  }
+  if (settings.roundtimeMinutes !== undefined && settings.roundtimeMinutes !== null) {
+    const rt = Math.max(1, Math.min(120, Number(settings.roundtimeMinutes)));
+    cmds.push(`matchzy_warmup_roundtime_minutes ${Number.isFinite(rt) ? rt : 10}`);
+  }
+  if (settings.startmoney !== undefined && settings.startmoney !== null) {
+    const sm = Math.max(0, Math.min(60000, Math.floor(Number(settings.startmoney))));
+    cmds.push(`matchzy_warmup_startmoney ${Number.isFinite(sm) ? sm : 16000}`);
+  }
+  if (settings.maxmoney !== undefined && settings.maxmoney !== null) {
+    const mm = Math.max(0, Math.min(60000, Math.floor(Number(settings.maxmoney))));
+    cmds.push(`matchzy_warmup_maxmoney ${Number.isFinite(mm) ? mm : 16000}`);
+  }
+  if (settings.buyAnywhere !== undefined && settings.buyAnywhere !== null) {
+    cmds.push(`matchzy_warmup_buy_anywhere ${settings.buyAnywhere ? '1' : '0'}`);
+  }
+  if (settings.infiniteAmmo !== undefined && settings.infiniteAmmo !== null) {
+    cmds.push(`matchzy_warmup_infinite_ammo ${settings.infiniteAmmo ? '1' : '0'}`);
+  }
+
+  if (settings.enable !== undefined && settings.enable !== null) {
+    cmds.push(`matchzy_warmup_enable ${settings.enable ? '1' : '0'}`);
+  }
+
+  return cmds;
+}
+
 /**
  * Get RCON commands to configure MatchZy webhook
  * Uses match slug in URL path for better event tracking

@@ -70,6 +70,12 @@ export interface Server {
   heartbeatReadyForAllocation?: boolean | null;
   heartbeatUpdatedAt?: number | null;
   heartbeatPluginVersion?: string | null;
+  heartbeatMap?: string | null;
+  heartbeatConnectedPlayers?: number | null;
+  heartbeatTrackingPlayers?: number | null;
+  heartbeatReadyPlayers?: number | null;
+  heartbeatPaused?: boolean | null;
+  heartbeatSimulated?: boolean | null;
   // Optional real-time status values reported by the MatchZy plugin and
   // allocator. These are populated by /api/servers/:id/status and are used
   // purely for UI display on the Servers page.
@@ -122,6 +128,12 @@ export interface ServerStatusResponse extends ApiResponse {
   heartbeatUpdatedAt?: number | null;
   heartbeatPluginVersion?: string | null;
   heartbeatReadyForAllocation?: boolean | null;
+  heartbeatMap?: string | null;
+  heartbeatConnectedPlayers?: number | null;
+  heartbeatTrackingPlayers?: number | null;
+  heartbeatReadyPlayers?: number | null;
+  heartbeatPaused?: boolean | null;
+  heartbeatSimulated?: boolean | null;
   allocationState?: string | null;
   allocationMatchSlug?: string | null;
   ipBanned?: boolean; // True if server has banned our IP address

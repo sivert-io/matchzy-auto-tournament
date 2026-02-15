@@ -60,6 +60,31 @@ router.post('/:serverId/heartbeat', async (req: Request, res: Response) => {
       ? body.ready_for_allocation !== 0
       : false;
   const pluginVersion = typeof body.plugin_version === 'string' ? body.plugin_version : null;
+  const mapName = typeof body.map === 'string' && body.map.trim() ? body.map.trim() : null;
+  const connectedPlayers =
+    typeof body.connected_players === 'number' && Number.isFinite(body.connected_players)
+      ? Math.max(0, Math.floor(body.connected_players))
+      : null;
+  const trackingPlayers =
+    typeof body.tracking_players === 'number' && Number.isFinite(body.tracking_players)
+      ? Math.max(0, Math.floor(body.tracking_players))
+      : null;
+  const readyPlayers =
+    typeof body.ready_players === 'number' && Number.isFinite(body.ready_players)
+      ? Math.max(0, Math.floor(body.ready_players))
+      : null;
+  const paused =
+    typeof body.paused === 'boolean'
+      ? body.paused
+      : typeof body.paused === 'number'
+      ? body.paused !== 0
+      : null;
+  const simulated =
+    typeof body.simulated === 'boolean'
+      ? body.simulated
+      : typeof body.simulated === 'number'
+      ? body.simulated !== 0
+      : null;
 
   const now = Math.floor(Date.now() / 1000);
 
@@ -93,6 +118,12 @@ router.post('/:serverId/heartbeat', async (req: Request, res: Response) => {
       heartbeat_ready_for_allocation: ready ? 1 : 0,
       heartbeat_updated_at: now,
       heartbeat_plugin_version: pluginVersion,
+      heartbeat_map: mapName,
+      heartbeat_connected_players: connectedPlayers,
+      heartbeat_tracking_players: trackingPlayers,
+      heartbeat_ready_players: readyPlayers,
+      heartbeat_paused: paused === null ? null : paused ? 1 : 0,
+      heartbeat_simulated: simulated === null ? null : simulated ? 1 : 0,
     };
 
     // RU heartbeat can optionally include CS2 build/version info so the UI can

@@ -295,6 +295,18 @@ export class ServerService {
           : server.heartbeat_ready_for_allocation ?? null,
       heartbeatUpdatedAt: server.heartbeat_updated_at ?? null,
       heartbeatPluginVersion: server.heartbeat_plugin_version ?? null,
+      heartbeatMap: server.heartbeat_map ?? null,
+      heartbeatConnectedPlayers: server.heartbeat_connected_players ?? null,
+      heartbeatTrackingPlayers: server.heartbeat_tracking_players ?? null,
+      heartbeatReadyPlayers: server.heartbeat_ready_players ?? null,
+      heartbeatPaused:
+        typeof server.heartbeat_paused === 'number'
+          ? server.heartbeat_paused === 1
+          : server.heartbeat_paused ?? null,
+      heartbeatSimulated:
+        typeof server.heartbeat_simulated === 'number'
+          ? server.heartbeat_simulated === 1
+          : server.heartbeat_simulated ?? null,
     };
   }
 }

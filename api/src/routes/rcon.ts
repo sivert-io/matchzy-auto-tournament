@@ -6,6 +6,8 @@ import { log } from '../utils/logger';
 import { getWebhookBaseUrl } from '../utils/urlHelper';
 import { getMatchZyWebhookCommands } from '../utils/matchzyRconCommands';
 import { getLastServerTestEvent } from '../services/serverConnectivityService';
+import { db } from '../config/database';
+import { getMatchzyWarmupSettingsCommands, type MatchzyWarmupSettings } from '../utils/matchzyRconCommands';
 
 const router = Router();
 
@@ -50,7 +52,6 @@ router.post('/matchzy/reconfigure', async (req: Request, res: Response) => {
     const results: Array<{ success: boolean; command: string; error?: string; response?: string }> = [];
     for (const cmd of cmds) {
       // Small delay helps avoid overwhelming RCON during startup.
-      // eslint-disable-next-line no-await-in-loop
       const result = await rconService.sendCommand(serverId, cmd);
       results.push({
         success: result.success,
@@ -58,7 +59,6 @@ router.post('/matchzy/reconfigure', async (req: Request, res: Response) => {
         error: result.error ?? undefined,
         response: typeof result.response === 'string' ? result.response : undefined,
       });
-      // eslint-disable-next-line no-await-in-loop
       await new Promise((r) => setTimeout(r, 150));
     }
 
@@ -171,21 +171,91 @@ router.post('/matchzy/idle', async (req: Request, res: Response) => {
 /**
  * MatchZy Enhanced warmup/practice settings
  *
- * MatchZy Enhanced does not implement MAT-controlled warmup convars. This endpoint is
- * intentionally not supported.
- *
  * POST /api/rcon/matchzy/settings
  */
-router.post('/matchzy/settings', async (_req: Request, res: Response) => {
+router.post('/matchzy/settings', async (req: Request, res: Response) => {
   try {
-    return res.status(501).json({
-      success: false,
-      error:
-        'Warmup settings are not supported for MatchZy Enhanced.',
+    const { serverId, settings } = req.body as { serverId?: string; settings?: MatchzyWarmupSettings };
+    if (!serverId) {
+      return res.status(400).json({ success: false, error: 'serverId is required' });
+    }
+    if (!settings || typeof settings !== 'object') {
+      return res.status(400).json({ success: false, error: 'settings is required' });
+    }
+
+    // Persist per-server warmup settings blob for future server init/retries.
+    const now = Math.floor(Date.now() / 1000);
+    await db.updateAsync(
+      'servers',
+      {
+        matchzy_warmup_config: JSON.stringify(settings),
+        updated_at: now,
+      },
+      'id = ?',
+      [serverId]
+    );
+
+    const cmds = getMatchzyWarmupSettingsCommands(settings);
+    const results: Array<{ success: boolean; command: string; error?: string; response?: string }> = [];
+    for (const cmd of cmds) {
+      const result = await rconService.sendCommand(serverId, cmd);
+      results.push({
+        success: result.success,
+        command: cmd,
+        error: result.error ?? undefined,
+        response: typeof result.response === 'string' ? result.response : undefined,
+      });
+      await new Promise((r) => setTimeout(r, 120));
+    }
+
+    const ok = results.every((r) => r.success);
+    return res.status(ok ? 200 : 207).json({
+      success: ok,
+      serverId,
+      results,
+      persisted: true,
+      message: ok ? 'Warmup settings applied' : 'Warmup settings applied (some failed)',
     });
   } catch (error) {
     log.error('Failed to handle MatchZy Enhanced settings route', error as Error);
     return res.status(500).json({ success: false, error: 'Failed to handle MatchZy Enhanced settings' });
+  }
+});
+
+/**
+ * MatchZy Enhanced recovery / restore
+ *
+ * POST /api/rcon/matchzy/recover
+ * Body: { serverId: string, round: number }
+ *
+ * Sends: css_restore <round>
+ */
+router.post('/matchzy/recover', async (req: Request, res: Response) => {
+  try {
+    const { serverId, round } = req.body as { serverId?: string; round?: unknown };
+    if (!serverId) {
+      return res.status(400).json({ success: false, error: 'serverId is required' });
+    }
+
+    const n =
+      typeof round === 'number' && Number.isFinite(round) ? Math.floor(round) : Number.parseInt(String(round), 10);
+    if (!Number.isFinite(n) || n < 0) {
+      return res.status(400).json({ success: false, error: 'round must be a non-negative number' });
+    }
+
+    const cmd = `css_restore ${n}`;
+    const result = await rconService.sendCommand(serverId, cmd);
+    return res.status(result.success ? 200 : 400).json({
+      success: result.success,
+      serverId,
+      round: n,
+      command: cmd,
+      response: typeof result.response === 'string' ? result.response : undefined,
+      error: result.error ?? undefined,
+    });
+  } catch (error) {
+    log.error('Failed to recover (restore) via RCON', error as Error);
+    return res.status(500).json({ success: false, error: 'Failed to recover (restore) via RCON' });
   }
 });
 

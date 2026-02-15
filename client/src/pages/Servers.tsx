@@ -994,6 +994,24 @@ export default function Servers() {
                               sx={{ fontWeight: 700 }}
                             />
                           )}
+                          {server.heartbeatPaused === true && (
+                            <Chip
+                              label="Paused"
+                              size="small"
+                              variant="outlined"
+                              color="warning"
+                              sx={{ fontWeight: 700 }}
+                            />
+                          )}
+                          {server.heartbeatSimulated === true && (
+                            <Chip
+                              label="Simulated"
+                              size="small"
+                              variant="outlined"
+                              color="default"
+                              sx={{ fontWeight: 700 }}
+                            />
+                          )}
                           {server.heartbeatReadyForAllocation === true && (
                             <Chip
                               label="Allocatable"
@@ -1001,6 +1019,28 @@ export default function Servers() {
                               variant="outlined"
                               color="success"
                               sx={{ fontWeight: 800 }}
+                            />
+                          )}
+                          {server.heartbeatMap && (
+                            <Chip
+                              label={`Map: ${server.heartbeatMap}`}
+                              size="small"
+                              variant="outlined"
+                              color="secondary"
+                              sx={{ fontWeight: 600 }}
+                            />
+                          )}
+                          {typeof server.heartbeatConnectedPlayers === 'number' && (
+                            <Chip
+                              label={`Players: ${server.heartbeatConnectedPlayers}${
+                                typeof server.heartbeatReadyPlayers === 'number' && typeof server.heartbeatTrackingPlayers === 'number'
+                                  ? ` (ready ${server.heartbeatReadyPlayers}/${server.heartbeatTrackingPlayers})`
+                                  : ''
+                              }`}
+                              size="small"
+                              variant="outlined"
+                              color="default"
+                              sx={{ fontWeight: 600 }}
                             />
                           )}
                           {server.heartbeatPluginVersion && (

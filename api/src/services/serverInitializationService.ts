@@ -19,7 +19,12 @@
 import { db } from '../config/database';
 import { rconService } from './rconService';
 import { log } from '../utils/logger';
-import { getMatchzyEnhancedServerInitCommands, redactMatchzyCommand } from '../utils/matchzyRconCommands';
+import {
+  getMatchzyEnhancedServerInitCommands,
+  getMatchzyWarmupSettingsCommands,
+  redactMatchzyCommand,
+  type MatchzyWarmupSettings,
+} from '../utils/matchzyRconCommands';
 import { settingsService } from './settingsService';
 // NOTE: Remaining MatchZy configuration is fetched by the server itself
 // via /api/servers/:id/bootstrap to avoid RCON command churn.
@@ -126,6 +131,22 @@ class ServerInitializationService {
       const adminsUrl = await settingsService.getMatchzyAdminsUrl();
       const adminsRefreshSeconds = await settingsService.getMatchzyAdminsRefreshSeconds();
 
+      const warmupRow = await db.queryOneAsync<{ matchzy_warmup_config: string | null }>(
+        'SELECT matchzy_warmup_config FROM servers WHERE id = ?',
+        [serverId]
+      );
+      let warmupSettings: MatchzyWarmupSettings | null = null;
+      if (warmupRow?.matchzy_warmup_config) {
+        try {
+          warmupSettings = JSON.parse(warmupRow.matchzy_warmup_config) as MatchzyWarmupSettings;
+        } catch {
+          warmupSettings = null;
+          log.warn('[SERVER-INIT] Failed to parse matchzy_warmup_config; skipping warmup settings', {
+            serverId,
+          });
+        }
+      }
+
       const commands = getMatchzyEnhancedServerInitCommands({
         baseUrl,
         serverId,
@@ -134,7 +155,12 @@ class ServerInitializationService {
         adminsRefreshSeconds,
       });
 
-      for (const cmd of commands) {
+      const allCommands = [
+        ...commands,
+        ...(warmupSettings ? getMatchzyWarmupSettingsCommands(warmupSettings) : []),
+      ];
+
+      for (const cmd of allCommands) {
         const result = await rconService.sendCommand(serverId, cmd);
         if (!result.success) {
           errors.push(`${redactMatchzyCommand(cmd)}: ${result.error ?? 'no details'}`);
