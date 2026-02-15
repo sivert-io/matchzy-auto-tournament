@@ -49,14 +49,13 @@ docker compose up -d
 - Install [MatchZy Enhanced v1.3.0+](https://github.com/sivert-io/matchzy-Enhanced/releases)
 - Add server in the platform: Settings → Servers
 
-**Option C: ReadyUp (heartbeat-driven)**
-- Install the ReadyUp shim plugin on your CS2 server
+**Option C: MatchZy Enhanced (heartbeat-driven)**
+- Install the MatchZy Enhanced plugin on your CS2 server
 - Add server in the platform: Settings → Servers
 - Configure the server once via MAT (RCON):
-  - `POST /api/rcon/readyup/reconfigure` with `{ "serverId": "<id>" }`
+  - `POST /api/rcon/matchzy/reconfigure` with `{ "serverId": "<id>" }`
 - Live control (optional, via RCON):
-  - `POST /api/rcon/readyup/mode` with `{ "serverId": "<id>", "mode": "idle"|"practice" }`
-  - `POST /api/rcon/readyup/settings` with `{ "serverId": "<id>", "warmupEnabled": true|false, "warmupMessageHtml": "<html>" }`
+  - `POST /api/rcon/matchzy/mode` with `{ "serverId": "<id>", "mode": "idle"|"practice" }`
 - The allocator will only use servers that are sending a fresh heartbeat to:
   - `POST /api/servers/:serverId/heartbeat`
 

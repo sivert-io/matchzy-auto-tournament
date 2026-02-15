@@ -276,7 +276,7 @@ export const generateMatchConfig = async (
   };
 
   // Ensure CS2 overtime rules match the explicit overtime metadata.
-  // (ReadyUp consumes overtimeMode/overtimeSegments for logic, but the server still needs mp_overtime_*.)
+  // (The plugin consumes overtimeMode/overtimeSegments for logic, but the server still needs mp_overtime_*.)
   if (tournament.overtimeMode === 'enabled') {
     cvars.mp_overtime_enable = 1;
     const seg = Math.max(1, Math.min(60, tournament.overtimeSegments ?? 3));
@@ -286,8 +286,8 @@ export const generateMatchConfig = async (
     cvars.mp_overtime_enable = 0;
   }
 
-  // Reuse MatchZy Enhanced side-selection timer as the ReadyUp knife decision timer.
-  // (RU consumes this as a dedicated JSON field, not as a convar.)
+  // Reuse MatchZy Enhanced side-selection timer as the knife decision timer.
+  // (This is consumed as a dedicated JSON field, not as a convar.)
   const knifeDecisionSeconds =
     typeof matchzyEnhancedCvars.matchzy_side_selection_time === 'number'
       ? matchzyEnhancedCvars.matchzy_side_selection_time
@@ -503,7 +503,7 @@ async function generateShuffleMatchConfig(
     ...matchzyEnhancedCvars,
   };
 
-  // Reuse MatchZy Enhanced side-selection timer as the ReadyUp knife decision timer.
+  // Reuse MatchZy Enhanced side-selection timer as the knife decision timer.
   const knifeDecisionSeconds =
     typeof matchzyEnhancedCvars.matchzy_side_selection_time === 'number'
       ? matchzyEnhancedCvars.matchzy_side_selection_time

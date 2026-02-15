@@ -30,7 +30,7 @@ class MatchService {
       ...input.config,
     };
 
-    // Normalize manual-match roster shapes so stored configs match what ReadyUp expects:
+    // Normalize manual-match roster shapes so stored configs match what the plugin expects:
     // - team.players as map { steamid64: name }
     // - spectators.players as map { steamid64: name }
     // - captain_steamid64 defaulted to first roster member when missing
@@ -152,7 +152,7 @@ class MatchService {
         });
       }
 
-      // Ensure ReadyUp overtime metadata is present for manual matches.
+      // Ensure overtime metadata is present for manual matches.
       // RU uses overtimeMode/overtimeSegments/maxRounds for winner logic and will
       // otherwise default to "no overtime", which can cause matches to end as draws
       // even when mp_overtime_enable=1 is set.
@@ -193,7 +193,7 @@ class MatchService {
       ) {
         const otMax = parseFiniteNumber(config.cvars?.mp_overtime_maxrounds);
         if (otMax !== null && otMax > 0) {
-          // CS2 uses total overtime rounds; ReadyUp expects rounds per OT half.
+          // CS2 uses total overtime rounds; the config uses rounds per OT half.
           config.overtimeSegments = Math.max(1, Math.floor(otMax / 2));
         }
       }
@@ -259,7 +259,7 @@ class MatchService {
 
     // Persist matchid into the stored config now that we have the DB id.
     // This keeps the stored JSON self-contained (useful for debugging/export) and
-    // aligns with ReadyUp's requirement for a non-zero matchid.
+    // aligns with the plugin's requirement for a non-zero matchid.
     try {
       config.matchid = match.id;
       await db.updateAsync('matches', { config: JSON.stringify(config) }, 'id = ?', [match.id]);

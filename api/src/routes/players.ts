@@ -164,8 +164,8 @@ router.get('/find', async (req: Request, res: Response) => {
 router.get('/public-selection', async (_req: Request, res: Response) => {
   try {
     // Privacy guard: avoid exposing the full player directory unless explicitly enabled.
-    // This route was originally used by ReadyUp to infer admins, but ReadyUp should now
-    // use `/api/public/admins.json` instead.
+    // This route was originally used by older plugins to infer admins, but
+    // we now use `/api/public/admins.json` instead.
     const allowPublic = await settingsService.isSelfRegistrationAllowed();
     if (!allowPublic) {
       return res.status(403).json({
@@ -877,7 +877,7 @@ router.get('/:playerId/current-match', async (req: Request, res: Response) => {
     // Note: We're NOT exposing RCON password to players
     const serverPassword = null;
 
-    // Heartbeat-only model: use ReadyUp heartbeat snapshot for server status.
+    // Heartbeat-only model: use heartbeat snapshot for server status.
     let realServerStatus: ServerStatus | null = null;
     let serverStatusDescription: ReturnType<typeof serverStatusService.getStatusDescription> | null = null;
     if (match.server_id) {

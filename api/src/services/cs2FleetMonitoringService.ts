@@ -113,7 +113,7 @@ class Cs2FleetMonitoringService {
 
       for (const s of queue) {
         try {
-          // Heartbeat-only model: ReadyUp heartbeat is responsible for providing cs2BuildId.
+          // Heartbeat-only model: server heartbeat is responsible for providing cs2BuildId.
           const buildId = typeof s.cs2BuildId === 'number' && Number.isFinite(s.cs2BuildId) ? s.cs2BuildId : null;
           if (!buildId) {
             failed += 1;

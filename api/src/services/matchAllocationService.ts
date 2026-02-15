@@ -98,7 +98,10 @@ export class MatchAllocationService {
 
     // Snapshot from the heartbeat fields on the server row.
     // `online` is derived from heartbeat freshness (not from RCON).
-    const HEARTBEAT_FRESH_SECONDS = 15;
+    // Heartbeat freshness window:
+    // MatchZy Enhanced heartbeats are ~15s steady-state with occasional backoff/jitter.
+    // Keep this well above 15s to prevent false "offline" during allocation.
+    const HEARTBEAT_FRESH_SECONDS = 45;
     const now = Math.floor(Date.now() / 1000);
     const statusChecks = configuredServers.map((server) => {
       const updatedAt = server.heartbeatUpdatedAt ?? null;
@@ -264,7 +267,7 @@ export class MatchAllocationService {
   async getAvailableServers(): Promise<ServerResponse[]> {
     const enabledServers = await serverService.getAllServers(true);
     const now = Math.floor(Date.now() / 1000);
-    const HEARTBEAT_FRESH_SECONDS = 15;
+    const HEARTBEAT_FRESH_SECONDS = 45;
 
     // Filter out servers that have never heartbeated or are stale.
     const heartbeatServers = enabledServers.filter((s) => {
@@ -352,7 +355,7 @@ export class MatchAllocationService {
     try {
       // Final heartbeat check right before allocation so we don't rely on an older snapshot.
       const now = Math.floor(Date.now() / 1000);
-      const HEARTBEAT_FRESH_SECONDS = 15;
+      const HEARTBEAT_FRESH_SECONDS = 45;
       const hb = await db.queryOneAsync<{
         heartbeat_status: string | null;
         heartbeat_ready_for_allocation: number | null;
@@ -1400,7 +1403,7 @@ export class MatchAllocationService {
     for (const serverId of serverIds) {
       try {
         log.info(`[RESTART] Ending match on server: ${serverId}`);
-        const result = await rconService.sendCommand(serverId, 'ru end');
+        const result = await rconService.sendCommand(serverId, 'css_endmatch');
 
         if (result.success) {
           log.success(`[RESTART] Match ended on server ${serverId}`);
@@ -1500,9 +1503,9 @@ export class MatchAllocationService {
 
       const serverId = match.server_id;
 
-      // ReadyUp restart: keep match loaded, return to warmup gating.
-      log.info(`Restarting match ${matchSlug} on server ${serverId} (ReadyUp)`);
-      const restartResult = await rconService.sendCommand(serverId, 'ru restart');
+      // MatchZy Enhanced restart: reset server match state back to idle/warmup gating.
+      log.info(`Restarting match ${matchSlug} on server ${serverId} (MatchZy Enhanced)`);
+      const restartResult = await rconService.sendCommand(serverId, 'css_restart');
 
       if (!restartResult.success) {
         return {

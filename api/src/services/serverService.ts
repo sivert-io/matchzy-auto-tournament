@@ -82,11 +82,6 @@ export class ServerService {
         ? JSON.stringify(input.matchzyConfig)
         : null;
 
-    const readyupConfig =
-      input.readyupConfig && Object.keys(input.readyupConfig).length > 0
-        ? JSON.stringify(input.readyupConfig)
-        : null;
-
     await db.insertAsync('servers', {
       id: input.id,
       name: input.name,
@@ -95,7 +90,6 @@ export class ServerService {
       password: input.password,
       enabled: input.enabled !== undefined ? (input.enabled ? 1 : 0) : 1,
       matchzy_config: matchzyConfig,
-      readyup_config: readyupConfig,
     });
 
     log.serverCreated(input.id, input.name);
@@ -146,12 +140,6 @@ export class ServerService {
       const hasKeys =
         input.matchzyConfig && Object.keys(input.matchzyConfig).length > 0;
       updateData.matchzy_config = hasKeys ? JSON.stringify(input.matchzyConfig) : null;
-    }
-
-    if (input.readyupConfig !== undefined) {
-      const hasKeys =
-        input.readyupConfig && Object.keys(input.readyupConfig).length > 0;
-      updateData.readyup_config = hasKeys ? JSON.stringify(input.readyupConfig) : null;
     }
 
     await db.updateAsync('servers', updateData, 'id = ?', [id]);
@@ -265,16 +253,6 @@ export class ServerService {
       }
     }
 
-    let readyupConfig: ServerResponse['readyupConfig'] = null;
-    if (server.readyup_config) {
-      try {
-        readyupConfig = JSON.parse(server.readyup_config);
-      } catch {
-        readyupConfig = null;
-        log.warn('Failed to parse readyup_config for server', { id: server.id });
-      }
-    }
-
     return {
       id: server.id,
       name: server.name,
@@ -283,7 +261,6 @@ export class ServerService {
       password: server.password,
       enabled: server.enabled === 1,
       matchzyConfig,
-      readyupConfig,
       created_at: server.created_at,
       updated_at: server.updated_at,
       // Server tracking fields

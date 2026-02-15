@@ -34,12 +34,16 @@ export default function MapModal({ open, map, onClose, onSave }: MapModalProps) 
   const [id, setId] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [workshopInput, setWorkshopInput] = useState('');
+  const [workshopLoading, setWorkshopLoading] = useState(false);
+  const [workshopHint, setWorkshopHint] = useState('');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string>('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const workshopTimerRef = useRef<number | null>(null);
 
   const isEditing = !!map;
 
@@ -58,6 +62,8 @@ export default function MapModal({ open, map, onClose, onSave }: MapModalProps) 
           : getDefaultWebpUrlForId(map.id);
       setImageUrl(normalizedImageUrl || '');
       setPreviewUrl(normalizedImageUrl || '');
+      setWorkshopInput('');
+      setWorkshopHint('');
     } else {
       resetForm();
     }
@@ -69,11 +75,80 @@ export default function MapModal({ open, map, onClose, onSave }: MapModalProps) 
     setImageUrl('');
     setPreviewUrl('');
     setSelectedFile(null);
+    setWorkshopInput('');
+    setWorkshopHint('');
     setError('');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
   };
+
+  useEffect(() => {
+    if (isEditing) return;
+    if (!open) return;
+
+    if (workshopTimerRef.current) {
+      window.clearTimeout(workshopTimerRef.current);
+      workshopTimerRef.current = null;
+    }
+
+    const trimmed = workshopInput.trim();
+    if (!trimmed) {
+      setWorkshopLoading(false);
+      setWorkshopHint('');
+      return;
+    }
+
+    workshopTimerRef.current = window.setTimeout(() => {
+      void (async () => {
+        setWorkshopLoading(true);
+        setWorkshopHint('');
+        try {
+          const resp = await api.get<{
+            success: boolean;
+            workshopId?: string;
+            title?: string;
+            previewUrl?: string | null;
+            error?: string;
+          }>(`/api/steam/workshop-map?input=${encodeURIComponent(trimmed)}`);
+
+          if (!resp?.success || !resp.workshopId) {
+            setWorkshopHint(resp?.error || t('mapModal.errors.workshopLookupFailed'));
+            return;
+          }
+
+          const resolvedId = String(resp.workshopId);
+          const resolvedTitle =
+            typeof resp.title === 'string' && resp.title.trim() ? resp.title.trim() : resolvedId;
+          const resolvedPreview =
+            typeof resp.previewUrl === 'string' && resp.previewUrl.trim() ? resp.previewUrl.trim() : '';
+
+          setId(resolvedId);
+          setDisplayName(resolvedTitle);
+          if (resolvedPreview) {
+            setImageUrl(resolvedPreview);
+            setPreviewUrl(resolvedPreview);
+            setSelectedFile(null);
+            if (fileInputRef.current) fileInputRef.current.value = '';
+          }
+
+          setWorkshopHint(t('mapModal.workshop.found', { title: resolvedTitle }));
+        } catch (e) {
+          setWorkshopHint(t('mapModal.errors.workshopLookupFailed'));
+          console.error(e);
+        } finally {
+          setWorkshopLoading(false);
+        }
+      })();
+    }, 650);
+
+    return () => {
+      if (workshopTimerRef.current) {
+        window.clearTimeout(workshopTimerRef.current);
+        workshopTimerRef.current = null;
+      }
+    };
+  }, [workshopInput, isEditing, open, t]);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -277,6 +352,23 @@ export default function MapModal({ open, map, onClose, onSave }: MapModalProps) 
       </DialogTitle>
       <DialogContent sx={{ px: 3, pt: 2, pb: 1 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {!isEditing && (
+            <TextField
+              label={t('mapModal.workshop.inputLabel')}
+              value={workshopInput}
+              onChange={(e) => setWorkshopInput(e.target.value)}
+              placeholder={t('mapModal.workshop.inputPlaceholder')}
+              helperText={workshopHint || t('mapModal.workshop.inputHelper')}
+              fullWidth
+              slotProps={{
+                htmlInput: { 'data-testid': 'map-workshop-input' },
+                input: {
+                  endAdornment: workshopLoading ? <CircularProgress size={16} /> : undefined,
+                },
+              }}
+            />
+          )}
+
           <TextField
             label={t('mapModal.mapIdLabel')}
             value={id}

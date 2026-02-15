@@ -94,11 +94,11 @@ export default function Settings() {
   const [initialMatchzyDebugChatEnabled, setInitialMatchzyDebugChatEnabled] = useState(false);
   const [allowSelfRegister, setAllowSelfRegister] = useState(false);
   const [initialAllowSelfRegister, setInitialAllowSelfRegister] = useState(false);
-  // ReadyUp plugin settings
-  const [readyupAdminsUrl, setReadyupAdminsUrl] = useState<string>('');
-  const [initialReadyupAdminsUrl, setInitialReadyupAdminsUrl] = useState<string>('');
-  const [readyupAdminsRefreshSeconds, setReadyupAdminsRefreshSeconds] = useState<number>(60);
-  const [initialReadyupAdminsRefreshSeconds, setInitialReadyupAdminsRefreshSeconds] =
+  // MatchZy Enhanced plugin settings
+  const [matchzyAdminsUrl, setMatchzyAdminsUrl] = useState<string>('');
+  const [initialMatchzyAdminsUrl, setInitialMatchzyAdminsUrl] = useState<string>('');
+  const [matchzyAdminsRefreshSeconds, setMatchzyAdminsRefreshSeconds] = useState<number>(60);
+  const [initialMatchzyAdminsRefreshSeconds, setInitialMatchzyAdminsRefreshSeconds] =
     useState<number>(60);
   const [resettingAllServerInit, setResettingAllServerInit] = useState(false);
   // MatchZy core defaults
@@ -234,8 +234,8 @@ export default function Settings() {
         response.settings.allowSelfRegister !== undefined
           ? response.settings.allowSelfRegister
           : false;
-      const ruAdminsUrl = response.settings.readyupAdminsUrl ?? '';
-      const ruAdminsRefresh = response.settings.readyupAdminsRefreshSeconds ?? 60;
+      const adminsUrl = response.settings.matchzyAdminsUrl ?? '';
+      const adminsRefresh = response.settings.matchzyAdminsRefreshSeconds ?? 60;
       // MatchZy core defaults
       const autostartMode = response.settings.matchzyAutostartMode ?? 1;
       const minimumReadyRequired = response.settings.matchzyMinimumReadyRequired ?? 0;
@@ -285,10 +285,10 @@ export default function Settings() {
       setInitialMatchzyDebugChatEnabled(debugChatEnabled);
       setAllowSelfRegister(allowSelfRegisterValue);
       setInitialAllowSelfRegister(allowSelfRegisterValue);
-      setReadyupAdminsUrl(ruAdminsUrl);
-      setInitialReadyupAdminsUrl(ruAdminsUrl);
-      setReadyupAdminsRefreshSeconds(ruAdminsRefresh);
-      setInitialReadyupAdminsRefreshSeconds(ruAdminsRefresh);
+      setMatchzyAdminsUrl(adminsUrl);
+      setInitialMatchzyAdminsUrl(adminsUrl);
+      setMatchzyAdminsRefreshSeconds(adminsRefresh);
+      setInitialMatchzyAdminsRefreshSeconds(adminsRefresh);
       setRatingsEnabled(ratingsEnabledValue);
       setInitialRatingsEnabled(ratingsEnabledValue);
       setMatchzyAutostartMode(autostartMode);
@@ -386,8 +386,8 @@ export default function Settings() {
           ratingsEnabled,
           matchzyDebugChatEnabled: overrides?.matchzyDebugChatEnabled ?? matchzyDebugChatEnabled,
           allowSelfRegister,
-          readyupAdminsUrl: readyupAdminsUrl.trim() === '' ? null : readyupAdminsUrl.trim(),
-          readyupAdminsRefreshSeconds,
+          matchzyAdminsUrl: matchzyAdminsUrl.trim() === '' ? null : matchzyAdminsUrl.trim(),
+          matchzyAdminsRefreshSeconds,
           // MatchZy core defaults
           matchzyAutostartMode,
           matchzyMinimumReadyRequired,
@@ -444,8 +444,8 @@ export default function Settings() {
           response.settings.allowSelfRegister !== undefined
             ? response.settings.allowSelfRegister
             : false;
-        const newReadyupAdminsUrl = response.settings.readyupAdminsUrl ?? '';
-        const newReadyupAdminsRefreshSeconds = response.settings.readyupAdminsRefreshSeconds ?? 60;
+        const newMatchzyAdminsUrl = response.settings.matchzyAdminsUrl ?? '';
+        const newMatchzyAdminsRefreshSeconds = response.settings.matchzyAdminsRefreshSeconds ?? 60;
         const newAutostartMode = response.settings.matchzyAutostartMode ?? 1;
         const newMinimumReadyRequired = response.settings.matchzyMinimumReadyRequired ?? 0;
         const newAllowForceReady = response.settings.matchzyAllowForceReady ?? true;
@@ -501,10 +501,10 @@ export default function Settings() {
         setInitialMatchzyDebugChatEnabled(newDebugChatEnabled);
         setAllowSelfRegister(newAllowSelfRegister);
         setInitialAllowSelfRegister(newAllowSelfRegister);
-        setReadyupAdminsUrl(newReadyupAdminsUrl);
-        setInitialReadyupAdminsUrl(newReadyupAdminsUrl);
-        setReadyupAdminsRefreshSeconds(newReadyupAdminsRefreshSeconds);
-        setInitialReadyupAdminsRefreshSeconds(newReadyupAdminsRefreshSeconds);
+        setMatchzyAdminsUrl(newMatchzyAdminsUrl);
+        setInitialMatchzyAdminsUrl(newMatchzyAdminsUrl);
+        setMatchzyAdminsRefreshSeconds(newMatchzyAdminsRefreshSeconds);
+        setInitialMatchzyAdminsRefreshSeconds(newMatchzyAdminsRefreshSeconds);
         setMatchzyAutostartMode(newAutostartMode);
         setInitialMatchzyAutostartMode(newAutostartMode);
         setMatchzyMinimumReadyRequired(newMinimumReadyRequired);
@@ -604,8 +604,8 @@ export default function Settings() {
       simulateMatches,
       simulationTimescale,
       allowSelfRegister,
-      readyupAdminsUrl,
-      readyupAdminsRefreshSeconds,
+      matchzyAdminsUrl,
+      matchzyAdminsRefreshSeconds,
       matchzyAutostartMode,
       matchzyMinimumReadyRequired,
       matchzyAllowForceReady,
@@ -652,8 +652,8 @@ export default function Settings() {
       ratingsEnabled !== initialRatingsEnabled ||
       matchzyDebugChatEnabled !== initialMatchzyDebugChatEnabled ||
       allowSelfRegister !== initialAllowSelfRegister ||
-      readyupAdminsUrl !== initialReadyupAdminsUrl ||
-      readyupAdminsRefreshSeconds !== initialReadyupAdminsRefreshSeconds ||
+      matchzyAdminsUrl !== initialMatchzyAdminsUrl ||
+      matchzyAdminsRefreshSeconds !== initialMatchzyAdminsRefreshSeconds ||
       matchzyAutostartMode !== initialMatchzyAutostartMode ||
       matchzyMinimumReadyRequired !== initialMatchzyMinimumReadyRequired ||
       matchzyAllowForceReady !== initialMatchzyAllowForceReady ||
@@ -1689,8 +1689,8 @@ export default function Settings() {
                     <Stack spacing={2}>
                       <TextField
                         label={t('settingsPage.plugin.readyup.adminsUrl.label')}
-                        value={readyupAdminsUrl}
-                        onChange={(e) => setReadyupAdminsUrl(e.target.value)}
+                        value={matchzyAdminsUrl}
+                        onChange={(e) => setMatchzyAdminsUrl(e.target.value)}
                         onBlur={handleFieldBlur}
                         onKeyDown={handleFieldKeyDown}
                         helperText={t('settingsPage.plugin.readyup.adminsUrl.helper')}
@@ -1702,11 +1702,11 @@ export default function Settings() {
                       <TextField
                         label={t('settingsPage.plugin.readyup.adminsRefreshSeconds.label')}
                         type="number"
-                        value={readyupAdminsRefreshSeconds}
+                        value={matchzyAdminsRefreshSeconds}
                         onChange={(e) => {
                           const v = parseInt(e.target.value, 10);
                           if (!Number.isFinite(v)) return;
-                          setReadyupAdminsRefreshSeconds(v);
+                          setMatchzyAdminsRefreshSeconds(v);
                         }}
                         onBlur={handleFieldBlur}
                         onKeyDown={handleFieldKeyDown}

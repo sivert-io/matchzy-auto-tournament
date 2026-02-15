@@ -10,7 +10,6 @@ export interface Server {
   password: string;
   enabled: number; // PostgreSQL stores boolean as 0/1 in INTEGER column
   matchzy_config?: string | null; // JSON blob with per-server MatchZy ConVar overrides
-  readyup_config?: string | null; // JSON blob with per-server ReadyUp settings (warmup/practice)
   persistent_config_sent?: number | null; // Unix timestamp when persistent config was last sent
   plugin_version?: string | null; // MatchZy Enhanced version (e.g., "1.3.6")
   hostname?: string | null; // CS2 server hostname (from hostname convar)
@@ -43,7 +42,7 @@ export interface Server {
   /** Unix timestamp when server last successfully sent any event to /api/events. */
   server_can_reach_api_at?: number | null;
 
-  // ReadyUp heartbeat snapshot (allocator uses these; null = never seen)
+  // Heartbeat snapshot (allocator uses these; null = never seen)
   heartbeat_status?: string | null; // 'idle'|'loading'|'warmup'|'live'|'postgame'|'error'
   heartbeat_match_slug?: string | null;
   heartbeat_matchid?: number | null;
@@ -62,7 +61,6 @@ export interface CreateServerInput {
   password: string;
   enabled?: boolean; // Optional, defaults to true
   matchzyConfig?: MatchzyServerConfigInput;
-  readyupConfig?: ReadyUpServerConfigInput;
 }
 
 export interface UpdateServerInput {
@@ -72,7 +70,6 @@ export interface UpdateServerInput {
   password?: string;
   enabled?: boolean;
   matchzyConfig?: MatchzyServerConfigInput | null;
-  readyupConfig?: ReadyUpServerConfigInput | null;
 }
 
 export interface BatchUpdateInput {
@@ -88,7 +85,6 @@ export interface ServerResponse {
   password: string;
   enabled: boolean;
   matchzyConfig: MatchzyServerConfig | null;
-  readyupConfig: ReadyUpServerConfig | null;
   created_at: number;
   updated_at: number;
   // Server tracking fields (from MatchZy Enhanced server_configured event)
@@ -125,7 +121,7 @@ export interface ServerResponse {
   /** Unix timestamp when server last successfully sent any event to /api/events. */
   serverCanReachApiAt?: number | null;
 
-  // ReadyUp heartbeat snapshot
+  // Heartbeat snapshot
   heartbeatStatus?: string | null;
   heartbeatMatchSlug?: string | null;
   heartbeatMatchid?: number | null;
@@ -164,25 +160,10 @@ export interface MatchzyServerConfig {
 }
 
 /**
- * Per-server ReadyUp configuration (backend representation)
- * This drives custom warmup/practice UX, pushed live via RCON.
- */
-export interface ReadyUpServerConfig {
-  warmupEnabled?: boolean | null;
-  warmupMessageHtml?: string | null;
-  warmupRespawn?: boolean | null;
-  warmupIgnoreWinConditions?: boolean | null;
-  warmupRoundTimeMinutes?: number | null; // 1..120
-  warmupBuyAnywhere?: boolean | null;
-  warmupInfiniteAmmo?: boolean | null;
-}
-
-/**
  * Shape accepted from API clients (frontend) – same as MatchzyServerConfig for now.
  * Defined separately in case we want stricter validation later.
  */
 export type MatchzyServerConfigInput = MatchzyServerConfig;
-export type ReadyUpServerConfigInput = ReadyUpServerConfig;
 
 export interface BatchOperationResult {
   success: boolean;

@@ -51,7 +51,8 @@ function getServerReadiness(server: Server) {
   const hbAt = server.heartbeatUpdatedAt ?? null;
   const heartbeatSeen = typeof hbAt === 'number';
   const now = Math.floor(Date.now() / 1000);
-  const HEARTBEAT_FRESH_SECONDS = 20;
+  // MatchZy Enhanced heartbeats are ~15s steady-state; keep UI window above that to avoid flapping.
+  const HEARTBEAT_FRESH_SECONDS = 45;
   const heartbeatRecent = heartbeatSeen ? now - (hbAt as number) <= HEARTBEAT_FRESH_SECONDS : false;
   const heartbeatStep: StepState = !heartbeatSeen ? 'pending' : heartbeatRecent ? 'ok' : 'warn';
   const configStep: StepState = server.persistentConfigSent ? 'ok' : 'pending';
@@ -135,19 +136,19 @@ export default function Servers() {
   const [retryingServerId, setRetryingServerId] = useState<string | null>(null);
   const [retryingAll, setRetryingAll] = useState(false);
   const [bulkDeleteConfirmOpen, setBulkDeleteConfirmOpen] = useState(false);
-  const [readyupLatest, setReadyupLatest] = useState<{ version: string; releaseUrl: string } | null>(null);
+  const [matchzyLatest, setMatchzyLatest] = useState<{ version: string; releaseUrl: string } | null>(null);
   const { t } = useTranslation();
 
-  const loadReadyUpLatestVersion = useCallback(async () => {
+  const loadMatchzyLatestVersion = useCallback(async () => {
     try {
       const resp = await api.get<{
         success: boolean;
         version?: string;
         releaseUrl?: string;
-      }>('/api/readyup/latest-version');
+      }>('/api/matchzy/latest-version');
 
       if (resp?.success && typeof resp.version === 'string' && typeof resp.releaseUrl === 'string') {
-        setReadyupLatest({ version: resp.version, releaseUrl: resp.releaseUrl });
+        setMatchzyLatest({ version: resp.version, releaseUrl: resp.releaseUrl });
       }
     } catch {
       // Best-effort only; ignore failures (GitHub rate limits, offline, etc.)
@@ -172,10 +173,10 @@ export default function Servers() {
         if (!s.enabled) {
           initialStatus = 'disabled';
         } else if (!s.heartbeatUpdatedAt) {
-          initialStatus = 'ghost'; // Waiting for first RU heartbeat
+          initialStatus = 'ghost'; // Waiting for first plugin heartbeat
         } else {
           const now = Math.floor(Date.now() / 1000);
-          const HEARTBEAT_FRESH_SECONDS = 20;
+          const HEARTBEAT_FRESH_SECONDS = 45;
           const isOnline = now - (s.heartbeatUpdatedAt as number) <= HEARTBEAT_FRESH_SECONDS;
           initialStatus = isOnline ? 'online' : 'offline';
         }
@@ -470,8 +471,8 @@ export default function Servers() {
     // Always do full connectivity checks to show real server status (not cached)
     void loadServers({ autoRetry: true });
     void loadAllocationStatus();
-    void loadReadyUpLatestVersion();
-  }, [loadServers, loadAllocationStatus, loadReadyUpLatestVersion]);
+    void loadMatchzyLatestVersion();
+  }, [loadServers, loadAllocationStatus, loadMatchzyLatestVersion]);
 
   const handleOpenModal = (server?: Server) => {
     setEditingServer(server || null);
@@ -611,7 +612,7 @@ export default function Servers() {
         ghost++; // Enabled but no RU heartbeat received yet
       } else {
         const now = Math.floor(Date.now() / 1000);
-        const HEARTBEAT_FRESH_SECONDS = 20;
+        const HEARTBEAT_FRESH_SECONDS = 45;
         const secondsAgo = now - (server.heartbeatUpdatedAt as number);
         if (secondsAgo <= HEARTBEAT_FRESH_SECONDS) online++;
         else offline++;
@@ -900,11 +901,11 @@ export default function Servers() {
                             }
                           />
                           <StepRow
-                            label="ReadyUp heartbeat"
+                            label="MatchZy Enhanced heartbeat"
                             state={readiness.heartbeatStep}
                             detail={
                               readiness.heartbeatStep === 'pending'
-                                ? 'Waiting for ReadyUp to contact MAT…'
+                                ? 'Waiting for MatchZy Enhanced to contact MAT…'
                                 : readiness.heartbeatStep === 'warn'
                                 ? 'Heartbeat seen, but stale.'
                                 : 'Heartbeat OK.'
@@ -1004,14 +1005,14 @@ export default function Servers() {
                           )}
                           {server.heartbeatPluginVersion && (
                             (() => {
-                              const behind = isSemVerBehind(server.heartbeatPluginVersion, readyupLatest?.version);
+                              const behind = isSemVerBehind(server.heartbeatPluginVersion, matchzyLatest?.version);
                               const updateAvailable = behind === true;
-                              const latest = readyupLatest?.version ?? null;
-                              const releaseUrl = readyupLatest?.releaseUrl ?? null;
+                              const latest = matchzyLatest?.version ?? null;
+                              const releaseUrl = matchzyLatest?.releaseUrl ?? null;
 
                               const title = updateAvailable
-                                ? `ReadyUp update available: v${latest}`
-                                : 'ReadyUp version reported by server heartbeat';
+                                ? `MatchZy Enhanced update available: v${latest}`
+                                : 'MatchZy Enhanced version reported by server heartbeat';
 
                               return (
                                 <Tooltip
@@ -1029,7 +1030,7 @@ export default function Servers() {
                                 >
                                   <Chip
                                     icon={updateAvailable ? <UpdateIcon /> : undefined}
-                                    label={`RU v${server.heartbeatPluginVersion}`}
+                                    label={`MZ v${server.heartbeatPluginVersion}`}
                                     size="small"
                                     variant="outlined"
                                     color={updateAvailable ? 'warning' : 'default'}
@@ -1125,7 +1126,7 @@ export default function Servers() {
                         <Box display="flex" alignItems="center" gap={0.5}>
                           <UpdateIcon sx={{ fontSize: 16, color: 'text.disabled' }} />
                           <Typography variant="body2" color="text.secondary">
-                            <strong>ReadyUp:</strong> v{server.heartbeatPluginVersion}
+                            <strong>MatchZy Enhanced:</strong> v{server.heartbeatPluginVersion}
                           </Typography>
                         </Box>
                       )}

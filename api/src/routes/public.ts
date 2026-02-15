@@ -7,10 +7,10 @@ const router = Router();
 /**
  * GET /api/public/admins.json
  *
- * Public, minimal admin list for ReadyUp.
+ * Public, minimal admin list for MatchZy Enhanced.
  * Returns only SteamID64 values (no player directory leakage).
  *
- * Shape A (preferred by ReadyUp): { "admins": ["7656...", ...] }
+ * Shape: { "admins": ["7656...", ...] }
  */
 router.get('/admins.json', async (_req: Request, res: Response) => {
   try {
@@ -23,7 +23,7 @@ router.get('/admins.json', async (_req: Request, res: Response) => {
       .map((r) => String(r.id))
       .filter((id) => id && /^7656\d{13}$/.test(id));
 
-    // Cache briefly to reduce RU polling load; refresh interval is configured on the RU side.
+    // Cache briefly to reduce polling load; refresh interval is configured on the server side.
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     res.setHeader('Cache-Control', 'public, max-age=30');
 

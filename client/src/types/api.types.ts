@@ -63,7 +63,7 @@ export interface Server {
   matchzyDbLastSeenAt?: number | null;
   /** Unix timestamp when server last successfully sent any event to /api/events. */
   serverCanReachApiAt?: number | null;
-  // ReadyUp heartbeat snapshot (source of truth)
+  // Heartbeat snapshot (source of truth)
   heartbeatStatus?: string | null;
   heartbeatMatchSlug?: string | null;
   heartbeatMatchid?: number | null;
@@ -342,9 +342,9 @@ export interface SettingsResponse extends ApiResponse {
     matchzyDebugChatEnabled?: boolean;
     ratingsEnabled?: boolean;
     allowSelfRegister?: boolean;
-    // ReadyUp plugin settings
-    readyupAdminsUrl?: string | null;
-    readyupAdminsRefreshSeconds?: number;
+    // MatchZy Enhanced plugin settings
+    matchzyAdminsUrl?: string | null;
+    matchzyAdminsRefreshSeconds?: number;
     // MatchZy core defaults
     matchzyAutostartMode?: 0 | 1 | 2;
     matchzyMinimumReadyRequired?: number;

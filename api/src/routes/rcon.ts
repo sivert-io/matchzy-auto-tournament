@@ -6,7 +6,6 @@ import { log } from '../utils/logger';
 import { getWebhookBaseUrl } from '../utils/urlHelper';
 import { getMatchZyWebhookCommands } from '../utils/matchzyRconCommands';
 import { getLastServerTestEvent } from '../services/serverConnectivityService';
-import { serverService } from '../services/serverService';
 
 const router = Router();
 
@@ -14,19 +13,19 @@ const router = Router();
 router.use(requireAuth);
 
 /**
- * ReadyUp configuration (heartbeat-driven server tracking)
+ * MatchZy Enhanced configuration (heartbeat-driven server tracking)
  *
- * POST /api/rcon/readyup/reconfigure
+ * POST /api/rcon/matchzy/reconfigure
  * Body: { serverId: string }
  *
- * Sends minimal one-time configuration to ReadyUp via RCON:
- * - ru_match_token <SERVER_TOKEN>
- * - ru_webhook_url <BASE>/api/events
- * - ru_heartbeat_url <BASE>/api/servers/:serverId/heartbeat
+ * Sends minimal one-time configuration to MatchZy Enhanced via RCON:
+ * - matchzy_heartbeat_url <BASE>/api/servers/:serverId/heartbeat
+ * - matchzy_match_token <SERVER_TOKEN>
+ * - matchzy_webhook_url <BASE>/api/events
  *
- * Note: URLs must NOT be quoted for ReadyUp's simple parser.
+ * Note: URLs/tokens should not need quoting.
  */
-router.post('/readyup/reconfigure', async (req: Request, res: Response) => {
+router.post('/matchzy/reconfigure', async (req: Request, res: Response) => {
   try {
     const { serverId } = req.body as { serverId?: string };
     if (!serverId) {
@@ -43,9 +42,9 @@ router.post('/readyup/reconfigure', async (req: Request, res: Response) => {
     const eventsBaseUrl = `${baseUrl}/api/events`;
 
     const cmds = [
-      `ru_match_token ${serverToken}`,
-      `ru_webhook_url ${eventsBaseUrl}`,
-      `ru_heartbeat_url ${heartbeatUrl}`,
+      `matchzy_heartbeat_url ${heartbeatUrl}`,
+      `matchzy_match_token ${serverToken}`,
+      `matchzy_webhook_url ${eventsBaseUrl}`,
     ];
 
     const results: Array<{ success: boolean; command: string; error?: string; response?: string }> = [];
@@ -72,22 +71,22 @@ router.post('/readyup/reconfigure', async (req: Request, res: Response) => {
       eventsBaseUrl,
       results,
       message: ok
-        ? 'ReadyUp reconfigure commands sent'
-        : 'ReadyUp reconfigure commands sent (some failed)',
+        ? 'MatchZy Enhanced reconfigure commands sent'
+        : 'MatchZy Enhanced reconfigure commands sent (some failed)',
     });
   } catch (error) {
-    log.error('Failed to reconfigure ReadyUp via RCON', error as Error);
-    return res.status(500).json({ success: false, error: 'Failed to reconfigure ReadyUp' });
+    log.error('Failed to reconfigure MatchZy Enhanced via RCON', error as Error);
+    return res.status(500).json({ success: false, error: 'Failed to reconfigure MatchZy Enhanced' });
   }
 });
 
 /**
- * ReadyUp live mode switch
+ * MatchZy Enhanced mode switch
  *
- * POST /api/rcon/readyup/mode
+ * POST /api/rcon/matchzy/mode
  * Body: { serverId: string, mode: 'idle'|'practice' }
  */
-router.post('/readyup/mode', async (req: Request, res: Response) => {
+router.post('/matchzy/mode', async (req: Request, res: Response) => {
   try {
     const { serverId, mode } = req.body as { serverId?: string; mode?: string };
     if (!serverId) {
@@ -97,7 +96,7 @@ router.post('/readyup/mode', async (req: Request, res: Response) => {
       return res.status(400).json({ success: false, error: "mode must be 'idle' or 'practice'" });
     }
 
-    const cmd = `ru mode ${mode}`;
+    const cmd = `matchzy_autostart_mode ${mode === 'idle' ? '0' : '2'}`;
     const result = await rconService.sendCommand(serverId, cmd);
     return res.status(result.success ? 200 : 400).json({
       success: result.success,
@@ -108,25 +107,25 @@ router.post('/readyup/mode', async (req: Request, res: Response) => {
       error: result.error ?? undefined,
     });
   } catch (error) {
-    log.error('Failed to set ReadyUp mode via RCON', error as Error);
-    return res.status(500).json({ success: false, error: 'Failed to set ReadyUp mode' });
+    log.error('Failed to set MatchZy Enhanced mode via RCON', error as Error);
+    return res.status(500).json({ success: false, error: 'Failed to set MatchZy Enhanced mode' });
   }
 });
 
 /**
- * ReadyUp convenience endpoints (mode wrappers)
+ * MatchZy Enhanced convenience endpoints (mode wrappers)
  *
- * POST /api/rcon/readyup/practice
+ * POST /api/rcon/matchzy/practice
  * Body: { serverId: string }
  */
-router.post('/readyup/practice', async (req: Request, res: Response) => {
+router.post('/matchzy/practice', async (req: Request, res: Response) => {
   try {
     const { serverId } = req.body as { serverId?: string };
     if (!serverId) {
       return res.status(400).json({ success: false, error: 'serverId is required' });
     }
 
-    const cmd = 'ru mode practice';
+    const cmd = 'matchzy_autostart_mode 2';
     const result = await rconService.sendCommand(serverId, cmd);
     return res.status(result.success ? 200 : 400).json({
       success: result.success,
@@ -137,23 +136,23 @@ router.post('/readyup/practice', async (req: Request, res: Response) => {
       error: result.error ?? undefined,
     });
   } catch (error) {
-    log.error('Failed to set ReadyUp practice via RCON', error as Error);
-    return res.status(500).json({ success: false, error: 'Failed to set ReadyUp practice' });
+    log.error('Failed to set MatchZy Enhanced practice via RCON', error as Error);
+    return res.status(500).json({ success: false, error: 'Failed to set MatchZy Enhanced practice' });
   }
 });
 
 /**
- * POST /api/rcon/readyup/idle
+ * POST /api/rcon/matchzy/idle
  * Body: { serverId: string }
  */
-router.post('/readyup/idle', async (req: Request, res: Response) => {
+router.post('/matchzy/idle', async (req: Request, res: Response) => {
   try {
     const { serverId } = req.body as { serverId?: string };
     if (!serverId) {
       return res.status(400).json({ success: false, error: 'serverId is required' });
     }
 
-    const cmd = 'ru mode idle';
+    const cmd = 'matchzy_autostart_mode 0';
     const result = await rconService.sendCommand(serverId, cmd);
     return res.status(result.success ? 200 : 400).json({
       success: result.success,
@@ -164,134 +163,29 @@ router.post('/readyup/idle', async (req: Request, res: Response) => {
       error: result.error ?? undefined,
     });
   } catch (error) {
-    log.error('Failed to set ReadyUp idle via RCON', error as Error);
-    return res.status(500).json({ success: false, error: 'Failed to set ReadyUp idle' });
+    log.error('Failed to set MatchZy Enhanced idle via RCON', error as Error);
+    return res.status(500).json({ success: false, error: 'Failed to set MatchZy Enhanced idle' });
   }
 });
 
 /**
- * ReadyUp warmup/practice settings push (and persist in DB)
+ * MatchZy Enhanced warmup/practice settings
  *
- * POST /api/rcon/readyup/settings
- * Body: { serverId: string, warmupEnabled?: boolean, warmupMessageHtml?: string|null }
+ * MatchZy Enhanced does not implement MAT-controlled warmup convars. This endpoint is
+ * intentionally not supported.
+ *
+ * POST /api/rcon/matchzy/settings
  */
-router.post('/readyup/settings', async (req: Request, res: Response) => {
+router.post('/matchzy/settings', async (_req: Request, res: Response) => {
   try {
-    const {
-      serverId,
-      warmupEnabled,
-      warmupMessageHtml,
-      warmupRespawn,
-      warmupIgnoreWinConditions,
-      warmupRoundTimeMinutes,
-      warmupBuyAnywhere,
-      warmupInfiniteAmmo,
-    } = req.body as {
-      serverId?: string;
-      warmupEnabled?: boolean;
-      warmupMessageHtml?: string | null;
-      warmupRespawn?: boolean;
-      warmupIgnoreWinConditions?: boolean;
-      warmupRoundTimeMinutes?: number;
-      warmupBuyAnywhere?: boolean;
-      warmupInfiniteAmmo?: boolean;
-    };
-    if (!serverId) {
-      return res.status(400).json({ success: false, error: 'serverId is required' });
-    }
-
-    const existing = await serverService.getServerById(serverId);
-    if (!existing) {
-      return res.status(404).json({ success: false, error: `Server '${serverId}' not found` });
-    }
-
-    const nextConfig = {
-      ...(existing.readyupConfig ?? {}),
-    } as Record<string, unknown>;
-
-    const cmds: string[] = [];
-    if (typeof warmupEnabled === 'boolean') {
-      nextConfig.warmupEnabled = warmupEnabled;
-      cmds.push(`ru_warmup_enable ${warmupEnabled ? '1' : '0'}`);
-    }
-
-    if (warmupMessageHtml !== undefined) {
-      if (warmupMessageHtml === null || warmupMessageHtml === '' || warmupMessageHtml === 'default') {
-        nextConfig.warmupMessageHtml = null;
-        cmds.push('ru_warmup_message_html default');
-      } else {
-        // ReadyUp reads "rest of line" as the HTML string; keep it single-line for RCON.
-        const htmlOneLine = String(warmupMessageHtml).replace(/[\r\n]+/g, ' ').trim();
-        nextConfig.warmupMessageHtml = htmlOneLine;
-        cmds.push(`ru_warmup_message_html ${htmlOneLine}`);
-      }
-    }
-
-    if (typeof warmupRespawn === 'boolean') {
-      nextConfig.warmupRespawn = warmupRespawn;
-      cmds.push(`ru_warmup_respawn ${warmupRespawn ? '1' : '0'}`);
-    }
-
-    if (typeof warmupIgnoreWinConditions === 'boolean') {
-      nextConfig.warmupIgnoreWinConditions = warmupIgnoreWinConditions;
-      cmds.push(`ru_warmup_ignore_win_conditions ${warmupIgnoreWinConditions ? '1' : '0'}`);
-    }
-
-    if (typeof warmupRoundTimeMinutes === 'number') {
-      const m = Math.max(1, Math.min(120, Math.floor(warmupRoundTimeMinutes)));
-      nextConfig.warmupRoundTimeMinutes = m;
-      cmds.push(`ru_warmup_roundtime_minutes ${m}`);
-    }
-
-    if (typeof warmupBuyAnywhere === 'boolean') {
-      nextConfig.warmupBuyAnywhere = warmupBuyAnywhere;
-      cmds.push(`ru_warmup_buy_anywhere ${warmupBuyAnywhere ? '1' : '0'}`);
-    }
-
-    if (typeof warmupInfiniteAmmo === 'boolean') {
-      nextConfig.warmupInfiniteAmmo = warmupInfiniteAmmo;
-      cmds.push(`ru_warmup_infinite_ammo ${warmupInfiniteAmmo ? '1' : '0'}`);
-    }
-
-    // Persist settings (even if caller only wants to push one key).
-    await serverService.updateServer(serverId, {
-      readyupConfig: nextConfig,
-    });
-
-    const results: Array<{ success: boolean; command: string; error?: string; response?: string }> = [];
-    for (const cmd of cmds) {
-      // eslint-disable-next-line no-await-in-loop
-      const result = await rconService.sendCommand(serverId, cmd);
-      results.push({
-        success: result.success,
-        command: cmd,
-        error: result.error ?? undefined,
-        response: typeof result.response === 'string' ? result.response : undefined,
-      });
-      // eslint-disable-next-line no-await-in-loop
-      await new Promise((r) => setTimeout(r, 120));
-    }
-
-    const ok = results.every((r) => r.success);
-    return res.status(ok ? 200 : 207).json({
-      success: ok,
-      serverId,
-      pushed: {
-        warmupEnabled,
-        warmupMessageHtml,
-        warmupRespawn,
-        warmupIgnoreWinConditions,
-        warmupRoundTimeMinutes,
-        warmupBuyAnywhere,
-        warmupInfiniteAmmo,
-      },
-      commands: cmds,
-      results,
-      readyupConfig: nextConfig,
+    return res.status(501).json({
+      success: false,
+      error:
+        'Warmup settings are not supported for MatchZy Enhanced.',
     });
   } catch (error) {
-    log.error('Failed to push ReadyUp settings via RCON', error as Error);
-    return res.status(500).json({ success: false, error: 'Failed to push ReadyUp settings' });
+    log.error('Failed to handle MatchZy Enhanced settings route', error as Error);
+    return res.status(500).json({ success: false, error: 'Failed to handle MatchZy Enhanced settings' });
   }
 });
 

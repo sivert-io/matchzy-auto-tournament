@@ -19,7 +19,7 @@
 import { db } from '../config/database';
 import { rconService } from './rconService';
 import { log } from '../utils/logger';
-import { getReadyUpServerInitCommands, redactReadyUpCommand } from '../utils/readyupRconCommands';
+import { getMatchzyEnhancedServerInitCommands, redactMatchzyCommand } from '../utils/matchzyRconCommands';
 import { settingsService } from './settingsService';
 // NOTE: Remaining MatchZy configuration is fetched by the server itself
 // via /api/servers/:id/bootstrap to avoid RCON command churn.
@@ -120,24 +120,24 @@ class ServerInitializationService {
         };
       }
 
-      log.info(`[SERVER-INIT] Initializing server ${serverId} for ReadyUp`);
+      log.info(`[SERVER-INIT] Initializing server ${serverId} for MatchZy Enhanced`);
       const errors: string[] = [];
 
-      const readyupAdminsUrl = await settingsService.getReadyUpAdminsUrl();
-      const readyupAdminsRefreshSeconds = await settingsService.getReadyUpAdminsRefreshSeconds();
+      const adminsUrl = await settingsService.getMatchzyAdminsUrl();
+      const adminsRefreshSeconds = await settingsService.getMatchzyAdminsRefreshSeconds();
 
-      const commands = getReadyUpServerInitCommands({
+      const commands = getMatchzyEnhancedServerInitCommands({
         baseUrl,
         serverId,
         serverToken,
-        adminsUrl: readyupAdminsUrl,
-        adminsRefreshSeconds: readyupAdminsRefreshSeconds,
+        adminsUrl,
+        adminsRefreshSeconds,
       });
 
       for (const cmd of commands) {
         const result = await rconService.sendCommand(serverId, cmd);
         if (!result.success) {
-          errors.push(`${redactReadyUpCommand(cmd)}: ${result.error ?? 'no details'}`);
+          errors.push(`${redactMatchzyCommand(cmd)}: ${result.error ?? 'no details'}`);
         }
       }
 
@@ -157,7 +157,7 @@ class ServerInitializationService {
         };
       }
 
-      log.success(`[SERVER-INIT] Server ${serverId} ReadyUp configuration applied`);
+      log.success(`[SERVER-INIT] Server ${serverId} MatchZy Enhanced configuration applied`);
       return {
         success: true,
         alreadyInitialized: false,

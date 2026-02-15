@@ -13,7 +13,9 @@ class HealthMonitoringService {
   private intervalId: NodeJS.Timeout | null = null;
   private inProgress = false;
   private readonly CHECK_INTERVAL_MS = 60 * 1000; // Check every 1 minute
-  private readonly HEARTBEAT_RECENT_THRESHOLD_SECONDS = 5 * 60; // "recent events" window
+  // "recent events" window used for reachability tracking/debounce.
+  // Keep this generous; this service is not used for UI "online now" chips.
+  private readonly HEARTBEAT_RECENT_THRESHOLD_SECONDS = 5 * 60;
   private readonly OFFLINE_FAILURE_THRESHOLD = 3; // Only mark offline after N consecutive failures
   private readonly CS2_FLEET_CHECK_INTERVAL_SECONDS = 5 * 60; // 5 minutes
   private lastCs2FleetCheckAt: number | null = null; // unix seconds
@@ -71,7 +73,7 @@ class HealthMonitoringService {
       let markedOffline = 0;
 
       for (const server of servers) {
-        // Heartbeat-only model: ReadyUp heartbeat is the single “online/offline” signal.
+        // Heartbeat-only model: server heartbeat is the single “online/offline” signal.
         const lastSeen = server.heartbeatUpdatedAt ?? null;
         const heartbeatRecent =
           typeof lastSeen === 'number' && now - lastSeen <= this.HEARTBEAT_RECENT_THRESHOLD_SECONDS;

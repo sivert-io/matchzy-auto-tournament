@@ -197,7 +197,7 @@ export function useCreateManualMatchModal({
         }
       >();
       const now = Math.floor(Date.now() / 1000);
-      const HEARTBEAT_FRESH_SECONDS = 20;
+      const HEARTBEAT_FRESH_SECONDS = 45;
       list.forEach((server) => {
         const hb = server.heartbeatUpdatedAt ?? null;
         const isOnline = typeof hb === 'number' && now - hb <= HEARTBEAT_FRESH_SECONDS;
@@ -465,9 +465,9 @@ export function useCreateManualMatchModal({
         cvars.mp_overtime_maxrounds = overtimeMaxRounds;
       }
 
-      // ReadyUp uses explicit overtime metadata (overtimeMode/overtimeSegments) for
-      // winner/series logic. Mirror the cvars above so RU behavior matches what
-      // the server is configured to do.
+      // The plugin uses explicit overtime metadata (overtimeMode/overtimeSegments) for
+      // winner/series logic. Mirror the cvars above so behavior matches what the
+      // server is configured to do.
       const overtimeMode: 'enabled' | 'disabled' = overtimeEnabled ? 'enabled' : 'disabled';
       const overtimeSegments =
         overtimeEnabled && typeof overtimeMaxRounds === 'number' && overtimeMaxRounds > 0
@@ -498,7 +498,7 @@ export function useCreateManualMatchModal({
         maplist: maplistForConfig,
         num_maps: requiredMaps,
         players_per_team: safePlayersPerTeam,
-        // Explicit round-limit metadata for ReadyUp (preferred over deriving from cvars).
+        // Explicit round-limit metadata (preferred over deriving from cvars).
         maxRounds: safeMaxRounds,
         overtimeMode,
         overtimeSegments: overtimeEnabled ? overtimeSegments : undefined,
@@ -511,7 +511,7 @@ export function useCreateManualMatchModal({
           ...(team1Mode === 'existing' && existingTeam1 && existingTeam1.tag
             ? { tag: existingTeam1.tag }
             : {}),
-          // ReadyUp expects a steamid64->name map for `players`.
+          // The plugin expects a steamid64->name map for `players`.
           players: team1PlayersMap,
           // Default captain to first roster member when present.
           captain_steamid64: pickFirstSteamId(team1PlayersMap),

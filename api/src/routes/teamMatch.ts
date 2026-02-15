@@ -288,7 +288,7 @@ router.get('/:teamId/match', async (req: Request, res: Response) => {
     // If you want to add join passwords, add a separate field to servers table
     const serverPassword = null;
 
-    // Heartbeat-only model: use ReadyUp heartbeat snapshot for server status.
+    // Heartbeat-only model: use heartbeat snapshot for server status.
     let realServerStatus: ServerStatus | null = null;
     let serverStatusDescription: ReturnType<typeof serverStatusService.getStatusDescription> | null = null;
     if (match.server_id) {

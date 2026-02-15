@@ -271,7 +271,7 @@ export interface MatchUnpausedEvent extends MatchZyBaseEvent {
   pause_duration: number;
 }
 
-// ReadyUp extension: match forfeit (captain-only)
+// Plugin extension: match forfeit (captain-only)
 export interface MatchForfeitEvent extends MatchZyBaseEvent {
   event: 'match_forfeit';
   map_number: number;

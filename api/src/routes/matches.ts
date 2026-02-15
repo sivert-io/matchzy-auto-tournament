@@ -454,7 +454,7 @@ router.get('/:slug.json', async (req: Request, res: Response) => {
               },
       };
 
-      // ReadyUp knife + captain-only commands require captains in match config.
+      // Knife + captain-only commands require captains in match config.
       // For manual matches, default captain_steamid64 to the first roster SteamID when missing.
       const pickFirstSteamId = (players: MatchPlayer): string | null => {
         const keys = Object.keys(players);

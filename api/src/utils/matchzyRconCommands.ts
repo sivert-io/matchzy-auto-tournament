@@ -3,6 +3,61 @@
  */
 
 /**
+ * Get RCON commands to configure MatchZy Enhanced's MAT integration.
+ *
+ * These ConVars are persisted by the plugin, so they only need to be sent once
+ * (or when they change).
+ */
+export function getMatchzyEnhancedServerInitCommands(options: {
+  baseUrl: string;
+  serverId: string;
+  serverToken: string;
+  adminsUrl?: string | null;
+  adminsRefreshSeconds?: number | null;
+}): string[] {
+  const base = options.baseUrl.replace(/\/+$/, '');
+  const heartbeatUrl = `${base}/api/servers/${options.serverId}/heartbeat`;
+
+  const resolvedAdminsUrl = resolveMaybeRelativeUrl(base, options.adminsUrl);
+  const refreshSeconds =
+    typeof options.adminsRefreshSeconds === 'number' && Number.isFinite(options.adminsRefreshSeconds)
+      ? Math.floor(options.adminsRefreshSeconds)
+      : null;
+
+  // Order matters:
+  // - heartbeat_url first so ME can derive server_id/bootstrap/report endpoints
+  // - match_token next so auth headers/bootstrap token are configured
+  // - webhook_url last so any first events include server_id
+  return [
+    `matchzy_heartbeat_url ${heartbeatUrl}`,
+    `matchzy_match_token ${options.serverToken}`,
+    `matchzy_webhook_url ${base}/api/events`,
+    // Admins integration (optional; ME may ignore if not implemented)
+    ...(resolvedAdminsUrl ? [`matchzy_admins_url ${resolvedAdminsUrl}`] : ['matchzy_admins_url clear']),
+    ...(refreshSeconds !== null ? [`matchzy_admins_refresh_seconds ${refreshSeconds}`] : []),
+  ];
+}
+
+/**
+ * Get RCON commands to load a match via MatchZy Enhanced.
+ */
+export function getMatchzyEnhancedLoadMatchCommands(options: {
+  baseUrl: string;
+  matchSlug: string;
+}): string[] {
+  const base = options.baseUrl.replace(/\/+$/, '');
+  const configUrl = `${base}/api/matches/${options.matchSlug}.json`;
+  return [`matchzy match load ${configUrl}`];
+}
+
+export function redactMatchzyCommand(command: string): string {
+  if (command.startsWith('matchzy_match_token ')) return 'matchzy_match_token REDACTED';
+  if (command.startsWith('matchzy_report_token ')) return 'matchzy_report_token REDACTED';
+  if (command.startsWith('matchzy_bootstrap_token ')) return 'matchzy_bootstrap_token REDACTED';
+  return command;
+}
+
+/**
  * Get RCON commands to configure MatchZy webhook
  * Uses match slug in URL path for better event tracking
  */
@@ -233,6 +288,14 @@ export function getMatchZyServerConfigCommands(config: {
   }
 
   return commands;
+}
+
+function resolveMaybeRelativeUrl(baseUrlNoTrailingSlash: string, maybeUrl?: string | null): string | null {
+  if (!maybeUrl) return null;
+  const trimmed = maybeUrl.trim();
+  if (!trimmed) return null;
+  if (trimmed.startsWith('/')) return `${baseUrlNoTrailingSlash}${trimmed}`;
+  return trimmed;
 }
 
 /**

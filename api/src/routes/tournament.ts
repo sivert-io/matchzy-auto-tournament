@@ -110,7 +110,7 @@ async function preflightServersUpToDateForTournamentStart(): Promise<
     }
 
     try {
-      // Heartbeat-only model: CS2 build ID is provided by RU heartbeat.
+      // Heartbeat-only model: CS2 build ID is provided by the server heartbeat.
       const installedBuildId =
         typeof server.cs2BuildId === 'number' && Number.isFinite(server.cs2BuildId)
           ? server.cs2BuildId
@@ -122,7 +122,7 @@ async function preflightServersUpToDateForTournamentStart(): Promise<
           name: server.name,
           installedBuildId: null,
           requiredVersion: null,
-          reason: 'No CS2 build ID reported by ReadyUp heartbeat yet',
+          reason: 'No CS2 build ID reported by server heartbeat yet',
         });
         continue;
       }

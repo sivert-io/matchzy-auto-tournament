@@ -45,11 +45,11 @@ export interface MatchConfig {
   overtimeMode?: 'enabled' | 'disabled';
   overtimeSegments?: number;
   /**
-   * ReadyUp-only knife decider side-pick timeout (seconds).
+   * Knife decider side-pick timeout (seconds).
    *
-   * When a map uses `map_sides: "knife"`, ReadyUp will run a knife decider and
+   * When a map uses `map_sides: "knife"`, the plugin will run a knife decider and
    * then wait this many seconds for the knife-winning captain (or an admin) to
-   * pick sides. If they do not, ReadyUp will auto-pick randomly.
+   * pick sides. If they do not, it will auto-pick randomly.
    */
   knifeDecisionSeconds?: number;
   /**

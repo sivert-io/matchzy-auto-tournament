@@ -77,7 +77,12 @@ router.get('/:id/status', async (req: Request, res: Response) => {
     const nowSec = Math.floor(Date.now() / 1000);
     const heartbeatUpdatedAt = server.heartbeatUpdatedAt ?? null;
     const heartbeatSeen = heartbeatUpdatedAt !== null;
-    const heartbeatRecent = heartbeatUpdatedAt !== null ? nowSec - heartbeatUpdatedAt <= 20 : false;
+    // Heartbeat freshness window:
+    // MatchZy Enhanced sends heartbeats every ~15s steady-state, with short backoff on failures.
+    // Keep this comfortably above 15s so servers don't flap offline due to a single miss.
+    const HEARTBEAT_FRESH_SECONDS = 45;
+    const heartbeatRecent =
+      heartbeatUpdatedAt !== null ? nowSec - heartbeatUpdatedAt <= HEARTBEAT_FRESH_SECONDS : false;
 
     // Heartbeat-only model: online/offline is derived strictly from RU heartbeat freshness.
     const online = heartbeatRecent;

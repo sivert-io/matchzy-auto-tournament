@@ -162,7 +162,7 @@ export function DashboardStats({ showOnboarding }: DashboardStatsProps) {
 
   const serverStatusCount: ServerStatusCount = useMemo(() => {
     const now = Math.floor(Date.now() / 1000);
-    const HEARTBEAT_FRESH_SECONDS = 20;
+    const HEARTBEAT_FRESH_SECONDS = 45;
     const counts: ServerStatusCount = { online: 0, offline: 0, total: servers.length };
     servers.forEach((server) => {
       const hb = server.heartbeatUpdatedAt ?? null;

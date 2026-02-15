@@ -122,19 +122,19 @@
     },
     "plugin": {
       "readyup": {
-        "title": "ReadyUp 插件",
-        "description": "配置 ReadyUp 插件级别设置（管理员来源、刷新周期与重新下发初始化配置）。",
+        "title": "MatchZy Enhanced 插件",
+        "description": "配置 MatchZy Enhanced 插件级别设置（管理员来源、刷新周期与重新下发初始化配置）。",
         "adminsUrl": {
           "label": "管理员 JSON URL（MAT）",
-          "helper": "推荐使用相对路径：/api/public/admins.json。ReadyUp 将从 MAT 拉取该 JSON，并将 admins 列表中的 SteamID 视为管理员。"
+          "helper": "推荐使用相对路径：/api/public/admins.json。MatchZy Enhanced 将从 MAT 拉取该 JSON，并将 admins 列表中的 SteamID 视为管理员。"
         },
         "adminsRefreshSeconds": {
           "label": "管理员刷新间隔（秒）",
-          "helper": "ReadyUp 从 MAT 刷新管理员列表的周期。范围：10–3600。"
+          "helper": "MatchZy Enhanced 从 MAT 刷新管理员列表的周期。范围：10–3600。"
         },
         "reconfigure": {
           "title": "重新下发到所有服务器",
-          "description": "修改插件设置后，重置初始化状态，使服务器在下次加载比赛时收到更新后的 ReadyUp 配置。",
+          "description": "修改插件设置后，重置初始化状态，使服务器在下次加载比赛时收到更新后的插件配置。",
           "button": "重置所有服务器初始化",
           "success": "已重置所有服务器初始化。配置将在下次加载比赛时重新下发。",
           "error": "重置所有服务器初始化失败"

@@ -35,9 +35,15 @@
     "titleEdit": "Edit Map",
     "mapIdLabel": "Map ID",
     "mapIdPlaceholder": "de_dust2",
-    "mapIdHelper": "Lowercase letters, numbers, and underscores only (de_dust2)",
+    "mapIdHelper": "Use a map name (de_dust2) or a Workshop numeric ID (e.g. 1234567890).",
     "displayNameLabel": "Display Name",
     "displayNamePlaceholder": "Dust II",
+    "workshop": {
+      "inputLabel": "Steam Workshop URL or ID",
+      "inputPlaceholder": "https://steamcommunity.com/sharedfiles/filedetails/?id=1234567890",
+      "inputHelper": "Paste a Workshop URL or numeric ID. MAT will auto-fetch the title and preview image.",
+      "found": "Found: {{title}}"
+    },
     "mapImageLabel": "Map Image",
     "uploadButton": "Upload Image",
     "fetchFromGitHub": "Fetch from GitHub",
@@ -55,6 +61,7 @@
       "fetchImageFailed": "Failed to fetch image. You can upload an image instead.",
       "imageNotFound": "Image not found for {{id}}. You can upload an image instead.",
       "uploadFailed": "Failed to upload image",
+      "workshopLookupFailed": "Failed to fetch Workshop map details",
       "saveFailed": "Failed to save map"
     },
     "success": {

@@ -547,7 +547,7 @@ export class RconService {
       this.sendCommand(serverId, `kick "${playerName}"`),
 
     /**
-     * Execute MatchZy command (legacy; ReadyUp migration)
+     * Execute MatchZy command (legacy)
      */
     matchzy: (serverId: string, matchzyCommand: string) =>
       this.sendCommand(serverId, `matchzy_${matchzyCommand}`),
@@ -559,20 +559,20 @@ export class RconService {
       this.sendCommand(serverId, `matchzy_loadmatch_url "${configUrl}"`),
 
     /**
-     * End current match (ReadyUp)
+     * End current match (MatchZy Enhanced)
      */
-    endMatch: (serverId: string) => this.sendCommand(serverId, 'ru end'),
+    endMatch: (serverId: string) => this.sendCommand(serverId, 'css_endmatch'),
 
     /**
-     * Load a match config (ReadyUp)
+     * Load a match config (MatchZy Enhanced)
      */
     loadMatchRu: (serverId: string, configUrl: string) =>
-      this.sendCommand(serverId, `ru match load ${configUrl}`),
+      this.sendCommand(serverId, `matchzy match load ${configUrl}`),
 
     /**
-     * Restart match back to warmup gating (ReadyUp)
+     * Restart match back to warmup gating (MatchZy Enhanced)
      */
-    restartMatchRu: (serverId: string) => this.sendCommand(serverId, 'ru restart'),
+    restartMatchRu: (serverId: string) => this.sendCommand(serverId, 'css_restart'),
 
     /**
      * Pause match (MatchZy)

@@ -10,7 +10,7 @@ import { log } from '../utils/logger';
 import type { DbMatchRow } from '../types/database.types';
 import { matchLiveStatsService } from './matchLiveStatsService';
 import { serverInitializationService } from './serverInitializationService';
-import { getReadyUpLoadMatchCommands, redactReadyUpCommand } from '../utils/readyupRconCommands';
+import { getMatchzyEnhancedLoadMatchCommands, redactMatchzyCommand } from '../utils/matchzyRconCommands';
 
 export interface MatchLoadOptions {
   skipWebhook?: boolean; // Deprecated: Webhooks are now persistent, this param is ignored
@@ -56,8 +56,7 @@ export async function loadMatchOnServer(
     // Helper to add small delay between RCON commands to avoid overwhelming the server
     const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-    // STEP 1: Initialize server with persistent configuration (if not already done)
-    // ReadyUp: configure base webhook URL, heartbeat URL, and bearer token.
+    // STEP 1: Initialize server with persistent configuration (if not already done).
     const initResult = await serverInitializationService.initializeServer(serverId, baseUrl);
     if (!initResult.success && !initResult.alreadyInitialized) {
       log.error(`Cannot load match ${matchSlug}: server initialization failed`, {
@@ -80,16 +79,16 @@ export async function loadMatchOnServer(
     await delay(500);
 
     // Load match on server
-    log.success(`✅ Server ${serverId} ready. Loading match ${matchSlug} via ReadyUp`);
-    log.info(`Sending load command to ${serverId}: ru match load ${configUrl}`);
+    log.success(`✅ Server ${serverId} ready. Loading match ${matchSlug} via MatchZy Enhanced`);
+    log.info(`Sending load command to ${serverId}: matchzy match load ${configUrl}`);
 
-    const ruCmds = getReadyUpLoadMatchCommands({ baseUrl, matchSlug });
+    const cmds = getMatchzyEnhancedLoadMatchCommands({ baseUrl, matchSlug });
     let loadOk = true;
-    for (const cmd of ruCmds) {
+    for (const cmd of cmds) {
       const r = await rconService.sendCommand(serverId, cmd);
       results.push({
         success: r.success,
-        command: redactReadyUpCommand(cmd),
+        command: redactMatchzyCommand(cmd),
         error: r.error,
       });
       if (!r.success) loadOk = false;
@@ -99,7 +98,7 @@ export async function loadMatchOnServer(
     if (!loadOk) {
       return {
         success: false,
-        error: 'ReadyUp failed to load the match (see rconResponses)',
+        error: 'MatchZy Enhanced failed to load the match (see rconResponses)',
         webhookConfigured: false,
         demoUploadConfigured: false,
         rconResponses: results,
