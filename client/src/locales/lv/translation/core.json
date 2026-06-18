@@ -1,0 +1,68 @@
+{
+  "app": {
+    "name": "Matchzy Auto Tournament"
+  },
+  "nav": {
+    "matchStatus": {
+      "yourTurnVeto": "Jūsu kārta veto",
+      "waitingVeto": "Gaida veto",
+      "waitingServer": "Gaida serveri",
+      "matchReady": "Spēle gatava – pievienoties",
+      "snackbarOpponentMoved": "Pretinieks izdarīja savu gājienu"
+    },
+    "dashboard": "Pārskats",
+    "tournament": "Turnīrs",
+    "bracket": "Turnīra tabula",
+    "matches": "Spēles",
+    "teams": "Komandas",
+    "players": "Spēlētāji",
+    "leaderboard": "Līderu tabula",
+    "servers": "Serveri",
+    "maps": "Kartes un karšu pūli",
+    "templates": "Veidnes",
+    "eloTemplates": "ELO aprēķins",
+    "adminTools": "Administrēšanas rīki",
+    "publicLinks": "Publiskās saites",
+    "devTools": "Izstrādātāja rīki",
+    "settings": "Iestatījumi",
+    "resourcesSection": "Resursi",
+    "tournamentSection": "Turnīrs",
+    "configurationSection": "Konfigurācija",
+    "systemSection": "Sistēma",
+    "documentation": "Dokumentācija",
+    "signOut": "Izrakstīties",
+    "linkSteam": "Saistīt Steam",
+    "myProfile": "Mans profils",
+    "goToAdminDashboard": "Doties uz administrēšanas paneli",
+    "goToAdminDashboardHint": "Jūs skatāt savu spēlētāja profilu. Atveriet administrēšanas paneli, lai pārvaldītu komandas, turnīrus un serverus."
+  },
+  "layout": {
+    "webhookNotConfigured": "Webhook URL nav konfigurēts. Spēles un serveri nevar saņemt notikumus, kamēr tas nav iestatīts.",
+    "openSettings": "Atvērt iestatījumus",
+    "pageTitle": {
+      "dashboard": "Pārskats",
+      "tournament": "Turnīrs",
+      "bracket": "Turnīra tabula",
+      "matches": "Spēles",
+      "teams": "Komandas",
+      "players": "Spēlētāji",
+      "servers": "Serveri",
+      "maps": "Kartes un karšu pūli",
+      "templates": "Veidnes",
+      "eloTemplates": "ELO aprēķins",
+      "adminTools": "Administrēšanas rīki",
+      "settings": "Iestatījumi",
+      "devTools": "Izstrādes rīki",
+      "publicLinks": "Publiskās saites"
+    }
+  },
+  "language": {
+    "label": "Valoda",
+    "en": "Angļu",
+    "zhCN": "Ķīniešu (vienkāršotā)"
+  },
+  "common": {
+    "delete": "Dzēst",
+    "cancel": "Atcelt"
+  }
+}

@@ -231,7 +231,7 @@ export default function Bracket() {
 
   // Set dynamic page title
   useEffect(() => {
-    document.title = t('layout.pageTitle.bracket');
+    document.title = `FULM: ${t('layout.pageTitle.bracket')}`;
   }, [t]);
 
   // For shuffle tournaments, we always render the list view (no visual bracket).

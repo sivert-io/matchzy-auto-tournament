@@ -11,7 +11,9 @@ LICENSE
 # Node modules (will be installed in container)
 node_modules
 .npm
-.yarn
+.yarn/cache
+.yarn/unplugged
+.yarn/install-state.gz
 .pnpm-store
 
 # Environment files (should be provided at runtime)

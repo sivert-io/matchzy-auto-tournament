@@ -12,6 +12,7 @@ import pt from './locales/pt-PT/translation';
 import pl from './locales/pl/translation';
 import nl from './locales/nl/translation';
 import nb from './locales/nb/translation';
+import lv from './locales/lv/translation';
 import bracketsViewerEn from './locales/brackets-viewer/en.json';
 import bracketsViewerZhCN from './locales/brackets-viewer/zh-CN.json';
 import bracketsViewerFr from './locales/brackets-viewer/fr.json';
@@ -65,6 +66,10 @@ export const resources = {
     translation: nb,
     bracketsViewer: bracketsViewerEn, // Use English as fallback for brackets-viewer
   },
+  lv: {
+    translation: lv,
+    bracketsViewer: bracketsViewerEn,
+  },
 } as const;
 
 const i18n = createInstance();
@@ -75,7 +80,7 @@ void i18n
   .init({
     resources,
     fallbackLng: 'en',
-    supportedLngs: ['en', 'fr', 'de', 'es', 'it', 'pt-PT', 'pl', 'nl', 'zh-CN', 'nb'],
+    supportedLngs: ['en', 'fr', 'de', 'es', 'it', 'pt-PT', 'pl', 'nl', 'zh-CN', 'nb', 'lv'],
     ns: ['translation', 'bracketsViewer'],
     defaultNS,
     interpolation: {

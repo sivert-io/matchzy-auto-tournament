@@ -30,6 +30,7 @@ import FastForwardIcon from '@mui/icons-material/FastForward';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CloseIcon from '@mui/icons-material/Close';
 import CancelIcon from '@mui/icons-material/Cancel';
+import DnsIcon from '@mui/icons-material/Dns';
 import { api } from '../../utils/api';
 
 interface AdminMatchControlsProps {
@@ -94,7 +95,7 @@ const AdminMatchControls: React.FC<AdminMatchControlsProps> = ({
 
   const executeAction = async (action: string, params?: Record<string, unknown>) => {
     // Force cancel doesn't require a server - it works even when server is offline
-    if (!serverId && action !== 'forceCancel' && action !== 'restartMatch' && action !== 'reallocateServer') {
+    if (!serverId && action !== 'forceCancel' && action !== 'restartMatch' && action !== 'reallocateServer' && action !== 'allocateServer') {
       showError('No server assigned to this match');
       return;
     }
@@ -116,6 +117,7 @@ const AdminMatchControls: React.FC<AdminMatchControlsProps> = ({
         broadcast: '/api/rcon/say',
         restartMatch: matchSlug ? `/api/matches/${matchSlug}/restart` : '',
         reallocateServer: matchSlug ? `/api/matches/${matchSlug}/reallocate` : '',
+        allocateServer: matchSlug ? `/api/matches/${matchSlug}/allocate` : '',
         forceCancel: matchSlug ? `/api/matches/${matchSlug}/force-cancel` : '',
       };
 
@@ -127,7 +129,9 @@ const AdminMatchControls: React.FC<AdminMatchControlsProps> = ({
       const requestBody =
         action === 'restartMatch' || action === 'forceCancel' || action === 'reallocateServer'
           ? {}
-          : { serverId, ...params };
+          : action === 'allocateServer'
+            ? { ...params }
+            : { serverId, ...params };
       const response = await api.post(endpoint, requestBody);
 
       const messages: Record<string, string> = {
@@ -144,6 +148,7 @@ const AdminMatchControls: React.FC<AdminMatchControlsProps> = ({
         broadcast: 'Message sent to server',
         restartMatch: 'Match restarted (ended and reloaded)',
         reallocateServer: 'Match reallocated to a different server',
+        allocateServer: 'Server allocated to match',
         forceCancel: 'Match cancelled successfully',
       };
 
@@ -207,13 +212,16 @@ const AdminMatchControls: React.FC<AdminMatchControlsProps> = ({
   const handleInputConfirm = () => {
     if (inputDialog.action) {
       const params: Record<string, unknown> = {};
-      
+
       if (inputDialog.action === 'restoreBackup') {
         params.round = Number(inputValue);
       } else if (inputDialog.action === 'addTime') {
         params.seconds = Number(inputValue);
       } else if (inputDialog.action === 'broadcast') {
         params.message = String(inputValue);
+      } else if (inputDialog.action === 'allocateServer') {
+        const val = String(inputValue).trim();
+        if (val) params.serverId = val;
       }
 
       executeAction(inputDialog.action, params);
@@ -419,6 +427,32 @@ const AdminMatchControls: React.FC<AdminMatchControlsProps> = ({
                         disabled={executing}
                       >
                         Restart Match
+                      </Button>
+                    </span>
+                  </Tooltip>
+                </Grid>
+              )}
+              {matchSlug && (matchStatus === 'ready' || matchStatus === 'pending') && !serverId && (
+                <Grid size={{ xs: 6, sm: 4 }}>
+                  <Tooltip title={matchStatus === 'pending' ? 'Skip veto and allocate a server to this match' : 'Find an available server and allocate it to this match'} arrow>
+                    <span>
+                      <Button
+                        fullWidth
+                        variant="contained"
+                        color="primary"
+                        startIcon={<DnsIcon />}
+                        onClick={() =>
+                          handleInputActionClick(
+                            'allocateServer',
+                            'Allocate Server',
+                            'Server ID (leave empty for auto-select)',
+                            'text',
+                            ''
+                          )
+                        }
+                        disabled={executing}
+                      >
+                        Allocate Server
                       </Button>
                     </span>
                   </Tooltip>
@@ -635,7 +669,7 @@ const AdminMatchControls: React.FC<AdminMatchControlsProps> = ({
             onClick={handleInputConfirm}
             variant="contained"
             color="primary"
-            disabled={executing || !inputValue}
+            disabled={executing || (!inputValue && inputDialog.action !== 'allocateServer')}
           >
             Execute
           </Button>

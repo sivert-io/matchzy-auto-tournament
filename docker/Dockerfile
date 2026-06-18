@@ -10,8 +10,7 @@ RUN apk add --no-cache \
     g++
 
 # Enable Yarn via corepack (Node.js 20+)
-# Use classic Yarn 1.x to match the repo's lockfile format
-RUN corepack enable && corepack prepare yarn@1.22.19 --activate
+RUN corepack enable
 
 # -------------------------------------------------------------------
 # deps: install ALL dependencies (prod + dev) for building
@@ -19,21 +18,13 @@ RUN corepack enable && corepack prepare yarn@1.22.19 --activate
 FROM base AS deps
 
 # Only copy files needed to resolve dependencies (root + workspace manifests)
-COPY package.json yarn.lock ./
+COPY package.json yarn.lock .yarnrc.yml ./
 COPY api/package.json ./api/package.json
 COPY client/package.json ./client/package.json
 
 # Install all dependencies (including devDeps for build tools) for all workspaces
-# Add retry logic for network issues, especially in ARM64 emulation
-# Use verbose output to show progress during long installs
 RUN echo "Starting yarn install (this may take several minutes)..." && \
-    yarn install --network-timeout 300000 --network-concurrency 1 --verbose || \
-    (echo "⚠️  First yarn install attempt failed, retrying in 5 seconds..." && sleep 5 && \
-     echo "Retry attempt 1/2..." && \
-     yarn install --network-timeout 300000 --network-concurrency 1 --verbose) || \
-    (echo "⚠️  Second yarn install attempt failed, retrying in 10 seconds..." && sleep 10 && \
-     echo "Retry attempt 2/2 (final attempt)..." && \
-     yarn install --network-timeout 300000 --network-concurrency 1 --verbose) && \
+    yarn install && \
     echo "✅ yarn install completed successfully"
 
 # -------------------------------------------------------------------

@@ -426,6 +426,27 @@ export const MatchCard: React.FC<MatchCardProps> = ({
               </Tooltip>
             )}
           </Box>
+
+          {/* Per-map round scores for completed matches */}
+          {match.status === 'completed' && match.mapResults && match.mapResults.length > 0 && (
+            <Box sx={{ mt: 1, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+              {match.mapResults.map((result, i) => (
+                <Chip
+                  key={i}
+                  label={`${result.mapName || `Map ${i + 1}`}: ${result.team1Score}–${result.team2Score}`}
+                  size="small"
+                  variant="outlined"
+                  sx={{
+                    fontSize: '0.7rem',
+                    height: 22,
+                    fontFamily: '"Rajdhani", sans-serif',
+                    fontWeight: 600,
+                    color: result.team1Score > result.team2Score ? 'primary.main' : result.team2Score > result.team1Score ? 'error.main' : 'text.secondary',
+                  }}
+                />
+              ))}
+            </Box>
+          )}
         </Stack>
       </CardContent>
     </Card>

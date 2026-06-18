@@ -1,0 +1,35 @@
+{
+  "notFound": {
+    "title": "Lapa nav atrasta",
+    "description": "Lapa, kuru meklējat, neeksistē vai ir pārvietota.",
+    "backToDashboard": "Atpakaļ uz vadības paneli",
+    "publicPlayerSearch": "Publiskā spēlētāju meklēšana"
+  },
+  "publicLinks": {
+    "intro": "Ātrās saites uz publiskajām lapām, kuras varat kopīgot ar spēlētājiem un skatītājiem.",
+    "common": {
+      "publicUrl": "Publiskais URL",
+      "urlPattern": "URL šablons"
+    },
+    "playerSearch": {
+      "title": "Publiskā spēlētāju meklēšana",
+      "description": "Meklējiet reģistrētus spēlētājus pēc vārda, Steam ID vai profila URL.",
+      "openButton": "Atvērt /player"
+    },
+    "playerProfile": {
+      "title": "Spēlētāja profils (publisks)",
+      "description": "Tiešā saite uz spēlētāja profilu pēc Steam ID64. Spēlētāji, kuri ir pierakstījušies ar Steam, var izmantot arī saiti \"Mans profils\" augšējā joslā, nevis kopēt URL.",
+      "requiresSteamId": "Nepieciešams Steam ID64"
+    },
+    "teamMatch": {
+      "title": "Komandas spēles lapa (publiska)",
+      "description": "Tikai lasāms skats uz komandas pašreizējo vai pēdējo spēli.",
+      "openExample": "Atvērt komandas piemēru"
+    },
+    "tournamentLeaderboard": {
+      "title": "Turnīra rezultātu tabula (publiska)",
+      "description": "Publiskā pozīciju lapa pašreizējam turnīram (pēc noklusējuma 1. turnīrs).",
+      "open": "Atvērt rezultātu tabulu"
+    }
+  }
+}

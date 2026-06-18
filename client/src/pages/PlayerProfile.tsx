@@ -213,6 +213,17 @@ function normalizeMatchForPlayerView(rawMatch: TeamMatchInfo, steamId: string): 
   };
 }
 
+function getFaceitColor(level: number): string {
+  const colors: Record<number, string> = {
+    1: '#EEE', 2: '#1CE400', 3: '#1CE400',
+    4: '#FFC800', 5: '#FFC800', 6: '#FFC800',
+    7: '#FF6309', 8: '#FF6309',
+    9: '#EE4B2B', 10: '#EE4B2B',
+  };
+  return colors[level] || '#666';
+}
+
+
 export default function PlayerProfile() {
   type AssignedTeam = {
     id: string;
@@ -232,6 +243,7 @@ export default function PlayerProfile() {
   const [assignedTeam, setAssignedTeam] = useState<AssignedTeam | null>(null);
   const [currentTournamentStatus, setCurrentTournamentStatus] = useState<string>('setup');
   const [selectedMatch, setSelectedMatch] = useState<MatchHistoryEntry | null>(null);
+  const [faceit, setFaceit] = useState<{ faceitElo: number; skillLevel: number; nickname: string } | null>(null);
   const [allocationCountdown, setAllocationCountdown] = useState<{
     nextAllocationInSeconds: number | null;
     gracePeriodSeconds: number;
@@ -354,7 +366,14 @@ export default function PlayerProfile() {
       }
 
       setPlayer(summaryResponse.player);
-      document.title = `${summaryResponse.player.name} - Player Profile`;
+      document.title = `FULM: ${summaryResponse.player.name}`;
+
+      // Fetch FACEIT data
+      try {
+        const faceitRes = await api.fetch(`/api/lobbies/faceit/players?steamIds=${steamId}`);
+        if (faceitRes.players?.[steamId]) setFaceit(faceitRes.players[steamId]);
+        else setFaceit(null);
+      } catch { setFaceit(null); }
 
       // Resolve team membership (used for "My Team" even when player has no current match)
       try {
@@ -982,6 +1001,21 @@ export default function PlayerProfile() {
                           sx={{ fontWeight: 600, fontSize: '1rem' }}
                         />
                       </Tooltip>
+                      {faceit && (
+                        <Tooltip title={`FACEIT: ${faceit.nickname} · ELO ${faceit.faceitElo}`}>
+                          <Box display="flex" alignItems="center" gap={0.75}>
+                            <Box
+                              component="img"
+                              src={`https://cdn-frontend.faceit-cdn.net/web/static/media/assets_images_skill-icons_skill_level_${faceit.skillLevel}_svg.svg`}
+                              alt={`Level ${faceit.skillLevel}`}
+                              sx={{ width: 32, height: 32 }}
+                            />
+                            <Typography fontWeight={700} sx={{ fontFamily: '"Rajdhani", sans-serif', fontSize: '1.1rem', color: getFaceitColor(faceit.skillLevel) }}>
+                              {faceit.faceitElo}
+                            </Typography>
+                          </Box>
+                        </Tooltip>
+                      )}
                       {latestTournamentId && (
                         <Button
                           variant="outlined"

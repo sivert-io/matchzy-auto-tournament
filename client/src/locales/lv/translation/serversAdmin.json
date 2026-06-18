@@ -1,0 +1,190 @@
+{
+  "serversPage": {
+    "title": "Serveri",
+    "headerActions": {
+      "refreshChecking": "Pārbauda...",
+      "refresh": "Atjaunot statusu",
+      "retryUninitialized": "Atkārtot neinicializētos ({{count}})",
+      "retryUninitializedChecking": "Atkārto...",
+      "batchAdd": "Pievienot vairākus",
+      "select": "Atlasīt",
+      "done": "Pabeigt atlasi",
+      "selectAll": "Atlasīt visus",
+      "unselectAll": "Noņemt atlasi visiem",
+      "deleteSelected": "Dzēst atlasītos",
+      "addServer": "Pievienot serveri"
+    },
+    "empty": {
+      "title": "Nav reģistrētu serveru",
+      "description": "Pievienojiet savu pirmo CS2 serveri, lai sāktu turnīru",
+      "addServer": "Pievienot serveri",
+      "batchAdd": "Vai pievienot vairākus serverus vienlaikus"
+    },
+    "allocation": {
+      "title": "Serveru piešķiršana",
+      "loading": "Ielādē piešķiršanas statusu...",
+      "empty": "Nav pieejamu piešķiršanas datu.",
+      "available": "Pieejamie serveri:",
+      "waiting": "Spēles, kas gaida serverus:",
+      "nextPass": "Nākamā piešķiršanas kārta pēc ~{{seconds}}s",
+      "cooldownLabel": "Atdzišana",
+      "cooldownDescription": "Nesen pabeigta spēle – atdzišanas periodā, lai demo faili var augšupielādēties un serveris var pilnībā atiestatīties (aptuveni 2 minūtes).",
+      "cooldownEta": "Gatavs pēc ~{{seconds}}s"
+    },
+    "statusChip": {
+      "checking": "Pārbauda...",
+      "disabled": "Atspējots",
+      "offline": "Bezsaistē",
+      "onlineOk": "Tiešsaistē (API ↔ Serveris OK)",
+      "onlineRconOnly": "Tiešsaistē (tikai RCON)",
+      "rconFailed": "RCON neizdevās",
+      "onlineTesting": "Tiešsaistē (testē)"
+    },
+    "ipBanned": {
+      "title": "Serveris, iespējams, ir bloķējis mūsu IP",
+      "message": "Serveris ir sasniedzams, bet atkārtoti noraida RCON autentifikāciju. Tas var norādīt uz IP bloķēšanu. Ja RCON parole ir pareiza, lūdzu, pārbaudiet servera bloķēšanas sarakstu un atbloķējiet mūsu IP adresi."
+    },
+    "connectivity": {
+      "apiToServer": "MAT API → CS2 Server",
+      "serverToApi": "Server → API (/api/events)",
+      "unreachable": "Nesasniedzams",
+      "reachable": "Sasniedzams",
+      "unknown": "Nezināms",
+      "loading": "Ielādē…",
+      "pluginLabel": "MatchZy:"
+    },
+    "currentMatch": {
+      "view": "Skatīt spēli",
+      "loading": "Ielādē...",
+      "queuedPrefix": "Rindā: "
+    },
+    "labels": {
+      "host": "Resursdators:",
+      "port": "Ports:",
+      "id": "ID:"
+    },
+    "errors": {
+      "loadServers": "Neizdevās ielādēt serverus",
+      "noMatchesForServer": "Šim serverim nav atrasta neviena spēle",
+      "loadCurrentMatch": "Neizdevās ielādēt pašreizējo spēli šim serverim",
+      "bulkDelete": "Neizdevās dzēst vienu vai vairākus serverus"
+    },
+    "bulkDelete": {
+      "title": "Dzēst serverus",
+      "message": "Vai tiešām vēlaties dzēst {{count}} server{{suffix}}? Šo darbību nevar atsaukt."
+    },
+    "autoConfig": {
+      "configuring": "Konfigurē jaunos serverus (sūta MatchZy konfigurāciju caur RCON)…",
+      "done": "Jaunie serveri konfigurēti. Atjaunina statusu…"
+    },
+    "checkServerLogs": "Pārbaudiet spēles servera konsoli/žurnālus, lai redzētu, vai MatchZy saņem konfigurāciju un sūta notikumus."
+  },
+  "serverModal": {
+    "titleCreate": "Pievienot serveri",
+    "titleEdit": "Rediģēt serveri",
+    "serverNameLabel": "Servera nosaukums",
+    "serverNamePlaceholder": "Spēles serveris #1",
+    "hostLabel": "Resursdators / IP adrese",
+    "hostPlaceholder": "192.168.1.100",
+    "portLabel": "Ports",
+    "portPlaceholder": "27015",
+    "rconPasswordLabel": "RCON parole",
+    "rconPasswordPlaceholder": "jūsu-rcon-parole",
+    "rconPasswordHelper": "Parole RCON piekļuvei serverim",
+    "enabledLabel": "Serveris iespējots",
+    "enabledHelper": "Atspējoti serveri netiks izmantoti spēlēm",
+    "overridesTitle": "MatchZy pārrakstīšanas (neobligāti)",
+    "overridesDescription": "Šie iestatījumi pārraksta globālos MatchZy noklusējumus tikai šim serverim. Atstājiet tukšu, lai izmantotu globālās vērtības no Iestatījumiem.",
+    "chatPrefixLabel": "Čata prefiksa pārrakstīšana",
+    "chatPrefixPlaceholder": "[{Green}MAT{Default}]",
+    "chatPrefixHelper": "Pārraksta matchzy_chat_prefix šajā serverī (neobligāti)",
+    "adminChatPrefixLabel": "Administratora čata prefiksa pārrakstīšana",
+    "adminChatPrefixPlaceholder": "[{Red}ADMIN{Default}]",
+    "adminChatPrefixHelper": "Pārraksta matchzy_admin_chat_prefix šajā serverī (neobligāti)",
+    "knifeOverrideLabel": "Naža raunds iespējots pēc noklusējuma (pārrakstīšana)",
+    "knifeOverrideHelper": "Ja iestatīts, pārraksta matchzy_knife_enabled_default šim serverim. Atstājiet nenoteiktā stāvoklī, lai izmantotu globālo noklusējumu.",
+    "testConnectivity": "Testēt savienojamību",
+    "testingConnectivity": "Testē savienojamību…",
+    "connectivity": {
+      "apiToServer": "MAT API → CS2 Server:",
+      "serverToApi": "Server → API (/api/events):",
+      "reachable": "Sasniedzams",
+      "unreachable": "Nesasniedzams"
+    },
+    "errors": {
+      "nameRequired": "Servera nosaukums ir obligāts",
+      "hostRequired": "Resursdators ir obligāts",
+      "portInvalid": "Portam jābūt derīgam skaitlim no 1 līdz 65535",
+      "rconRequired": "RCON parole ir obligāta",
+      "idGenerationFailed": "Nevar ģenerēt servera ID. Lūdzu, pielāgojiet servera nosaukumu.",
+      "duplicateId": "Servera nosaukums rada dublikātu ID '{{id}}'. Izvēlieties citu nosaukumu.",
+      "duplicateHostPort": "Serveris ar resursdatoru:portu '{{host}}:{{port}}' jau eksistē (ID: {{id}}, Nosaukums: {{name}})",
+      "testConnectionSaveFirst": "Vispirms saglabājiet serveri, pirms testēt savienojumu",
+      "testConnectionFailed": "Neizdevās testēt savienojumu",
+      "saveFailed": "Neizdevās saglabāt serveri",
+      "deleteFailed": "Neizdevās dzēst serveri",
+      "rconReachableApiUnreachable": "Mēs varam sasniegt serveri caur RCON, bet serveris nevarēja sasniegt API galapunktu (testa notikums nav saņemts).",
+      "serverOffline": "Serveris šķiet bezsaistē vai nesasniedzams caur RCON."
+    },
+    "success": {
+      "connectivityOk": "Divvirzienu savienojamība apstiprināta: serveris ir tiešsaistē un var sasniegt API.",
+      "serverUpdated": "Serveris veiksmīgi atjaunināts",
+      "serverCreated": "Serveris veiksmīgi izveidots",
+      "serverDeleted": "Serveris veiksmīgi dzēsts"
+    },
+    "buttons": {
+      "deleteServer": "Dzēst serveri",
+      "cancel": "Atcelt",
+      "saving": "Saglabā...",
+      "saveChanges": "Saglabāt izmaiņas",
+      "addServer": "Pievienot serveri"
+    },
+    "confirmDelete": {
+      "title": "Dzēst serveri",
+      "message": "Vai tiešām vēlaties dzēst \"{{name}}\"? Šo darbību nevar atsaukt."
+    }
+  },
+  "adminToolsPage": {
+    "title": "Administratora rīki",
+    "description": "Izpildiet biežākās spēļu un serveru darbības savos CS2 serveros. Ātrās darbības tiek rādītas vispirms, papildu rīki pieejami zemāk.",
+    "header": {
+      "refresh": "Atjaunot serverus"
+    },
+    "serverSelect": {
+      "label": "Mērķa serveris(-i)",
+      "allServersChip": "Visi serveri",
+      "allServersDescription": "Izpildīt visos {{count}} serveros(-os)",
+      "sendStatus": "Nosūtīt statusu"
+    },
+    "command": {
+      "execute": "Izpildīt"
+    },
+    "customRconWarning": "Brīdinājums: Lietojiet piesardzīgi!",
+    "results": {
+      "title": "Izpildes rezultāti",
+      "successChip": "✓ Veiksmīgi",
+      "failedChip": "✗ Neizdevās",
+      "errorPrefix": "Kļūda:"
+    },
+    "quickActions": {
+      "title": "Ātrās darbības"
+    },
+    "advanced": {
+      "title": "Papildu rīki"
+    },
+    "noServers": "Nav atrasts neviens iespējots serveris. Lūdzu, pievienojiet un iespējojiet serverus Serveru lapā.",
+    "recovery": {
+      "title": "Spēļu atjaunošana",
+      "description": "Ja API vai serveri tika restartēti turnīra laikā un spēļu stāvoklis izskatās nesinhronizēts (piemēram, spēles iestrēgušas iesildīšanās režīmā vai trūkst tiešraides rezultātu), varat manuāli aktivizēt atjaunošanas procesu. Tas pieprasīs visiem serveriem pašreizējo spēles atskaiti, atkārtoti sinhronizēs rezultātus/fāzes un, kur iespējams, pārkonfigurēs Webhook un demo augšupielādes.",
+      "button": "Palaist spēļu atjaunošanu tagad",
+      "success": "Spēļu atjaunošana pabeigta.",
+      "error": "Spēļu atjaunošana neizdevās.",
+      "failedTrigger": "Neizdevās aktivizēt spēļu atjaunošanu. Lūdzu, mēģiniet vēlreiz."
+    },
+    "monitoring": {
+      "title": "Uzraudzība un žurnāli",
+      "serverEvents": "Servera notikumu monitors",
+      "appLogs": "Lietojumprogrammas žurnāli"
+    }
+  }
+}

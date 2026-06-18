@@ -340,7 +340,7 @@ export default function Settings() {
   }, [showError, t]);
 
   useEffect(() => {
-    document.title = t('settingsPage.title');
+    document.title = `FULM: ${t('settingsPage.title')}`;
     void fetchSettings();
   }, [fetchSettings, t]);
 

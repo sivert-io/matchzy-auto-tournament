@@ -1120,7 +1120,7 @@ const InnerMatchDetailsModal: React.FC<Required<MatchDetailsModalProps>> = ({
               </AccordionDetails>
             </Accordion>
 
-            {match.serverId && (match.status === 'live' || match.status === 'loaded') && (
+            {(match.status === 'pending' || match.status === 'ready' || match.status === 'live' || match.status === 'loaded') && (
               <Accordion sx={{ mt: 2 }}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography variant="subtitle1" fontWeight={600}>
@@ -1140,22 +1140,26 @@ const InnerMatchDetailsModal: React.FC<Required<MatchDetailsModalProps>> = ({
                       setError(message);
                     }}
                   />
-                  <Divider sx={{ my: 2 }} />
-                  <AddBackupPlayer
-                    matchSlug={match.slug}
-                    serverId={match.serverId}
-                    team1Name={match.team1?.name || 'Team 1'}
-                    team2Name={match.team2?.name || 'Team 2'}
-                    existingTeam1Players={match.config?.team1?.players || []}
-                    existingTeam2Players={match.config?.team2?.players || []}
-                    onSuccess={(message) => {
-                      setSuccess(message);
-                      setTimeout(() => setSuccess(''), 3000);
-                    }}
-                    onError={(message) => {
-                      setError(message);
-                    }}
-                  />
+                  {match.serverId && (
+                    <>
+                      <Divider sx={{ my: 2 }} />
+                      <AddBackupPlayer
+                        matchSlug={match.slug}
+                        serverId={match.serverId}
+                        team1Name={match.team1?.name || 'Team 1'}
+                        team2Name={match.team2?.name || 'Team 2'}
+                        existingTeam1Players={match.config?.team1?.players || []}
+                        existingTeam2Players={match.config?.team2?.players || []}
+                        onSuccess={(message) => {
+                          setSuccess(message);
+                          setTimeout(() => setSuccess(''), 3000);
+                        }}
+                        onError={(message) => {
+                          setError(message);
+                        }}
+                      />
+                    </>
+                  )}
                 </AccordionDetails>
               </Accordion>
             )}

@@ -1,72 +1,67 @@
 import { createTheme } from '@mui/material/styles';
-import type {} from '@mui/lab/themeAugmentation';
 
-// Material Design 3 Purple theme with maximum roundness
+// CS2/Valve esports orange theme
 export const theme = createTheme({
-  palette: {
+ palette: {
     mode: 'dark',
     primary: {
-      main: '#D0BCFF', // M3 Purple
-      light: '#E8DEF8',
-      dark: '#9C88D6',
-      contrastText: '#381E72',
+      main: '#FF7A1A', // CS2/Valve orange
+      light: '#FFA361',
+      dark: '#C85A0F',
+      contrastText: '#241200',
     },
     secondary: {
-      main: '#CCC2DC',
-      light: '#E8DEF8',
-      dark: '#9F91B0',
-      contrastText: '#332D41',
+      main: '#8C95A3', // Steel gray-blue, tactical HUD feel
+      light: '#B0B7C2',
+      dark: '#666E79',
+      contrastText: '#1A1D21',
     },
     error: {
-      // Softer, more purple-leaning danger to better match the primary palette
-      main: '#FFB4AB',
-      light: '#FFDAD6',
-      dark: '#C7756A',
-      contrastText: '#31111D',
+      main: '#FF6B57', // Warm red-orange, distinct from primary
+      light: '#FF9A89',
+      dark: '#C24A3A',
+      contrastText: '#2B0D06',
     },
     warning: {
-      // Warm but muted amber that plays nicer with the purple background
-      main: '#F7CF9A',
-      light: '#FFE2B8',
-      dark: '#BC8F5A',
-      contrastText: '#2B1700',
+      main: '#F2C94C',
+      light: '#F7DC85',
+      dark: '#BC9A2E',
+      contrastText: '#2B1F00',
     },
     info: {
-      main: '#A8C7FA',
-      light: '#D3E3FD',
-      dark: '#7F99C4',
-      contrastText: '#003258',
+      main: '#5B9BD5',
+      light: '#8FBCE3',
+      dark: '#3D74A8',
+      contrastText: '#001A2E',
     },
     success: {
-      // Mint-teal accent tuned to feel softer next to the purple primary
-      main: '#A6E3D0',
-      light: '#C9F0E1',
-      dark: '#5AAEA1',
-      contrastText: '#00382F',
+      main: '#5FBF8F',
+      light: '#8FD4AE',
+      dark: '#3D9468',
+      contrastText: '#00261A',
     },
     background: {
-      default: '#1C1B1F', // M3 Dark background
-      paper: '#2B2930',
-      // Surface levels for Material Design 3 elevation system (0-7)
-      surface0: '#2B2930', // Level 0 (same as paper)
-      surface1: '#332D3C', // Level 1
-      surface2: '#3A3542', // Level 2
-      surface3: '#2B2930', // Level 3 (default container)
-      surface4: '#25232A', // Level 4
-      surface5: '#1F1D24', // Level 5
-      surface6: '#332D3C', // Level 6
-      surface7: '#3A3542', // Level 7
+      default: '#16181C', // Cool near-black, tactical
+      paper: '#1E2126',
+      surface0: '#1E2126',
+      surface1: '#262A30',
+      surface2: '#2C3138',
+      surface3: '#1E2126',
+      surface4: '#191B1F',
+      surface5: '#131518',
+      surface6: '#262A30',
+      surface7: '#2C3138',
     },
     text: {
-      primary: '#E6E1E5',
-      secondary: '#CAC4D0',
-      disabled: '#938F99',
+      primary: '#ECEDEE',
+      secondary: '#A8ADB4',
+      disabled: '#6B7178',
     },
   },
   shape: {
     borderRadius: 8, // Default minimal roundness
   },
-  typography: {
+typography: {
     fontFamily: [
       'Inter',
       '-apple-system',
@@ -78,15 +73,16 @@ export const theme = createTheme({
       'sans-serif',
     ].join(','),
     button: {
-      textTransform: 'none', // M3 style - no uppercase
-      fontWeight: 500,
+      fontFamily: '"Rajdhani", sans-serif',
+      textTransform: 'none',
+      fontWeight: 600,
     },
-    h1: { lineHeight: 1.1 },
-    h2: { lineHeight: 1.1 },
-    h3: { lineHeight: 1.1 },
-    h4: { lineHeight: 1.1 },
-    h5: { lineHeight: 1.1 },
-    h6: { lineHeight: 1.1 },
+    h1: { fontFamily: '"Rajdhani", sans-serif', fontWeight: 700, lineHeight: 1.1 },
+    h2: { fontFamily: '"Rajdhani", sans-serif', fontWeight: 700, lineHeight: 1.1 },
+    h3: { fontFamily: '"Rajdhani", sans-serif', fontWeight: 600, lineHeight: 1.1 },
+    h4: { fontFamily: '"Rajdhani", sans-serif', fontWeight: 600, lineHeight: 1.1 },
+    h5: { fontFamily: '"Rajdhani", sans-serif', fontWeight: 500, lineHeight: 1.1 },
+    h6: { fontFamily: '"Rajdhani", sans-serif', fontWeight: 500, lineHeight: 1.1 },
   },
   components: {
     MuiCssBaseline: {
@@ -130,7 +126,7 @@ export const theme = createTheme({
           fontWeight: 500,
           // Make focus state same as hover state
           '&:focus-visible': {
-            backgroundColor: 'rgba(208, 188, 255, 0.08)', // Same as hover for contained buttons
+            backgroundColor: 'rgba(255, 122, 26, 0.08)', // Same as hover for contained buttons
           },
         },
         contained: {
@@ -139,18 +135,18 @@ export const theme = createTheme({
             boxShadow: 'none',
           },
           '&:focus-visible': {
-            backgroundColor: '#9C88D6', // Same as hover (primary.dark)
+            backgroundColor: '#C85A0F',
             boxShadow: 'none',
           },
         },
         outlined: {
           '&:focus-visible': {
-            backgroundColor: 'rgba(208, 188, 255, 0.08)',
+            backgroundColor: 'rgba(255, 122, 26, 0.08)',
           },
         },
         text: {
           '&:focus-visible': {
-            backgroundColor: 'rgba(208, 188, 255, 0.08)',
+            backgroundColor: 'rgba(255, 122, 26, 0.08)',
           },
         },
       },
@@ -163,7 +159,7 @@ export const theme = createTheme({
         root: {
           // Make focus state same as hover state
           '&:focus-visible': {
-            backgroundColor: 'rgba(208, 188, 255, 0.08)',
+            backgroundColor: 'rgba(255, 122, 26, 0.08)',
           },
         },
       },
@@ -179,7 +175,7 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           '& .MuiOutlinedInput-root': {
-            borderRadius: 28, // Rounded text fields
+            borderRadius: 8,
           },
         },
       },
@@ -193,7 +189,29 @@ export const theme = createTheme({
     },
     MuiChip: {
       styleOverrides: {
-        root: {},
+        root: {
+          fontFamily: '"Rajdhani", sans-serif',
+          fontWeight: 600,
+        },
+      },
+    },
+    MuiListItemText: {
+      styleOverrides: {
+        primary: {
+          fontFamily: '"Rajdhani", sans-serif',
+          fontWeight: 600,
+          fontSize: '0.95rem',
+        },
+      },
+    },
+    MuiListSubheader: {
+      styleOverrides: {
+        root: {
+          fontFamily: '"Rajdhani", sans-serif',
+          fontWeight: 700,
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em',
+        },
       },
     },
     MuiAppBar: {

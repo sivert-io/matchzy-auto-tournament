@@ -1,0 +1,336 @@
+{
+  "mapsPage": {
+    "title": "Kartes un karšu kopas",
+    "tabs": {
+      "maps": "Kartes",
+      "mapPools": "Karšu kopas"
+    },
+    "headerActions": {
+      "addMap": "Pievienot karti",
+      "createMapPool": "Izveidot karšu kopu"
+    },
+    "errors": {
+      "loadMaps": "Neizdevās ielādēt kartes",
+      "loadPools": "Neizdevās ielādēt karšu kopas",
+      "defaultPoolCannotDelete": "Noklusējuma karšu kopu nevar dzēst.",
+      "setDefaultPool": "Neizdevās iestatīt noklusējuma karšu kopu",
+      "togglePool": "Neizdevās pārslēgt karšu kopas statusu",
+      "deleteMap": "Neizdevās dzēst karti",
+      "deletePool": "Neizdevās dzēst karšu kopu"
+    },
+    "success": {
+      "mapDeleted": "Karte veiksmīgi dzēsta"
+    },
+    "confirmDeleteMap": {
+      "title": "Dzēst karti",
+      "message": "Vai tiešām vēlaties dzēst \"{{name}}\"? Šo darbību nevar atsaukt."
+    },
+    "confirmDeletePool": {
+      "title": "Dzēst karšu kopu",
+      "message": "Vai tiešām vēlaties dzēst \"{{name}}\"? Šo darbību nevar atsaukt."
+    }
+  },
+  "mapModal": {
+    "titleCreate": "Pievienot karti",
+    "titleEdit": "Rediģēt karti",
+    "workshop": {
+      "inputLabel": "Steam Workshop URL vai ID",
+      "inputPlaceholder": "https://steamcommunity.com/sharedfiles/filedetails/?id=1234567890",
+      "inputHelper": "Ielīmējiet Workshop URL vai ciparu ID, lai automātiski aizpildītu nosaukumu un attēlu.",
+      "found": "Atrasts: {{title}}",
+      "lookupFailed": "Workshop meklēšana neizdevās"
+    },
+    "mapIdLabel": "Kartes ID",
+    "mapIdPlaceholder": "de_dust2",
+    "mapIdHelper": "Tikai mazie burti, cipari un pasvītrojumi (de_dust2)",
+    "displayNameLabel": "Attēlojamais nosaukums",
+    "displayNamePlaceholder": "Dust II",
+    "mapImageLabel": "Kartes attēls",
+    "uploadButton": "Augšupielādēt attēlu",
+    "fetchFromGitHub": "Iegūt no GitHub",
+    "uploadHelper": "Augšupielādējiet PNG, JPG, GIF vai WebP attēlu (maks. 5MB)",
+    "previewLabel": "Priekšskatījums:",
+    "removeImage": "Noņemt attēlu",
+    "errors": {
+      "mapIdRequired": "Kartes ID ir obligāts",
+      "displayNameRequired": "Attēlojamais nosaukums ir obligāts",
+      "mapIdInvalid": "Kartes ID drīkst saturēt tikai mazos burtus, ciparus un pasvītrojumus",
+      "invalidFileType": "Nederīgs faila tips. Lūdzu, izvēlieties PNG, JPG, GIF vai WebP attēlu.",
+      "fileTooLarge": "Faila izmērs ir pārāk liels. Lūdzu, izvēlieties attēlu, kas mazāks par 5MB.",
+      "readFileFailed": "Neizdevās nolasīt attēla failu",
+      "fetchImageIdRequired": "Lūdzu, vispirms ievadiet kartes ID",
+      "fetchImageFailed": "Neizdevās iegūt attēlu. Tā vietā varat augšupielādēt attēlu.",
+      "imageNotFound": "Attēls nav atrasts priekš {{id}}. Tā vietā varat augšupielādēt attēlu.",
+      "uploadFailed": "Neizdevās augšupielādēt attēlu",
+      "saveFailed": "Neizdevās saglabāt karti"
+    },
+    "success": {
+      "mapUpdated": "Karte veiksmīgi atjaunināta",
+      "mapCreated": "Karte veiksmīgi izveidota"
+    },
+    "buttons": {
+      "cancel": "Atcelt",
+      "saving": "Saglabā...",
+      "update": "Atjaunināt",
+      "create": "Izveidot"
+    }
+  },
+  "mapActionsModal": {
+    "mapId": "Kartes ID",
+    "preview": "Priekšskatījums",
+    "edit": "Rediģēt"
+  },
+  "mapPoolActionsModal": {
+    "defaultChip": "Noklusējums",
+    "status": {
+      "label": "Statuss",
+      "enabled": "Ieslēgts",
+      "disabled": "Izslēgts"
+    },
+    "maps": {
+      "label": "Kartes ({{count}})"
+    },
+    "actions": {
+      "edit": "Rediģēt",
+      "enable": "Ieslēgt",
+      "disable": "Izslēgt",
+      "setDefault": "Iestatīt kā noklusējumu"
+    }
+  },
+  "templatesPage": {
+    "header": {
+      "createFromTournament": "Izveidot veidni no turnīra"
+    },
+    "empty": "Vēl nav veidņu. Izveidojiet savu pirmo veidni no turnīra lapas.",
+    "errors": {
+      "load": "Neizdevās ielādēt veidnes"
+    },
+    "delete": {
+      "title": "Dzēst veidni",
+      "message": "Vai tiešām vēlaties dzēst veidni \"{{name}}\"? Šo darbību nevar atsaukt.",
+      "success": "Veidne \"{{name}}\" veiksmīgi dzēsta",
+      "error": "Neizdevās dzēst veidni"
+    },
+    "update": {
+      "success": "Veidne \"{{name}}\" veiksmīgi atjaunināta",
+      "error": "Neizdevās atjaunināt veidni"
+    },
+    "createFromTemplate": {
+      "errors": {
+        "inProgressOrCompleted": "Nevar izveidot turnīru no veidnes, kamēr turnīrs ir procesā vai pabeigts. Lūdzu, vispirms dzēsiet vai atiestatiet pašreizējo turnīru.",
+        "alreadyExists": "Turnīrs jau pastāv. Lūdzu, dzēsiet vai atiestatiet pašreizējo turnīru, pirms veidojat jaunu no veidnes."
+      }
+    },
+    "edit": {
+      "title": "Rediģēt veidni",
+      "nameLabel": "Veidnes nosaukums",
+      "descriptionLabel": "Apraksts (neobligāts)",
+      "typeLabel": "Turnīra tips",
+      "formatLabel": "Spēles formāts",
+      "mapPool": {
+        "title": "Karšu kopa",
+        "selectLabel": "Izvēlieties karšu kopu",
+        "customOption": "Pielāgots",
+        "selectedLabel": "Izvēlētās kartes ({{count}}):",
+        "vetoWarning": "Veto formātiem (BO1/BO3/BO5) nepieciešamas tieši 7 kartes. Pašlaik izvēlētas: {{count}}"
+      },
+      "save": "Saglabāt"
+    }
+  },
+  "saveTemplateModal": {
+    "title": "Saglabāt kā veidni",
+    "nameLabel": "Veidnes nosaukums",
+    "namePlaceholder": "8 komandu vienreizēja izslēgšana BO3",
+    "descriptionLabel": "Apraksts (neobligāts)",
+    "descriptionPlaceholder": "Iknedēļas 8 komandu vienreizējas izslēgšanas turnīrs",
+    "saveButton": "Saglabāt veidni",
+    "errors": {
+      "nameRequired": "Veidnes nosaukums ir obligāts",
+      "saveFailed": "Neizdevās saglabāt veidni"
+    }
+  },
+  "saveMapPoolModal": {
+    "title": "Saglabāt karšu kopu",
+    "nameLabel": "Karšu kopas nosaukums",
+    "namePlaceholder": "Mana pielāgotā kopa",
+    "info": "Tiks saglabāta karšu kopa ar {{count}} kart{{count, plural, one {i} other {ēm}}}.",
+    "saveButton": "Saglabāt",
+    "errors": {
+      "nameRequired": "Karšu kopas nosaukums ir obligāts",
+      "noMaps": "Lūdzu, izvēlieties vismaz vienu karti",
+      "saveFailed": "Neizdevās saglabāt karšu kopu"
+    }
+  },
+  "batchServerModal": {
+    "title": "Pakešu serveru izveide",
+    "info": "Izveidojiet vairākus serverus ar portiem, kas palielinās par 10 (27015, 27025, 27035...). Ideāli piemērots LAN konfigurācijām ar serveriem uz vienas mašīnas.",
+    "sections": {
+      "identification": {
+        "title": "Servera identifikācija"
+      },
+      "connection": {
+        "title": "Savienojuma iestatījumi"
+      },
+      "configuration": {
+        "title": "Servera konfigurācija"
+      }
+    },
+    "baseId": {
+      "label": "Bāzes ID",
+      "placeholder": "server",
+      "helper": "Serveru ID būs: bāze_1, bāze_2, bāze_3..."
+    },
+    "baseName": {
+      "label": "Bāzes nosaukums",
+      "placeholder": "MAT",
+      "helper": "Serveru nosaukumi būs: Bāze #1, Bāze #2, Bāze #3..."
+    },
+    "host": {
+      "label": "Resursdators / IP adrese",
+      "placeholder": "192.168.1.100"
+    },
+    "rconPassword": {
+      "label": "RCON parole",
+      "placeholder": "koplietojama-rcon-parole",
+      "helper": "Viena parole visiem serveriem"
+    },
+    "numServers": {
+      "label": "Serveru skaits",
+      "placeholder": "3",
+      "helper": "Maks.: 50"
+    },
+    "assignPorts": {
+      "label": "Piešķirt portus",
+      "helper": "API → Serveris (RCON tests)"
+    },
+    "serverPortLabel": "Serveris #{{index}}",
+    "portPlaceholder": "27015",
+    "enabled": {
+      "label": "Serveri ieslēgti",
+      "helper": "Visi serveri tiks izveidoti kā ieslēgti/izslēgti"
+    },
+    "preview": {
+      "title": "Priekšskatījums ({{showingFirst10, boolean, true {rāda pirmos 10} false {visi}}})",
+      "more": "...un vēl {{count}}"
+    },
+    "checkServersButton": {
+      "default": "Pārbaudīt serverus",
+      "checking": "Pārbauda..."
+    },
+    "createServersButton": {
+      "default": "Izveidot {{count}} server{{count, plural, one {i} other {us}}}",
+      "creating": "Izveido..."
+    },
+    "warnings": {
+      "notAllVerified": "Daži serveri nav izturējuši savienojuma pārbaudes. Tie tiks saglabāti, bet var parādīties kā bezsaistē, līdz tiks konfigurēts RCON un webhook."
+    },
+    "success": {
+      "createdAll": "Veiksmīgi izveidoti {{count}} serveri(-s)"
+    },
+    "errors": {
+      "baseNameRequired": "Bāzes nosaukums ir obligāts",
+      "baseIdRequired": "Bāzes ID ir obligāts",
+      "hostRequired": "Resursdators ir obligāts",
+      "countRange": "Serveru skaitam jābūt no 1 līdz 50",
+      "passwordRequired": "RCON parole ir obligāta",
+      "portRange": "Servera #{{index}} portam jābūt no 1 līdz 65535",
+      "connectionFailed": "Savienojums neizdevās",
+      "createFailed": "Neizdevās izveidot serverus",
+      "partialCreate": "Izveidoti {{created}}/{{total}} serveri. Kļūdas:\n{{details}}"
+    }
+  },
+  "eloTemplatesPage": {
+    "errors": {
+      "load": "Neizdevās ielādēt ELO veidnes"
+    },
+    "header": {
+      "createTemplate": "Izveidot veidni",
+      "importJson": "Importēt no JSON"
+    },
+    "empty": {
+      "title": "Nav ELO aprēķinu veidņu",
+      "description": "Izveidojiet savu pirmo veidni, lai pielāgotu, kā spēlētāju statistika ietekmē ELO korekcijas",
+      "action": "Izveidot veidni"
+    },
+    "delete": {
+      "title": "Dzēst ELO veidni",
+      "message": "Vai tiešām vēlaties dzēst \"{{name}}\"? Šo darbību nevar atsaukt.",
+      "success": "Veidne \"{{name}}\" veiksmīgi dzēsta",
+      "error": "Neizdevās dzēst veidni",
+      "defaultProtected": "Noklusējuma \"pure-win-loss\" veidni nevar dzēst."
+    },
+    "import": {
+      "success": "Veiksmīgi importētas {{count}} ELO veidne(-es)"
+    },
+    "weights": {
+      "noAdjustmentsPure": "Bez statistikas korekcijām (tīrs uzvaru/zaudējumu režīms)"
+    },
+    "card": {
+      "enabled": "Ieslēgts",
+      "disabled": "Izslēgts",
+      "default": "Noklusējums",
+      "adjustment": {
+        "none": "Statistikas korekcija par spēli: nav (0; tikai rezultātu ELO)",
+        "uncapped": "Statistikas korekcija par spēli: neierobežota (lietojiet piesardzīgi)",
+        "range": "Statistikas korekcijas diapazons par spēli: no {{min}} līdz {{max}} ELO",
+        "noMin": "bez min",
+        "noMax": "bez maks"
+      },
+      "tooltips": {
+        "edit": "Rediģēt veidni",
+        "delete": "Dzēst veidni"
+      },
+      "weightsTitle": "Statistikas svari:",
+      "limitsTitle": "Korekciju ierobežojumi:"
+    },
+    "importModal": {
+      "title": "Importēt ELO veidnes no JSON",
+      "introTitle": "Ielīmējiet JSON ar ELO veidņu definīcijām zemāk.",
+      "introBody": "Sagaidāmais formāts: veidņu masīvs ar name, neobligātu description, enabled, weights, maxAdjustment un minAdjustment. Ja izlaižat id, tas tiks ģenerēts no nosaukuma.",
+      "jsonLabel": "JSON dati",
+      "validJsonTitle": "✓ Derīgs JSON!",
+      "validJsonBody": "Atrastas {{count}} veidne{{count !== 1 ? 's' : ''}}.",
+      "previewTitle": "Priekšskatījums:",
+      "previewButton": "Priekšskatīt",
+      "importButton": "Importēt veidnes"
+    },
+    "editor": {
+      "titleEdit": "Rediģēt ELO veidni",
+      "titleCreate": "Izveidot ELO veidni",
+      "info": "Konfigurējiet, kā individuālā spēlētāju statistika ietekmē ELO korekcijas. Svari tiek piemēroti pēc tam, kad OpenSkill aprēķina bāzes ELO izmaiņas (uzvara/zaudējums). Pozitīvi svari palielina ELO, negatīvi svari samazina to.",
+      "nameLabel": "Veidnes nosaukums",
+      "nameDefaultLocked": "Noklusējuma veidnes nosaukumu nevar mainīt",
+      "descriptionLabel": "Apraksts",
+      "descriptionPlaceholder": "Neobligāts šīs veidnes mērķa apraksts",
+      "enabledLabel": "Ieslēgts",
+      "weights": {
+        "title": "Statistikas svari",
+        "subtitle": "Pielāgojiet slīdni katrai statistikai. Vērtība 0 nozīmē, ka šai statistikai nav korekcijas."
+      },
+      "limits": {
+        "title": "Korekciju ierobežojumi (neobligāti)",
+        "subtitle": "Iestatiet maksimālās un minimālās ELO korekcijas par spēli, lai novērstu ekstrēmas izmaiņas.",
+        "maxLabel": "Maks. korekcija",
+        "maxHelper": "Maksimālā pozitīvā ELO korekcija par spēli",
+        "minLabel": "Min. korekcija",
+        "minHelper": "Maksimālā negatīvā ELO korekcija par spēli"
+      },
+      "errors": {
+        "nameRequired": "Veidnes nosaukums ir obligāts"
+      },
+      "create": {
+        "success": "Veidne \"{{name}}\" veiksmīgi izveidota",
+        "error": "Neizdevās izveidot veidni"
+      },
+      "update": {
+        "success": "Veidne \"{{name}}\" veiksmīgi atjaunināta",
+        "error": "Neizdevās atjaunināt veidni"
+      },
+      "buttons": {
+        "saving": "Saglabā...",
+        "update": "Atjaunināt",
+        "create": "Izveidot"
+      }
+    }
+  }
+}

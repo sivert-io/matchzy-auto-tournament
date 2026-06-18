@@ -232,16 +232,22 @@ export default function MapModal({ open, map, onClose, onSave }: MapModalProps) 
     setError('');
 
     try {
-      // Download full-size webp image from GitHub repo
-      const imageUrl = `https://raw.githubusercontent.com/sivert-io/cs2-server-manager/master/map_thumbnails/${id}.webp`;
-
-      // Test if image exists
-      const response = await fetch(imageUrl, { method: 'HEAD' });
-      if (response.ok) {
-        setImageUrl(imageUrl);
-        setPreviewUrl(imageUrl);
+      // Try sivert-io repo first (webp)
+      const primaryUrl = `https://raw.githubusercontent.com/sivert-io/cs2-server-manager/master/map_thumbnails/${id}.webp`;
+      const primaryRes = await fetch(primaryUrl, { method: 'HEAD' });
+      if (primaryRes.ok) {
+        setImageUrl(primaryUrl);
+        setPreviewUrl(primaryUrl);
       } else {
-        setError(t('mapModal.errors.imageNotFound', { id }));
+        // Fallback: ghostcap-gaming repo (png)
+        const fallbackUrl = `https://raw.githubusercontent.com/ghostcap-gaming/cs2-map-images/main/cs2/${id}.png`;
+        const fallbackRes = await fetch(fallbackUrl, { method: 'HEAD' });
+        if (fallbackRes.ok) {
+          setImageUrl(fallbackUrl);
+          setPreviewUrl(fallbackUrl);
+        } else {
+          setError(t('mapModal.errors.imageNotFound', { id }));
+        }
       }
     } catch (err) {
       setError(t('mapModal.errors.fetchImageFailed'));

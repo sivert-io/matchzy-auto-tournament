@@ -22,7 +22,7 @@ export default function ConnectSteam() {
   const { t } = useTranslation();
 
   useEffect(() => {
-    document.title = t('connectSteam.title');
+    document.title = `FULM: ${t('connectSteam.title')}`;
   }, [t]);
 
   useEffect(() => {

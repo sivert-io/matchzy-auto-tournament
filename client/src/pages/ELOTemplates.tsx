@@ -61,7 +61,7 @@ export default function ELOTemplates() {
   }, [showError, t]);
 
   useEffect(() => {
-  document.title = t('layout.pageTitle.eloTemplates');
+  document.title = `FULM: ${t('layout.pageTitle.eloTemplates')}`;
   loadTemplates();
 }, [loadTemplates, t]);
 

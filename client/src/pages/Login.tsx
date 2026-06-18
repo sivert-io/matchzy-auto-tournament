@@ -37,7 +37,7 @@ export default function Login() {
     }
     hasLoadedProvidersRef.current = true;
 
-    document.title = t('login.title');
+    document.title = `FULM: ${t('login.title')}`;
   }, [t]);
 
   useEffect(() => {
@@ -149,8 +149,8 @@ export default function Login() {
                 }}
               >
                 <img
-                  src="/icon.svg"
-                  alt="MatchZy Auto Tournament Logo"
+                  src="/nice.png"
+                  alt="CS-FULM SCRIM"
                   style={{ width: '108px', height: '108px' }}
                 />
               </Box>
@@ -290,35 +290,6 @@ export default function Login() {
             </Stack>
 
             <Stack spacing={1.5} alignItems="center" sx={{ width: '100%' }}>
-              <Stack direction="row" spacing={2}>
-                <Link
-                  href="https://github.com/sivert-io/matchzy-auto-tournament"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  sx={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 0.5,
-                  }}
-                >
-                  {t('login.github')}
-                  <OpenInNewIcon sx={{ fontSize: '1rem' }} />
-                </Link>
-                <Link
-                  href="https://docs.sivert.io/docs/mat"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  sx={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 0.5,
-                  }}
-                >
-                  {t('login.documentation')}
-                  <OpenInNewIcon sx={{ fontSize: '1rem' }} />
-                </Link>
-              </Stack>
-
               <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
                 {t('login.version')} {appVersion || 'Unknown'}
               </Typography>

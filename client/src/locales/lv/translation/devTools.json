@@ -1,0 +1,139 @@
+{
+  "devToolsPage": {
+    "alert": "Šie rīki ir pieejami tikai izstrādes režīmā. Izmantojiet tos, lai ātri ģenerētu testa datus lietojumprogrammas testēšanai.",
+    "sections": {
+      "testData": {
+        "title": "Izveidot testa datus"
+      }
+    },
+    "testTeams": {
+      "title": "Testa komandas",
+      "description": "Izveidojiet komandas ar nejaušiem spēlētāju datiem, lai testētu turnīru iekavas un spēles.",
+      "success": "Veiksmīgi izveidota(s) {{count}} testa komanda(s)!",
+      "errors": {
+        "create": "Neizdevās izveidot testa komandas",
+        "partial": "Izveidota(s) {{created}} komanda(s), bet {{failed}} neizdevās. Skatiet konsoli, lai iegūtu detaļas."
+      },
+      "customLabel": "Pielāgots komandu skaits",
+      "buttons": {
+        "createFixed": "Izveidot {{count}} komandas",
+        "createCustom": "Izveidot komandas"
+      }
+    },
+    "testPlayers": {
+      "title": "Testa spēlētāji",
+      "description": "Izveidojiet spēlētājus ar ELO reitingiem, lai testētu jaukšanas turnīrus un spēlētāju pārvaldību.",
+      "success": "Veiksmīgi izveidots(i) {{created}} spēlētājs(i){{updated, number} > 0 ? (', un atjaunināts(i) ' + updated) : ''}}!",
+      "errors": {
+        "create": "Neizdevās izveidot testa spēlētājus",
+        "partial": "Izveidots(i) {{created}} spēlētājs(i), atjaunināts(i) {{updated}}, bet {{failed}} neizdevās. Skatiet konsoli, lai iegūtu detaļas."
+      },
+      "customLabel": "Pielāgots spēlētāju skaits",
+      "buttons": {
+        "createFixed": "Izveidot {{count}} spēlētājus",
+        "createCustom": "Izveidot spēlētājus"
+      }
+    },
+    "testServers": {
+      "title": "Testa serveri",
+      "description": "Izveidojiet serveru konfigurācijas, lai testētu spēļu pārvaldību un RCON komandas.",
+      "success": "Veiksmīgi izveidots(i) {{count}} testa serveris(i)!",
+      "errors": {
+        "create": "Neizdevās izveidot testa serverus",
+        "partial": "Izveidots(i) {{created}} serveris(i), bet {{failed}} neizdevās. Skatiet konsoli, lai iegūtu detaļas."
+      },
+      "customLabel": "Pielāgots serveru skaits",
+      "buttons": {
+        "createFixed": "Izveidot {{count}} server{{count === 1 ? '' : 's'}}",
+        "createCustom": "Izveidot serverus"
+      }
+    },
+    "dangerZone": {
+      "title": "Bīstamā zona"
+    },
+    "deleteTestData": {
+      "title": "Dzēst testa datus",
+      "description": "Dzēst visus testa datus (komandas un serverus ar 'test-' prefiksu). Šo darbību nevar atsaukt.",
+      "button": "Dzēst visus testa datus",
+      "confirmPrompt": "Vai tiešām vēlaties dzēst VISUS testa datus?",
+      "success": "Visi testa dati veiksmīgi izdzēsti!",
+      "error": "Neizdevās dzēst testa datus"
+    },
+    "wipeTable": {
+      "title": "Notīrīt konkrētas tabulas",
+      "description": "Dzēst visus datus no konkrētas tabulas. Noderīgi, lai sakārtotu, neatiestatot visu. Tabulas ir sakārtotas pa kategorijām.",
+      "confirmPrompt": "Vai tiešām vēlaties notīrīt tabulu {{table}}? Tiks dzēsti visi dati šajā tabulā.",
+      "success": "Tabula {{table}} veiksmīgi notīrīta!",
+      "error": "Neizdevās notīrīt tabulu {{table}}",
+      "core": {
+        "title": "Pamata tabulas",
+        "teams": "Notīrīt komandas",
+        "servers": "Notīrīt serverus",
+        "tournament": "Notīrīt turnīru",
+        "matches": "Notīrīt spēles"
+      },
+      "players": {
+        "title": "Spēlētāji un jaukšanas turnīri",
+        "players": "Notīrīt spēlētājus",
+        "ratingHistory": "Notīrīt reitingu vēsturi",
+        "matchStats": "Notīrīt spēļu statistiku",
+        "shufflePlayers": "Notīrīt jaukšanas spēlētājus"
+      },
+      "maps": {
+        "title": "Kartes un veidnes",
+        "maps": "Notīrīt kartes",
+        "mapPools": "Notīrīt karšu kopas",
+        "tournamentTemplates": "Notīrīt turnīru veidnes",
+        "eloTemplates": "Notīrīt ELO veidnes"
+      },
+      "matchEvents": {
+        "title": "Spēļu notikumi un rezultāti",
+        "events": "Notīrīt spēļu notikumus",
+        "mapResults": "Notīrīt karšu rezultātus"
+      },
+      "settings": {
+        "title": "Iestatījumi",
+        "appSettings": "Notīrīt lietotnes iestatījumus"
+      }
+    },
+    "simulation": {
+      "title": "Simulācijas stāvoklis",
+      "description": "Notīrīt visas spēles un vēsturisko statistiku, lai varētu noklikšķināt uz \"Sākt turnīru\" simulācijas režīmā ar tīru iekavu, saglabājot serverus, komandas, kartes un pašreizējo turnīra iestatījumu.",
+      "button": "Atiestatīt simulācijas stāvokli (saglabāt konfigurāciju)",
+      "reset": {
+        "success": "Simulācijas stāvoklis atiestatīts. Spēles un statistika notīrīta; serveri, komandas un turnīra iestatījumi saglabāti.",
+        "error": "Neizdevās atiestatīt simulācijas stāvokli"
+      }
+    },
+    "wipeDatabase": {
+      "title": "Notīrīt visu datubāzi",
+      "warningTitle": "ĀRKĀRTĪGI DESTRUKTĪVI!",
+      "warningBody": "Tiks dzēsti VISI dati.",
+      "permanentlyDeletes": "Neatgriezeniski dzēš:",
+      "items": {
+        "tournaments": "Visus turnīrus un iekavas",
+        "matches": "Visas spēles un notikumus",
+        "teams": "Visas komandas un spēlētājus",
+        "servers": "Visas serveru konfigurācijas"
+      },
+      "button": "Notīrīt visu datubāzi",
+      "successRedirect": "Datubāze veiksmīgi notīrīta! Pāradresē...",
+      "error": "Neizdevās notīrīt datubāzi",
+      "dialog": {
+        "title": "Apstiprināt datubāzes notīrīšanu",
+        "areYouSure": "Vai esat pilnīgi pārliecināts?",
+        "actionWill": "Šī darbība",
+        "permanentlyDelete": "neatgriezeniski dzēsīs",
+        "items": {
+          "tournaments": "Visus turnīru datus un iekavas",
+          "matches": "Visu spēļu vēsturi un notikumus",
+          "teams": "Visas komandas un spēlētāju konfigurācijas",
+          "servers": "Visas serveru konfigurācijas"
+        },
+        "cannotUndo": "Šo darbību nevar atsaukt!",
+        "wiping": "Notīra datubāzi...",
+        "yesWipe": "Jā, notīrīt visu"
+      }
+    }
+  }
+}

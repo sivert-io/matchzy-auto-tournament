@@ -3,6 +3,7 @@
     "version": "2.0.14",
     "description": "Tournament management API for CS2 MatchZy plugin",
     "private": true,
+    "packageManager": "yarn@4.17.0",
     "workspaces": [
         "api",
         "client"

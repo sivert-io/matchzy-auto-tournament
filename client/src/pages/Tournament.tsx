@@ -98,7 +98,7 @@ const Tournament: React.FC = () => {
 
   // Set dynamic page title
   useEffect(() => {
-    document.title = 'Tournament Setup';
+    document.title = 'FULM: Tournament Setup';
   }, []);
 
   // Load ELO templates

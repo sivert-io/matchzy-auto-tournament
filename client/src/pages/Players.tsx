@@ -48,7 +48,7 @@ export default function Players() {
 
   // Set dynamic page title
   useEffect(() => {
-    document.title = t('layout.pageTitle.players');
+    document.title = `FULM: ${t('layout.pageTitle.players')}`;
   }, [t]);
 
   const handleOpenModal = (player?: PlayerDetail) => {

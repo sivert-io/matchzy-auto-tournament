@@ -1,5 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { Rcon } from 'dathost-rcon-client';
+import fs from 'fs';
+import path from 'path';
 import { rconService } from '../services/rconService';
 import { requireAuth } from '../middleware/auth';
 import { log } from '../utils/logger';
@@ -461,6 +463,101 @@ router.post('/reload-admins', async (req: Request, res: Response) => {
       success: false,
       error: 'Failed to reload admins',
     });
+  }
+});
+
+/**
+ * POST /api/rcon/manage-admin
+ * Add or remove a CSS admin by editing admins.json directly, then reload.
+ * Matches the CounterStrikeSharp admins.json format with groups.
+ */
+router.post('/manage-admin', async (req: Request, res: Response) => {
+  try {
+    const { action, steamId, name, group } = req.body as {
+      action: 'add' | 'remove';
+      steamId: string;
+      name?: string;
+      group?: string;
+    };
+
+    if (!action || !steamId) {
+      return res.status(400).json({ success: false, error: 'action and steamId are required' });
+    }
+
+    const adminsPath = process.env.CS2_ADMINS_JSON_PATH ||
+      '/cs2-configs/admins.json';
+
+    let admins: Record<string, { identity: string; groups: string[] }> = {};
+    try {
+      const raw = fs.readFileSync(adminsPath, 'utf-8');
+      admins = JSON.parse(raw);
+    } catch {
+      if (action === 'add') {
+        admins = {};
+      } else {
+        return res.status(404).json({ success: false, error: 'admins.json not found at ' + adminsPath });
+      }
+    }
+
+    if (action === 'add') {
+      const label = name || steamId;
+      admins[label] = {
+        identity: steamId,
+        groups: [group || '#css/admin'],
+      };
+    } else {
+      // Find and remove by Steam ID (key might be a name, not the Steam ID)
+      const keyToRemove = Object.keys(admins).find(
+        (k) => admins[k].identity === steamId || k === steamId
+      );
+      if (keyToRemove) {
+        delete admins[keyToRemove];
+      }
+    }
+
+    const dir = path.dirname(adminsPath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(adminsPath, JSON.stringify(admins, null, 2), 'utf-8');
+
+    // Reload admins on all enabled servers
+    try {
+      await rconService.broadcastCommand('css_reloadadmins');
+    } catch (err) {
+      log.warn('Failed to broadcast css_reloadadmins after admin change', err as Error);
+    }
+
+    return res.json({
+      success: true,
+      message: action === 'add'
+        ? `Admin ${name || steamId} added with ${group || '#css/admin'}`
+        : `Admin ${steamId} removed`,
+      admins,
+    });
+  } catch (error) {
+    log.error('Failed to manage admin', error);
+    return res.status(500).json({ success: false, error: 'Failed to manage admin' });
+  }
+});
+
+/**
+ * GET /api/rcon/admins
+ * List current CSS admins from admins.json
+ */
+router.get('/admins', async (_req: Request, res: Response) => {
+  try {
+    const adminsPath = process.env.CS2_ADMINS_JSON_PATH ||
+      '/cs2-configs/admins.json';
+    let admins: Record<string, { identity: string; groups: string[] }> = {};
+    try {
+      const raw = fs.readFileSync(adminsPath, 'utf-8');
+      admins = JSON.parse(raw);
+    } catch { /* file doesn't exist yet */ }
+    return res.json({ success: true, admins });
+  } catch (error) {
+    log.error('Failed to read admins', error);
+    return res.status(500).json({ success: false, error: 'Failed to read admins' });
   }
 });
 

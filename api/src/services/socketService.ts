@@ -117,3 +117,34 @@ export function emitVetoUpdate(matchSlug: string, vetoState: VetoUpdateEvent['ve
     log.debug('Emitted veto update', { matchSlug });
   }
 }
+
+/**
+ * Emit lobby update (state changed)
+ */
+export function emitLobbyUpdate(lobby: { id: string }): void {
+  if (io) {
+    io.emit('lobby:update', lobby);
+    io.emit(`lobby:update:${lobby.id}`, lobby);
+    log.debug('Emitted lobby update', { lobbyId: lobby.id });
+  }
+}
+
+/**
+ * Emit lobby created
+ */
+export function emitLobbyCreated(lobby: { id: string }): void {
+  if (io) {
+    io.emit('lobby:created', lobby);
+    log.debug('Emitted lobby created', { lobbyId: lobby.id });
+  }
+}
+
+/**
+ * Emit lobby deleted/cancelled
+ */
+export function emitLobbyDeleted(lobbyId: string): void {
+  if (io) {
+    io.emit('lobby:deleted', { id: lobbyId });
+    log.debug('Emitted lobby deleted', { lobbyId });
+  }
+}

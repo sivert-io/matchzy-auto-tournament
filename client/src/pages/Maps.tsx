@@ -41,7 +41,7 @@ export default function Maps() {
 
   // Set dynamic page title
   useEffect(() => {
-    document.title = t('mapsPage.title');
+    document.title = `FULM: ${t('mapsPage.title')}`;
   }, [t]);
 
   // Set header actions

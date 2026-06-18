@@ -28,7 +28,7 @@ export default function Teams() {
 
   // Set dynamic page title
   useEffect(() => {
-    document.title = t('layout.pageTitle.teams');
+    document.title = `FULM: ${t('layout.pageTitle.teams')}`;
   }, [t]);
 
   // Set header actions

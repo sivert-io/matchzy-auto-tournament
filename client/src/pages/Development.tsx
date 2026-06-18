@@ -46,7 +46,7 @@ const Development: React.FC = () => {
   const { t } = useTranslation();
 
   // Set dynamic page title
-  document.title = t('layout.pageTitle.devTools');
+  document.title = `FULM: ${t('layout.pageTitle.devTools')}`;
 
   const handleCreateTestTeams = async (count: number) => {
     setLoading(true);

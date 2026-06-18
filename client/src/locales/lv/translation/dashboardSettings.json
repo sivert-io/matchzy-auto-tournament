@@ -1,0 +1,320 @@
+{
+  "dashboard": {
+    "title": "Panelis",
+    "notReady": "Turnīra panelis parādīsies šeit, kad turnīrs tiks sākts.",
+    "restartTournament": {
+      "button": "Restartēt turnīra spēles",
+      "restarting": "Restartē turnīra spēles…"
+    },
+    "onboarding": {
+      "ready": "🎉 Gatavs darbam!",
+      "gettingStarted": "Darba sākšana",
+      "stepsComplete": "{{completed}}/{{total}} Pabeigts",
+      "subtitle": "Izpildiet šīs darbības, lai iestatītu savu pirmo turnīru",
+      "steps": {
+        "webhook": {
+          "title": "Konfigurēt Webhook URL",
+          "secondaryConfigured": "Webhook galapunkts konfigurēts",
+          "secondaryMissing": "Iestatiet bāzes URL Webhook un demo augšupielādēm",
+          "openSettings": "Atvērt iestatījumus"
+        },
+        "servers": {
+          "title": "Pievienojiet vismaz vienu CS2 serveri",
+          "chip": "{{count}} serveris",
+          "chipPlural": "{{count}} serveri",
+          "secondaryConfigured": "Serveri konfigurēti un gatavi",
+          "secondaryMissing": "Sāciet, pievienojot savus CS2 spēļu serverus",
+          "addServer": "Pievienot serveri"
+        },
+        "teamsPlayers": {
+          "title": "Izveidojiet komandas vai pievienojiet spēlētājus",
+          "teamsChip": "{{count}} komanda",
+          "teamsChipPlural": "{{count}} komandas",
+          "playersChip": "{{count}} spēlētājs",
+          "playersChipPlural": "{{count}} spēlētāji",
+          "secondaryConfigured": "{{details}}",
+          "secondaryMissing": "Izveidojiet komandas un/vai pievienojiet spēlētājus ar viņu Steam ID",
+          "createTeams": "Izveidot komandas",
+          "addPlayers": "Pievienot spēlētājus"
+        },
+        "tournament": {
+          "title": "Konfigurējiet savu turnīru",
+          "chipStatus": "{{status}}",
+          "secondaryConfigured": "Turnīrs konfigurēts ar komandām un formātu",
+          "secondaryMissing": "Iestatiet turnīra veidu, formātu, komandas un kartes",
+          "createTournament": "Izveidot turnīru"
+        }
+      },
+      "startCta": {
+        "helper": "Viss ir gatavs! Pārskatiet konfigurāciju un sāciet turnīru no Turnīra lapas.",
+        "button": "Doties uz turnīru"
+      }
+    },
+    "stats": {
+      "heading": "Turnīra statistika",
+      "tournamentStatus": {
+        "title": "Turnīra statuss",
+        "none": "Nav aktīva turnīra",
+        "typeLabel": "Veids",
+        "formatLabel": "Formāts",
+        "matchesLabel": "Spēles"
+      },
+      "matchStatus": {
+        "title": "Spēļu statuss",
+        "total": "Kopā spēļu",
+        "pending": "Gaida:",
+        "ready": "Gatavs:",
+        "loaded": "Ielādēts:",
+        "live": "Tiešraide:",
+        "completed": "Pabeigts:"
+      },
+      "serverStatus": {
+        "title": "Serveru statuss",
+        "onlineSummary": "Serveri tiešsaistē",
+        "online": "{{count}} tiešsaistē",
+        "offline": "{{count}} bezsaistē",
+        "distributionTitle": "Serveru statuss"
+      },
+      "players": {
+        "title": "Spēlētāji",
+        "total": "Kopā spēlētāju",
+        "inMatches": "Spēlēs:",
+        "waiting": "Gaida:"
+      },
+      "playerDistribution": {
+        "title": "Spēlētāju sadalījums"
+      },
+      "topPlayers": {
+        "title": "Labākie spēlētāji pēc ELO",
+        "subtitle": "Globālais reitings visos turnīru veidos",
+        "chip": "ELO {{value}}"
+      },
+      "eloDistribution": {
+        "title": "Spēlētāju ELO sadalījums",
+        "subtitle": "Spēlētāju skaits katrā prasmju reitinga grupā (grupas lielums {{bucket}}).",
+        "xAxis": "Prasmju reitinga grupa",
+        "yAxis": "Spēlētāji",
+        "seriesLabel": "Spēlētāji"
+      },
+      "recentMatches": {
+        "title": "Pēdējās pabeigtās spēles",
+        "subtitle": "Pēdējās {{count}} pabeigtās spēles",
+        "none": "Vēl nav pabeigtu spēļu.",
+        "chipCompleted": "Pabeigts"
+      },
+      "noData": "Nav pieejamu datu. Izveidojiet turnīru, lai redzētu statistiku.",
+      "errors": {
+        "load": "Neizdevās ielādēt paneļa datus"
+      }
+    }
+  },
+  "settingsPage": {
+    "title": "Iestatījumi",
+    "intro": "Konfigurējiet galvenās integrācijas, spēles noklusējumus un izstrādātāja opcijas.",
+    "tabs": {
+      "integrations": "Integrācijas un Webhook",
+      "players": "Spēlētāji un piekļuve",
+      "matches": "Spēles un reitingi",
+      "advanced": "Papildu",
+      "matchzy": "MatchZy",
+      "developer": "Izstrādātājs / Simulācija"
+    },
+    "integrations": {
+      "webhook": {
+        "title": "MatchZy Webhook",
+        "description": "MatchZy Webhook URL, ko var sasniegt jūsu CS2 serveri.",
+        "label": "Webhook URL",
+        "helper": "Piemērs: https://your-domain.com"
+      },
+      "steam": {
+        "title": "Steam integrācija",
+        "apiKeyLabel": "Steam Web API atslēga",
+        "apiKeyHelper": "Atrisina Steam vanity URL un spēlētāju informāciju. Atstājiet tukšu, lai atspējotu meklēšanu.",
+        "checkButtonChecking": "Pārbauda Steam…",
+        "checkButtonIdle": "Pārbaudīt Steam savienojamību",
+        "statusOk": "Steam API atslēga ir iestatīta un sasniedzama.",
+        "statusNotConfigured": "Steam API atslēga nav iestatīta. Vanity URL nevar atrisināt, kamēr nepievienosiet atslēgu.",
+        "statusUnreachable": "Steam API atslēga ir iestatīta, bet Steam nav sasniedzams. Pārbaudiet tīklu vai atslēgu.",
+        "statusError": "Neizdevās pārbaudīt Steam API statusu. Lūdzu, mēģiniet vēlreiz."
+      },
+      "mapSync": {
+        "title": "Karšu sinhronizācija",
+        "description": "Sinhronizējiet CS2 kartes no GitHub repozitorija.",
+        "buttonSyncing": "Sinhronizē kartes...",
+        "buttonIdle": "Sinhronizēt CS2 kartes",
+        "success": "Karšu sinhronizācija pabeigta! {{added}} jauna(-as) karte(-es) pievienota(-as), {{skipped}} jau eksistēja.",
+        "partialError": "Dažas kartes neizdevās sinhronizēt: {{errors}}",
+        "failed": "Neizdevās sinhronizēt kartes",
+        "rateLimit": "GitHub API pieprasījumu limits pārsniegts. Lūdzu, mēģiniet vēlreiz pēc dažām minūtēm. Varat iestatīt GITHUB_TOKEN vides mainīgo, lai palielinātu pieprasījumu limitu.",
+        "rateLimitShort": "GitHub API pieprasījumu limits pārsniegts. Lūdzu, mēģiniet vēlreiz pēc dažām minūtēm.",
+        "githubError": "Nevar sasniegt GitHub repozitoriju. Lūdzu, pārbaudiet interneta savienojumu un mēģiniet vēlreiz vēlāk."
+      }
+    },
+    "matchRating": {
+      "chatDefaults": {
+        "title": "MatchZy čata un naža raunda noklusējumi",
+        "description": "Konfigurējiet spēles čata prefiksus un naža raunda noklusējuma uzvedību.",
+        "chatPrefixLabel": "Čata prefikss",
+        "chatPrefixHelper": "Noklusējums: \"[{Green}MAT{Default}]\". Atstājiet tukšu, lai atiestatītu uz noklusējuma prefiksu.",
+        "adminChatPrefixLabel": "Administratora čata prefikss",
+        "adminChatPrefixHelper": "Noklusējums: \"[{Red}ADMIN{Default}]\". Atstājiet tukšu, lai atiestatītu uz noklusējuma administratora prefiksu.",
+        "knifeToggleLabel": "Iespējot naža raundus pēc noklusējuma jaunām spēlēm (kad puses nav iepriekš izvēlētas)",
+        "knifeNote": "Attiecas tikai tad, kad MatchZy parasti izpildītu naža raundu; tiešas pušu izvēles vai nejaušā kārtībā piešķirtās puses netiek mainītas."
+      },
+      "ratings": {
+        "title": "Reitingu atjaunināšana",
+        "description": "Kontrolējiet, vai pabeigtās spēles atjaunina spēlētāju prasmju reitingus. Atspējojiet šo pasākumiem, kur ārēja sistēma (piemēram, jūsu Excel tabula) ir reitingu avots.",
+        "toggleLabel": "Atjaunināt spēlētāju reitingus no pabeigtām spēlēm",
+        "note": "Kad atspējots, visām spēlēm joprojām tiks sekots statistikai (ADR, K/D utt.), bet spēlētāju prasmju reitingi paliks nemainīgi."
+      },
+      "matchzyCore": {
+        "title": "MatchZy pamata noklusējumi",
+        "description": "Šie noklusējumi tiek nosūtīti serveriem inicializācijas laikā un pirms katras spēles ielādes.",
+        "expert": {
+          "title": "Eksperta iestatījumi",
+          "description": "Šie iestatījumi var izraisīt neparedzētu serveru uzvedību, ja tie ir nepareizi konfigurēti. Mainiet tos tikai tad, ja zināt, ka tas ir nepieciešams.",
+          "autostartMode": {
+            "label": "Automātiskā starta režīms spraudņa ielādē",
+            "helper": "0 = gaidīšana/miegs, 1 = spēles režīms (ieteicams), 2 = treniņa režīms",
+            "options": {
+              "0": "0 — Gaidīšana / miegs",
+              "1": "1 — Spēles režīms",
+              "2": "2 — Treniņa režīms"
+            }
+          }
+        },
+        "ready": {
+          "title": "Gatavība / Spēles sākums",
+          "minimumReadyLabel": "Minimālais gatavo spēlētāju skaits",
+          "minimumReadyHelper": "0 = visiem pieslēgtajiem jābūt gataviem. Noklusējums: 0.",
+          "allowForceReady": "Atļaut administratoriem piespiest spēlētāju gatavību iestatīšanas laikā (!forceready)"
+        },
+        "access": {
+          "title": "Servera piekļuve",
+          "kickWhenNoMatchLoaded": "Izmest/liegt pieslēgšanos, kad nav ielādēta spēle (turnīra serveri)",
+          "whitelistEnabledDefault": "Iespējot balto sarakstu pēc noklusējuma (administratori var pārslēgt ar .whitelist)"
+        },
+        "adminTools": {
+          "title": "Administratora rīki",
+          "pauseAfterRestore": "Pauzēt pēc raunda atjaunošanas (.stop), lai komandas varētu koordinēties",
+          "stopCommandAvailable": "Iespējot .stop (raunda atjaunošanas) komandu",
+          "stopCommandNoDamage": "Atspējot .stop pēc pretinieku komandas nodarītā kaitējuma",
+          "usePauseForTacticalPause": "Likt .pause darboties kā taktiskā pauze"
+        },
+        "demos": {
+          "title": "Demo ieraksti",
+          "demoPathLabel": "Demo ceļš (relatīvs pret csgo/)",
+          "demoPathHelper": "Jābeidzas ar '/'. Noklusējums: MatchZy/",
+          "demoNameFormatLabel": "Demo faila nosaukuma formāts (bez .dem)",
+          "demoNameFormatHelper": "Marķieri: {TIME}, {MATCH_ID}, {MAP}, {MAPNUMBER}, {TEAM1}, {TEAM2}"
+        },
+        "seriesEnd": {
+          "title": "Sērijas beigu laiks",
+          "kickDelayNoDemoLabel": "Papildu izmešanas aizkave, kad demo ir atspējoti (sekundes)",
+          "kickDelayDemoNoUploadLabel": "Papildu izmešanas aizkave, kad demo iespējoti, bet nav augšupielādes URL (sekundes)",
+          "kickDelayDemoUploadLabel": "Papildu izmešanas aizkave, kad demo iespējoti un augšupielādes URL ir iestatīts (sekundes)",
+          "kickDelayHelper": "Tiek pievienots papildus mp_match_restart_delay."
+        }
+      },
+      "matchzyEnhanced": {
+        "title": "MatchZy paplašinātās funkcijas",
+        "description": "Konfigurējiet papildu spēles funkcijas. Atstājiet iestatījumus tukšus, lai izmantotu MatchZy spraudņa noklusējumus.",
+        "autoready": {
+          "title": "Automātiskās gatavības sistēma",
+          "label": "Automātiski atzīmēt spēlētājus kā gatavus, kad tie pievienojas",
+          "description": "Spēlētāji automātiski tiek atzīmēti kā gatavi pievienojoties. Viņi joprojām var izmantot .unready, lai atteiktos."
+        },
+        "pause": {
+          "title": "Pauzes vadība",
+          "bothTeamsUnpause": "Prasīt abām komandām atcelt pauzi",
+          "maxPausesLabel": "Maksimālais paužu skaits komandai",
+          "maxPausesHelper": "0 = neierobežots paužu skaits",
+          "pauseDurationLabel": "Pauzes ilguma ierobežojums (sekundes)",
+          "pauseDurationHelper": "0 = bez laika ierobežojuma"
+        },
+        "sideSelection": {
+          "title": "Puses izvēles taimeris",
+          "enabled": "Iespējot puses izvēles taimeri",
+          "timeLabel": "Atļautais laiks (sekundes)",
+          "timeHelper": "Laiks pēc naža raunda, lai izvēlētos pusi"
+        },
+        "gg": {
+          "title": "Priekšlaicīga spēles beigšana (.gg)",
+          "enabled": "Iespējot .gg padošanās komandu",
+          "thresholdLabel": "Balsojuma slieksnis (0.0-1.0)",
+          "thresholdHelper": "0.8 = 80% komandas jābalso (piem., 4/5 spēlētāji)",
+          "minScoreDiffLabel": "Minimālā rezultātu starpība",
+          "minScoreDiffHelper": "0 = atspējots. Piemērs: 6 = atļaut .gg tikai tad, kad zaudē par 6+ raundiem"
+        },
+        "ffw": {
+          "title": "Neierašanās/Tehniskā uzvara sistēma",
+          "enabled": "Iespējot automātisku tehnisko zaudējumu, kad komanda atvienojas",
+          "timeLabel": "Tehniskā zaudējuma taimeris (sekundes)",
+          "timeHelper": "Laiks pirms tehniskā zaudējuma piešķiršanas, kad visa komanda atstāj spēli"
+        },
+        "demo": {
+          "title": "Demo ieraksti",
+          "enabled": "Iespējot demo ierakstīšanu (automātiski konfigurēt GOTV + augšupielādes)",
+          "description": "Kad iespējots, MAT iestata tv_enable 1 un konfigurē MatchZy Enhanced, lai automātiski augšupielādētu demo ierakstus uz MAT pēc katras kartes."
+        }
+      }
+    },
+    "players": {
+      "registration": {
+        "title": "Spēlētāju reģistrācija",
+        "description": "Kontrolējiet, vai jaunas Steam pieteikšanās automātiski izveido spēlētāju ierakstus. Kad atspējots, tikai administratoru izveidotie vai importētie spēlētāji parādīsies privātos turnīros un jaukšanas grupās.",
+        "toggleLabel": "Atļaut ikvienam reģistrēties caur Steam pieteikšanos",
+        "recommendation": "Ieteicams: turiet šo izslēgtu uzaicinājumu vai privātiem turnīriem, lai nejaušas Steam pieteikšanās nepiesārņotu spēlētāju sarakstu."
+      }
+    },
+    "developer": {
+      "title": "Izstrādātāja opcijas",
+      "description": "Tikai vietējās izstrādes palīgrīki; neiespējojiet produkcijā.",
+      "simulateToggleLabel": "Simulēt spēles (izmantot botu vadītas demo spēles reālu spēlētāju vietā)",
+      "simulateNote": "Kad iespējots, ģenerētās MatchZy konfigurācijas ietver \"simulation\": true automatizētām demo spēlēm.",
+      "timescaleTitle": "Simulācijas laika skala",
+      "timescaleDescription": "Kontrolē, cik ātri notiek simulētās spēles. Augstākas vērtības paātrina botus un raundu plūsmu. Tas attiecas tikai tad, kad simulācija ir iespējota.",
+      "timescaleWarning": "Ātrumi virs 2.0 var būt nedaudz nestabili un var izraisīt dīvainu botu uzvedību, bet ir piemēroti ātrai vietējai testēšanai.",
+      "resetApiTitle": "Atiestatīt API un datubāzi",
+      "resetApiDescription": "Bīstamā zona: dzēš un pārveido visu datubāzes shēmu, pēc tam atkārtoti inicializē noklusējuma datus (kartes, karšu kopas utt.). Izmantojiet tikai vietējai izstrādei. Šī darbība ir neatgriezeniska.",
+      "resetApiButton": "Atiestatīt API (dzēst visus datus)",
+      "resetApiButtonLoading": "Atiestata API…",
+      "resetApiSuccess": "API un datubāze veiksmīgi atiestatīta. Visi dati ir dzēsti un noklusējumi atkārtoti inicializēti.",
+      "resetApiError": "Neizdevās atiestatīt API un datubāzi. Pārbaudiet API žurnālus, lai iegūtu detaļas.",
+      "resetApiDialog": {
+        "title": "Atiestatīt API un dzēst visus datus?",
+        "description": "Šī darbība dzēsīs un pārveidīs visu datubāzes shēmu. Visi turnīri, spēles, spēlētāji, komandas, reitingi, notikumi, žurnāli un iestatījumi tiks neatgriezeniski dzēsti. Šo darbību nevar atsaukt. Turpināt?",
+        "cancel": "Atcelt",
+        "confirm": "Jā, atiestatīt API un dzēst datus",
+        "confirmLoading": "Atiestata…"
+      },
+      "debugChat": {
+        "label": "Iespējot MatchZy atkļūdošanas čata ziņojumus",
+        "description": "Kad iespējots, MatchZy izdrukās papildu atkļūdošanas ziņojumus (piemēram, spēlētāju pieslēgšanās, atvienošanās un notikumu izsekošana) spēles čatā. Izmantojiet tikai izstrādei un testēšanai — ne tiešraides pasākumu laikā."
+      }
+    },
+    "footer": {
+      "version": "Versija",
+      "unknownVersion": "Nezināma",
+      "resetButton": "Atiestatīt iestatījumus"
+    },
+    "resetDialog": {
+      "title": "Atiestatīt iestatījumus?",
+      "description": "Atiestatīt visus šīs lapas iestatījumus uz noklusējumiem. Esošie turnīri un serveri netiek mainīti, bet jaunas spēles un meklēšanas izmantos noklusējuma vērtības. Turpināt?",
+      "cancel": "Atcelt",
+      "confirm": "Atiestatīt",
+      "success": "Iestatījumi atiestatīti uz noklusējumiem",
+      "error": "Neizdevās atiestatīt iestatījumus"
+    },
+    "errors": {
+      "loadSettings": "Neizdevās ielādēt iestatījumus",
+      "saveSettings": "Neizdevās saglabāt iestatījumus"
+    },
+    "success": {
+      "saveSettings": "Iestatījumi saglabāti",
+      "simulationEnabled": "Simulācijas režīms iespējots{{suffix}}",
+      "simulationDisabled": "Simulācijas režīms atspējots",
+      "timescaleUpdated": "Simulācijas laika skala atjaunināta uz {{value}}x"
+    }
+  }
+}

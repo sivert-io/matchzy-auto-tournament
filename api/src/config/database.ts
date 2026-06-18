@@ -168,6 +168,7 @@ class DatabaseManager {
         { table: 'servers', column: 'matchzy_db_last_ok_at', type: 'INTEGER' },
         { table: 'servers', column: 'matchzy_db_last_seen_at', type: 'INTEGER' },
         { table: 'servers', column: 'server_can_reach_api_at', type: 'INTEGER' },
+        { table: 'lobbies', column: 'game_mode', type: "TEXT NOT NULL DEFAULT 'competitive'" },
       ];
 
       // Check if tournament_templates table exists, create if not

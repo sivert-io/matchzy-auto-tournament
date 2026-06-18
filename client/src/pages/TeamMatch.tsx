@@ -46,9 +46,9 @@ export default function TeamMatch() {
 
   useEffect(() => {
     if (team?.name) {
-      document.title = team.name;
+      document.title = `FULM: ${team.name}`;
     } else {
-      document.title = t('teamPage.pageTitle');
+      document.title = `FULM: ${t('teamPage.pageTitle')}`;
     }
   }, [team, t]);
 

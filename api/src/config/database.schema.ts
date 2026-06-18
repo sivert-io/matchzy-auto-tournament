@@ -382,6 +382,32 @@ export function getSchemaSQL(): string {
     CREATE INDEX IF NOT EXISTS idx_shuffle_tournament_players_tournament ON shuffle_tournament_players(tournament_id);
     CREATE INDEX IF NOT EXISTS idx_shuffle_tournament_players_player ON shuffle_tournament_players(player_id);
 
+    -- Custom game modes for lobby (cs2-modded-server compatible)
+    CREATE TABLE IF NOT EXISTS game_modes (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      commands TEXT NOT NULL DEFAULT '[]',
+      created_at INTEGER NOT NULL DEFAULT EXTRACT(EPOCH FROM NOW())::INTEGER,
+      updated_at INTEGER NOT NULL DEFAULT EXTRACT(EPOCH FROM NOW())::INTEGER
+    );
+
+    -- Lobbies table for FaceIT-style match creation
+    CREATE TABLE IF NOT EXISTS lobbies (
+      id TEXT PRIMARY KEY,
+      status TEXT NOT NULL DEFAULT 'waiting',
+      created_by TEXT NOT NULL,
+      team_size INTEGER NOT NULL DEFAULT 5,
+      map_pool TEXT NOT NULL DEFAULT '[]',
+      format TEXT NOT NULL DEFAULT 'bo1',
+      game_mode TEXT NOT NULL DEFAULT 'competitive',
+      match_slug TEXT,
+      lobby_state TEXT NOT NULL DEFAULT '{}',
+      created_at INTEGER NOT NULL DEFAULT EXTRACT(EPOCH FROM NOW())::INTEGER,
+      updated_at INTEGER NOT NULL DEFAULT EXTRACT(EPOCH FROM NOW())::INTEGER
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_lobbies_status ON lobbies(status);
+
     -- Session table for connect-pg-simple (express-session PostgreSQL store)
     -- This table is required for session persistence across API restarts
     CREATE TABLE IF NOT EXISTS session (

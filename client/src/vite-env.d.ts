@@ -1,4 +1,5 @@
 /// <reference types="vite/client" />
+/// <reference path="theme.d.ts" />
 
 declare const __APP_VERSION__: string;
 

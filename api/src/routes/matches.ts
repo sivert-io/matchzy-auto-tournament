@@ -18,6 +18,7 @@ import { teamService } from '../services/teamService';
 import { playerService } from '../services/playerService';
 import { getMapResults } from '../services/matchMapResultService';
 import { serverAllocationTracker } from '../services/serverAllocationTracker';
+import { serverService } from '../services/serverService';
 
 const router = Router();
 
@@ -1421,6 +1422,99 @@ router.post('/:slug/reallocate', requireAuth, async (req: Request, res: Response
     return res.status(500).json({
       success: false,
       error: 'Failed to reallocate match',
+    });
+  }
+});
+
+/**
+ * POST /api/matches/:slug/allocate
+ * Manually allocate a server to a match that has no server assigned.
+ *
+ * Body options:
+ *   serverId? — force a specific server (skips availability checks)
+ *
+ * If the match is still in 'pending' status (veto not completed), it will be
+ * promoted to 'ready' first so that allocation can proceed.
+ */
+router.post('/:slug/allocate', requireAuth, async (req: Request, res: Response) => {
+  try {
+    const { slug } = req.params;
+    const { serverId: forceServerId } = req.body as { serverId?: string };
+    const baseUrl = await getWebhookBaseUrl(req);
+
+    const match = await db.queryOneAsync<DbMatchRow>('SELECT * FROM matches WHERE slug = ?', [
+      slug,
+    ]);
+    if (!match) {
+      return res.status(404).json({ success: false, error: 'Match not found' });
+    }
+
+    if (match.server_id) {
+      return res.status(409).json({ success: false, error: 'Match already has a server allocated' });
+    }
+
+    let skippedVeto = false;
+    if (match.status === 'pending') {
+      await db.updateAsync('matches', { status: 'ready' }, 'slug = ?', [slug]);
+      skippedVeto = true;
+      log.info(`Match ${slug} promoted from pending to ready (veto skipped via manual allocation)`);
+    }
+
+    if (forceServerId) {
+      // Force-assign a specific server, bypassing all availability checks
+      const server = await serverService.getServerById(forceServerId);
+      if (!server) {
+        return res.status(404).json({ success: false, error: `Server '${forceServerId}' not found` });
+      }
+
+      serverAllocationTracker.markAllocated(forceServerId, slug);
+      await db.updateAsync('matches', { server_id: forceServerId }, 'slug = ?', [slug]);
+
+      const loadResult = await loadMatchOnServer(slug, forceServerId, { baseUrl });
+      if (loadResult.success) {
+        const updatedMatch = await matchService.getMatchBySlug(slug, baseUrl);
+        if (updatedMatch) {
+          emitMatchUpdate(updatedMatch);
+          emitBracketUpdate({ action: 'server_assigned', matchSlug: slug, serverId: forceServerId });
+        }
+        return res.json({
+          success: true,
+          message: `Server ${forceServerId} force-allocated to match ${slug}${skippedVeto ? ' (veto skipped)' : ''}`,
+          serverId: forceServerId,
+          skippedVeto,
+        });
+      }
+
+      // Roll back on failure
+      await db.updateAsync('matches', { server_id: null }, 'slug = ?', [slug]);
+      serverAllocationTracker.markIdle(forceServerId);
+      return res.status(400).json({
+        success: false,
+        error: loadResult.error || 'Failed to load match on server',
+      });
+    }
+
+    // Normal allocation — use the standard allocator
+    const result = await matchAllocationService.allocateSingleMatch(slug, baseUrl);
+
+    if (result.success) {
+      return res.json({
+        success: true,
+        message: `Server ${result.serverId} allocated to match ${slug}${skippedVeto ? ' (veto skipped)' : ''}`,
+        serverId: result.serverId,
+        skippedVeto,
+      });
+    }
+
+    return res.status(409).json({
+      success: false,
+      error: result.error || 'Failed to allocate server',
+    });
+  } catch (error) {
+    log.error(`Error allocating server to match`, error);
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to allocate server',
     });
   }
 });

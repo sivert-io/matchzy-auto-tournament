@@ -117,7 +117,7 @@ export default function Matches() {
 
   // Set dynamic page title
   useEffect(() => {
-    document.title = t('layout.pageTitle.matches');
+    document.title = `FULM: ${t('layout.pageTitle.matches')}`;
   }, [t]);
 
   // Initialize Socket.io connection (mount-only)

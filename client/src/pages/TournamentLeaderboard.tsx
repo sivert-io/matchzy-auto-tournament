@@ -90,7 +90,7 @@ export default function TournamentLeaderboard() {
 
   // Always set a reasonable tab title, even before the tournament data loads (or if it doesn't exist yet).
   useEffect(() => {
-    document.title = t('nav.leaderboard');
+    document.title = `FULM: ${t('nav.leaderboard')}`;
   }, [t]);
 
   const loadStandings = async (showLoading = true) => {
@@ -109,7 +109,7 @@ export default function TournamentLeaderboard() {
       if (response) {
         setData(response);
         if (response.tournament) {
-          document.title = `${response.tournament.name}${t('leaderboardPage.titleSuffix')}`;
+          document.title = `FULM: ${response.tournament.name}${t('leaderboardPage.titleSuffix')}`;
         }
       }
     } catch (err: unknown) {

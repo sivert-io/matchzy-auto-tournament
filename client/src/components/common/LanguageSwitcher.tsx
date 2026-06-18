@@ -9,15 +9,7 @@ const LANGUAGES: {
   label: string;
 }[] = [
   { code: 'en', flagCode: 'GB', label: 'English' },
-  { code: 'fr', flagCode: 'FR', label: 'Français' },
-  { code: 'de', flagCode: 'DE', label: 'Deutsch' },
-  { code: 'es', flagCode: 'ES', label: 'Español' },
-  { code: 'it', flagCode: 'IT', label: 'Italiano' },
-  { code: 'pt-PT', flagCode: 'PT', label: 'Português' },
-  { code: 'pl', flagCode: 'PL', label: 'Polski' },
-  { code: 'nl', flagCode: 'NL', label: 'Nederlands' },
-  { code: 'zh-CN', flagCode: 'CN', label: '简体中文' },
-  { code: 'nb', flagCode: 'NO', label: 'Norsk bokmål' },
+  { code: 'lv', flagCode: 'LV', label: 'Latviešu' },
 ];
 
 type FlagComponent = React.ComponentType<Record<string, never>>;
@@ -52,15 +44,7 @@ function FlagIcon({ code }: { code: string }) {
 
 function normalizeLanguageCode(raw: string): string {
   const lng = raw || 'en';
-  if (lng.startsWith('zh')) return 'zh-CN';
-  if (lng.startsWith('pt')) return 'pt-PT';
-  if (lng.startsWith('fr')) return 'fr';
-  if (lng.startsWith('de')) return 'de';
-  if (lng.startsWith('es')) return 'es';
-  if (lng.startsWith('it')) return 'it';
-  if (lng.startsWith('pl')) return 'pl';
-  if (lng.startsWith('nl')) return 'nl';
-  if (lng.startsWith('nb') || lng.startsWith('no')) return 'nb';
+  if (lng.startsWith('lv')) return 'lv';
   if (lng.startsWith('en')) return 'en';
   return 'en';
 }

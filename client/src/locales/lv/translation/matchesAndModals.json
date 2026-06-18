@@ -1,0 +1,334 @@
+{
+  "matchesPage": {
+    "errors": {
+      "loadMatches": "Neizdevās ielādēt spēles",
+      "loadTitle": "Kļūda ielādējot spēles"
+    },
+    "allocation": {
+      "nextServers": "Nākamie serveri tiks piešķirti pēc {{seconds}}s"
+    },
+    "header": {
+      "createMatch": "Izveidot spēli"
+    },
+    "bulkSelect": {
+      "select": "Atlasīt",
+      "done": "Pabeigt atlasi",
+      "selectAll": "Atlasīt visus",
+      "unselectAll": "Noņemt atlasi visiem",
+      "deleteSelected": "Dzēst atlasītos"
+    },
+    "empty": {
+      "title": "Nav spēļu, ko attēlot",
+      "description": "Izveidojiet turnīru un ģenerējiet tabulu, lai šeit redzētu spēles",
+      "createManual": "Vai izveidojiet manuālu spēli"
+    },
+    "sections": {
+      "live": "Tiešraides spēles ({{count}})",
+      "upcoming": "Gaidāmās spēles ({{count}})",
+      "history": "Spēļu vēsture ({{count}})"
+    },
+    "manualMatchLabel": "Manuālā spēle",
+    "create": {
+      "success": "Manuālā spēle izveidota: {{slug}}"
+    },
+    "bulkDelete": {
+      "title": "Dzēst manuālās spēles",
+      "message": "Vai tiešām vēlaties dzēst {{count}} manuāl{{suffix}} spēl{{suffix}}? Šo darbību nevar atsaukt."
+    }
+  },
+  "manualMatchModal": {
+    "title": "Izveidot manuālu spēli",
+    "steps": {
+      "matchSetup": "Spēles iestatīšana",
+      "rules": "Noteikumi",
+      "maps": "Kartes",
+      "teams": "Komandas",
+      "review": "Pārskats"
+    },
+    "description": "Izveidojiet atsevišķu spēli, kas ir neatkarīga no turnīra tabulas. API automātiski piešķirs jums pieejamu serveri.",
+    "buttons": {
+      "next": "Tālāk",
+      "back": "Atpakaļ",
+      "create": "Izveidot spēli",
+      "creating": "Izveido…"
+    },
+    "saveTemplate": {
+      "title": "Saglabāt spēles veidni",
+      "nameLabel": "Veidnes nosaukums",
+      "nameHelper": "Piemēram: BO1 Inferno knife, BO3 karšu kopums utt.",
+      "description": "Pašreizējās kartes, sērijas formāts, CT puses noteikums, veto iestatījums, naža režīms un spēlētāju skaits komandā tiks saglabāti šajā veidnē.",
+      "save": "Saglabāt"
+    },
+    "chooseMode": {
+      "heading": "Kā vēlaties izveidot šo spēli?",
+      "template": {
+        "title": "Izvēlēties veidni",
+        "description": "Ielādējiet iepriekš sagatavotu karšu, formāta un noteikumu iestatījumu, pēc tam izvēlieties komandas.",
+        "label": "Spēles veidne",
+        "none": "Nav",
+        "empty": "Vēl nav saglabātu veidņu. Konfigurējiet spēli un saglabājiet to kā veidni."
+      },
+      "custom": {
+        "title": "Izveidot jaunu spēli",
+        "description": "Konfigurējiet kartes, noteikumus, puses un komandas no nulles."
+      }
+    },
+    "errors": {
+      "slugAndMapsRequired": "Identifikators un vismaz viena karte ir obligāti.",
+      "teamsMustDiffer": "1. komandai un 2. komandai jābūt dažādām komandām.",
+      "invalidMapSelectionVeto": "Nederīga karšu atlase veto. Lūdzu, atlasiet tieši 7 kartes vai atspējojiet veto.",
+      "invalidMapSelectionFormat": "Nederīga karšu atlase šim sērijas formātam. Lūdzu, atlasiet pareizo karšu skaitu.",
+      "configIncomplete": "Spēles konfigurācija nav pabeigta. Lūdzu, pārskatiet iestatījumus.",
+      "createFailed": "Neizdevās izveidot spēli. Lūdzu, mēģiniet vēlreiz."
+    }
+  },
+  "matchDetailsModal": {
+    "delete": {
+      "dialogTitle": "Dzēst spēli",
+      "confirmTitle": "Dzēst šo spēli?",
+      "confirmBody": "Vai tiešām vēlaties dzēst spēli \"{{slug}}\"? Šo darbību nevar atsaukt.",
+      "button": "Dzēst spēli"
+    }
+  },
+  "bulkShuffleMatchesModal": {
+    "title": "Masveidā izveidot jaukšanas spēles",
+    "description": "Konfigurējiet vienas kartes jaukšanas spēli (karte + raundu limits), pēc tam definējiet tik daudz savstarpējo spēļu, cik vēlaties, izvēloties precīzus spēlētāju sastāvus katrai pusei. Spēles tiek izveidotas kā pašreizējā jaukšanas turnīra daļa un tiks piešķirtas serveriem, kad sāksiet turnīru.",
+    "mapSelect": {
+      "label": "Karte",
+      "noMaps": "Šim turnīram nav konfigurētu karšu",
+      "helper": "Visas šīs partijas spēles izmantos šo karti."
+    },
+    "maxRounds": {
+      "label": "Maksimālais raundu skaits kartē",
+      "helperWithValue": "Spēle ilgst līdz {{maxRounds}} raundiem; uzvarētājs ir pirmais, kas sasniedz {{winRounds}} raundus.",
+      "helperDefault": "Maksimālais raundu skaits kartē (noklusējums: 24, maks.: 30)."
+    },
+    "matchesSection": {
+      "title": "Spēles ({{count}})",
+      "addMatch": "Pievienot spēli"
+    },
+    "players": {
+      "empty": "Šim jaukšanas turnīram vēl nav reģistrētu spēlētāju. Vispirms reģistrējiet spēlētājus, pēc tam varēsiet izveidot manuālās spēles."
+    },
+    "matchRow": {
+      "title": "Spēle {{index}}",
+      "teamCounts": "{{team1}}/{{teamSize}} • {{team2}}/{{teamSize}}",
+      "team1Label": "1. komandas spēlētāji ({{team1Count}}/{{teamSize}})",
+      "team2Label": "2. komandas spēlētāji ({{team2Count}}/{{teamSize}})",
+      "searchPlaceholder": "Meklēt un atlasīt spēlētājus",
+      "mapOverrideLabel": "Karte (neobligāta pārrakstīšana)",
+      "mapOverrideHelperOwn": "Šī spēle izmanto savu karti.",
+      "mapOverrideHelperDefault": "Atstājiet tukšu, lai izmantotu noklusējuma karti augstāk.",
+      "maxRoundsOverrideLabel": "Maks. raundi (neobligāta pārrakstīšana)",
+      "maxRoundsOverrideHelperOwn": "Pārraksta noklusējuma maksimālo raundu skaitu šai spēlei (pašlaik {{value}}).",
+      "maxRoundsOverrideHelperDefault": "Atstājiet tukšu, lai izmantotu noklusējuma maksimālo raundu skaitu augstāk."
+    },
+    "errors": {
+      "loadPlayers": "Neizdevās ielādēt reģistrētos spēlētājus",
+      "noMatches": "Pievienojiet vismaz vienu spēli, lai izveidotu.",
+      "bothTeamsRequired": "Spēle {{index}}: abām komandām jābūt vismaz vienam spēlētājam.",
+      "conflictingPlayers": "Spēle {{index}}: viens un tas pats spēlētājs nevar būt abās komandās. Konfliktējošie ID: {{ids}}",
+      "mapRequired": "Spēle {{index}}: karte ir obligāta (iestatiet noklusējuma karti augstāk vai izvēlieties karti šai spēlei).",
+      "rowMaxRoundsRange": "Spēle {{index}}: maksimālajam raundu skaitam jābūt no 1 līdz 30, ja tas tiek pārrakstīts katrai spēlei.",
+      "globalMaxRoundsRange": "Maksimālajam raundu skaitam jābūt no 1 līdz 30.",
+      "createFailed": "Neizdevās izveidot manuālās jaukšanas spēles"
+    },
+    "success": {
+      "created": "Manuālās jaukšanas spēles izveidotas. Tās tiks piešķirtas, kad turnīrs sāksies."
+    },
+    "createMatchesButton": {
+      "default": "Izveidot spēles",
+      "creating": "Izveido…"
+    }
+  },
+  "teamModal": {
+    "titleCreate": "Izveidot jaunu komandu",
+    "titleEdit": "Rediģēt komandu",
+    "teamNameLabel": "Komandas nosaukums",
+    "teamNamePlaceholder": "Astralis",
+    "teamNameHelper": "Komandas nosaukums var ietvert jebkuru valodu vai speciālās rakstzīmes",
+    "teamTagLabel": "Komandas birka",
+    "teamTagPlaceholder": "AST",
+    "teamTagHelper": "Automātiski ģenerēta no komandas nosaukuma (maks. 4 rakstzīmes)",
+    "playersHeader": "Spēlētāji ({{count}})",
+    "selectPlayers": "Atlasīt spēlētājus",
+    "noPlayersInfo": "Vēl nav pievienotu spēlētāju. Pievienojiet vismaz vienu spēlētāju.",
+    "addPlayersHelper": "Pievienojiet spēlētājus, ielīmējot Steam URL vai atlasot no esošajiem spēlētājiem",
+    "steamInputLabel": "Steam ID / Vanity URL",
+    "steamInputPlaceholder": "gaben vai steamcommunity.com/id/gaben",
+    "resolveSteam": "Noteikt Steam ID",
+    "resolving": "Nosaka...",
+    "playerNameLabel": "Spēlētāja vārds",
+    "playerNamePlaceholder": "s1mple",
+    "eloLabel": "ELO (neobligāts)",
+    "eloPlaceholder": "1500",
+    "eloHelper": "Noklusējums: 1500",
+    "errors": {
+      "steamLookupEmpty": "Lūdzu, ievadiet Steam ID, vanity URL vai profila URL",
+      "steamApiNotConfigured": "Steam API nav konfigurēts — ievadiet Steam ID64 manuāli",
+      "steamResolveFailed": "Neizdevās noteikt Steam ID — lūdzu, ievadiet Steam ID64 manuāli",
+      "steamAndNameRequired": "Gan Steam ID, gan spēlētāja vārds ir obligāti",
+      "steamDuplicate": "Šis Steam ID jau ir komandā",
+      "teamNameRequired": "Komandas nosaukums ir obligāts",
+      "playersRequired": "Nepieciešams vismaz viens spēlētājs",
+      "saveFailed": "Neizdevās saglabāt komandu",
+      "deleteFailed": "Neizdevās dzēst komandu"
+    },
+    "success": {
+      "playerAdded": "Spēlētājs pievienots komandai",
+      "playerReplaced": "Spēlētājs aizvietots",
+      "teamUpdated": "Komanda veiksmīgi atjaunināta",
+      "teamCreated": "Komanda veiksmīgi izveidota",
+      "teamDeleted": "Komanda veiksmīgi dzēsta"
+    },
+    "buttons": {
+      "deleteTeam": "Dzēst komandu",
+      "cancel": "Atcelt",
+      "saving": "Saglabā...",
+      "saveChanges": "Saglabāt izmaiņas",
+      "createTeam": "Izveidot komandu"
+    },
+    "confirmDelete": {
+      "title": "Dzēst komandu",
+      "message": "Vai tiešām vēlaties dzēst \"{{name}}\"? Šo darbību nevar atsaukt."
+    },
+    "replacePlayerAria": "Aizvietot spēlētāju {{name}}",
+    "replacePlayerTooltip": "Aizvietot šo spēlētāju"
+  },
+  "playerModal": {
+    "titleCreate": "Izveidot spēlētāju",
+    "titleEdit": "Rediģēt spēlētāju",
+    "steamLabel": "Steam ID vai profila URL",
+    "steamHelperEditing": "Steam ID nevar mainīt",
+    "steamHelperNew": "Ievadiet Steam ID64, vanity URL vai profila URL. Nospiediet \"Noteikt\", lai automātiski aizpildītu vārdu un avatāru.",
+    "resolveSteam": "Noteikt Steam ID",
+    "resolving": "Nosaka...",
+    "playerNameLabel": "Spēlētāja vārds",
+    "playerNamePlaceholder": "Spēlētājs",
+    "eloLabelNew": "Sākotnējais ELO",
+    "eloLabelEdit": "ELO",
+    "eloHelperNew": "Atstājiet tukšu, lai izmantotu noklusējumu (1500 prasmju reitings).",
+    "eloHelperEdit": "Mainot ELO, tiks atiestatīts spēlētāja reitings un statistika. Šo darbību nevar atsaukt.",
+    "isAdminLabel": "Ir administrators (ir spēles iekšējās administratora tiesības visām spēlēm)",
+    "currentElo": "Pašreizējais ELO: {{value}}",
+    "startingElo": "Sākotnējais ELO: {{value}}",
+    "matchesPlayed": "Aizvadītās spēles: {{count}}",
+    "errors": {
+      "steamRequired": "Steam ID ir obligāts",
+      "nameRequired": "Spēlētāja vārds ir obligāts",
+      "steamLookupEmpty": "Lūdzu, ievadiet Steam ID, vanity URL vai profila URL",
+      "steamApiNotConfigured": "Steam API nav konfigurēts — ievadiet Steam ID64 manuāli",
+      "steamResolveFailed": "Neizdevās noteikt Steam ID — lūdzu, ievadiet Steam ID64 manuāli",
+      "saveFailed": "Neizdevās saglabāt spēlētāju"
+    },
+    "success": {
+      "playerUpdated": "Spēlētājs veiksmīgi atjaunināts",
+      "playerCreated": "Spēlētājs veiksmīgi izveidots"
+    },
+    "buttons": {
+      "delete": "Dzēst",
+      "cancel": "Atcelt",
+      "saving": "Saglabā...",
+      "save": "Saglabāt",
+      "create": "Izveidot"
+    },
+    "confirmDelete": {
+      "title": "Dzēst spēlētāju",
+      "message": "Vai tiešām vēlaties dzēst spēlētāju \"{{name}}\"? Šo darbību nevar atsaukt."
+    },
+    "confirmEloUpdate": {
+      "title": "Atjaunināt spēlētāja ELO",
+      "message": "Vai tiešām vēlaties atjaunināt šī spēlētāja ELO no {{from}} uz {{to}}? Tas atiestatīs viņa statistiku un reitinga vēsturi. Šo darbību nevar atsaukt."
+    }
+  },
+  "teamImportModal": {
+    "title": "Importēt komandas no JSON",
+    "info": {
+      "title": "Ielīmējiet JSON ar komandu datiem zemāk.",
+      "format": "Paredzētais formāts: komandu masīvs ar nosaukumu, birku (neobligāti) un spēlētājiem (vārds + steamId).",
+      "link": "Skatīt dokumentāciju ar piemēriem"
+    },
+    "jsonLabel": "JSON dati",
+    "errors": {
+      "mustBeArray": "JSON jābūt komandu masīvam",
+      "emptyArray": "Masīvs nevar būt tukšs",
+      "parseWithMessage": "JSON parsēšanas kļūda: {{message}}",
+      "parseGeneric": "Nederīgs JSON formāts. Lūdzu, pārbaudiet sintaksi.",
+      "importFailed": "Neizdevās importēt komandas",
+      "noJson": "Lūdzu, ievadiet JSON datus"
+    },
+    "preview": {
+      "summary": "✓ Derīgs JSON! Atrast{{teamCount, plural, one {a} other {as}}} {{teamCount}} komand{{teamCount, plural, one {a} other {as}}} ar {{playerCount}} spēlētājiem kopā.",
+      "title": "Priekšskatījums:",
+      "playersChip": "{{count}} spēlētāj{{count, plural, one {s} other {i}}}"
+    },
+    "actions": {
+      "preview": "Priekšskatījums",
+      "importing": "Importē...",
+      "import": "Importēt {{count}} komand{{count, plural, one {u} other {as}}}"
+    }
+  },
+  "playerImportModal": {
+    "title": "Importēt spēlētājus",
+    "info": {
+      "description": "Importējiet spēlētājus no JSON vai CSV formāta. Obligātie lauki: steamId, name. Neobligātie: initialELO (noklusējums 1500), avatarUrl.",
+      "link": "Skatīt dokumentāciju ar piemēriem"
+    },
+    "placeholders": {
+      "jsonCsv": "JSON formāts:\n[\n  {\n    \"steamId\": \"76561198012345678\",\n    \"name\": \"Pirmais spēlētājs\",\n    \"initialELO\": 1500,\n    \"avatarUrl\": \"https://...\"\n  }\n]\n\nCSV formāts:\nsteamId,name,initialELO,avatarUrl\n76561198012345678,Pirmais spēlētājs,1500,https://..."
+    },
+    "actions": {
+      "parseValidate": "Parsēt un validēt",
+      "importing": "Importē...",
+      "import": "Importēt {{count}} spēlētāj{{count, plural, one {u} other {us}}}"
+    },
+    "preview": {
+      "readyChip": "{{count}} spēlētāj{{count, plural, one {s} other {i}}} gatav{{count, plural, one {s} other {i}}} importēšanai",
+      "title": "Importējamie spēlētāji ({{count}}):",
+      "steamId": "Steam ID: {{steamId}}",
+      "name": "Vārds: {{name}}",
+      "initialElo": "Sākotnējais ELO: {{elo}}",
+      "avatar": "Avatārs: {{url}}"
+    },
+    "errors": {
+      "noData": "Lūdzu, ievadiet JSON vai CSV datus",
+      "noPlayers": "Datos nav atrasts neviens spēlētājs",
+      "validationPrefix": "Validācijas kļūdas:",
+      "parseFailed": "Neizdevās parsēt datus: {{message}}",
+      "importFailed": "Neizdevās importēt spēlētājus",
+      "parseFirst": "Lūdzu, vispirms parsējiet un validējiet datus"
+    }
+  },
+  "playerSelectionModal": {
+    "title": "Atlasīt spēlētājus",
+    "selectedCount": "{{count}} atlasīti",
+    "searchPlaceholder": "Meklēt spēlētājus pēc vārda vai Steam ID...",
+    "selectAll": {
+      "select": "Atlasīt visus",
+      "deselect": "Noņemt atlasi visiem"
+    },
+    "empty": {
+      "noSearchResults": "Nav atrasts neviens spēlētājs, kas atbilst meklējumam",
+      "noPlayers": "Nav pieejamu spēlētāju"
+    },
+    "playerCard": {
+      "alreadyInTeam": "Jau ir komandā"
+    },
+    "addPlayersButton": "Pievienot {{count}} spēlētāj{{count, plural, one {u} other {us}}}",
+    "errors": {
+      "loadFailed": "Neizdevās ielādēt spēlētājus",
+      "noSelectable": "Nav pieejamu atlasāmu spēlētāju"
+    }
+  },
+  "soundSettingsModal": {
+    "title": "Skaņas iestatījumi",
+    "soundSelect": {
+      "label": "Paziņojuma skaņa"
+    },
+    "volume": {
+      "label": "Skaļums: {{percent}}%"
+    },
+    "testButton": "Testēt skaņu",
+    "footer": "Skaņas paziņojumi tiks atskaņoti, kad jūsu spēle būs gatava vai kad notiks svarīgi notikumi."
+  }
+}

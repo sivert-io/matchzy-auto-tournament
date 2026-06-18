@@ -10,6 +10,10 @@ const GITHUB_REPO_API =
   'https://api.github.com/repos/sivert-io/cs2-server-manager/contents/map_thumbnails';
 const GITHUB_RAW_BASE =
   'https://raw.githubusercontent.com/sivert-io/cs2-server-manager/master/map_thumbnails';
+const GHOSTCAP_REPO_API =
+  'https://api.github.com/repos/ghostcap-gaming/cs2-map-images/contents/cs2';
+const GHOSTCAP_RAW_BASE =
+  'https://raw.githubusercontent.com/ghostcap-gaming/cs2-map-images/main/cs2';
 
 /**
  * Get GitHub API headers with optional authentication
@@ -220,6 +224,30 @@ export async function fetchCS2MapsFromWiki(): Promise<MapData[]> {
           });
           log.info(`Selected image for map ${mapId}: ${file.name} (priority ${priority})`);
         }
+      }
+
+      // Secondary source: ghostcap-gaming repo for maps not found in primary
+      try {
+        const ghostcapRes = await fetch(GHOSTCAP_REPO_API, {
+          timeout: 10000,
+          headers: getGitHubHeaders(),
+        });
+        if (ghostcapRes.ok) {
+          const ghostcapFiles = (await ghostcapRes.json()) as GitHubFile[];
+          if (Array.isArray(ghostcapFiles)) {
+            for (const file of ghostcapFiles) {
+              if (file.type !== 'file') continue;
+              const mapId = extractMapId(file.name);
+              if (!mapId || mapsById.has(mapId)) continue;
+              const displayName = mapIdToDisplayName(mapId);
+              const imageUrl = file.download_url || `${GHOSTCAP_RAW_BASE}/${file.name}`;
+              mapsById.set(mapId, { id: mapId, displayName, imageUrl, priority: 1 });
+              log.info(`Added map ${mapId} from ghostcap repo: ${file.name}`);
+            }
+          }
+        }
+      } catch (gcErr) {
+        log.warn('Failed to fetch maps from ghostcap repo (non-fatal)', { error: gcErr });
       }
 
       const maps: MapData[] = Array.from(mapsById.values()).map(

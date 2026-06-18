@@ -10,7 +10,7 @@ export default function Dashboard() {
   const { t } = useTranslation();
   // Set dynamic page title
   useEffect(() => {
-    document.title = t('dashboard.title');
+    document.title = `FULM: ${t('dashboard.title')}`;
   }, [t]);
 
   const {

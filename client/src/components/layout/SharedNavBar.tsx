@@ -3,18 +3,25 @@ import {
   Avatar,
   Box,
   Button,
+  Chip,
   IconButton,
   Menu,
   MenuItem,
+  Tooltip,
+  Typography,
 } from '@mui/material';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import MenuIcon from '@mui/icons-material/Menu';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import Inventory2Icon from '@mui/icons-material/Inventory2';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
 import { useSnackbar } from '../../contexts/SnackbarContext';
 import { useCurrentMatchStatus } from '../../hooks/useCurrentMatchStatus';
 import { LanguageSwitcher } from '../common/LanguageSwitcher';
+import { useIsDevelopment } from '../../hooks/useIsDevelopment';
 import { PlayerAvatar } from '../player/PlayerAvatar';
 import { generateAvatarDataUrl } from '../../generation/avatar';
 import { api } from '../../utils/api';
@@ -57,6 +64,9 @@ export const SharedNavBar: React.FC<SharedNavBarProps> = ({
     logout,
     adminProfileName,
     adminProfileAvatarUrl,
+    viewAsUser,
+    setViewAsUser,
+    isRealAdmin,
   } = useAuth();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -64,11 +74,13 @@ export const SharedNavBar: React.FC<SharedNavBarProps> = ({
     useCurrentMatchStatus(playerSteamId ?? null);
   const { showSnackbar } = useSnackbar();
 
+  const isDev = useIsDevelopment();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const prevMatchRef = React.useRef<{ status: string; label: string | null } | null>(null);
   const [playerAvatarUrl, setPlayerAvatarUrl] = React.useState<string | undefined>(undefined);
   const [playerName, setPlayerName] = React.useState<string>('Player');
   const [isLoadingPlayer, setIsLoadingPlayer] = React.useState(false);
+  const [activeLobby, setActiveLobby] = React.useState<{ id: string; status: string; matchStatus?: string } | null>(null);
 
   const handleAvatarMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -164,17 +176,26 @@ export const SharedNavBar: React.FC<SharedNavBarProps> = ({
     prevMatchRef.current = now;
   }, [playerSteamId, matchStatusLoading, matchStatus, matchStatusLabel, showSnackbar, t]);
 
-  const ctaLabels: Record<string, string> = {
-    your_turn_veto: t('nav.matchStatus.yourTurnVeto'),
-    waiting_veto: t('nav.matchStatus.waitingVeto'),
-    waiting_server: t('nav.matchStatus.waitingServer'),
-    match_ready: t('nav.matchStatus.matchReady'),
-  };
-  const ctaLabel =
-    playerSteamId &&
-    matchStatus !== 'none' &&
-    matchStatusLabel &&
-    ctaLabels[matchStatusLabel];
+  // Poll for active lobby status
+  React.useEffect(() => {
+    if (!playerSteamId) { setActiveLobby(null); return; }
+    let mounted = true;
+    const poll = async () => {
+      try {
+        const res = await api.fetch('/api/lobbies/my-lobby');
+        if (mounted && res.lobby) {
+          setActiveLobby({ id: res.lobby.id, status: res.lobby.status, matchStatus: res.lobby.matchStatus });
+        } else if (mounted) {
+          setActiveLobby(null);
+        }
+      } catch { /* ignore */ }
+    };
+    poll();
+    const interval = setInterval(poll, 5000);
+    return () => { mounted = false; clearInterval(interval); };
+  }, [playerSteamId]);
+
+  void matchStatus; void matchStatusLabel; // kept for snackbar notifications above
 
   return (
     <>
@@ -210,10 +231,24 @@ export const SharedNavBar: React.FC<SharedNavBarProps> = ({
         >
           <Box
             component="img"
-            src="/icon.svg"
-            alt="Matchzy Auto Tournament"
+            src="/faviconv2.png"
+            alt="CS-FULM SCRIM"
             sx={{ height: 32 }}
           />
+          <Typography
+            sx={{
+              fontFamily: '"High Speed", sans-serif',
+              fontSize: '1.3rem',
+              fontWeight: 400,
+              letterSpacing: '0.08em',
+              color: 'primary.main',
+              ml: 1,
+              lineHeight: 1,
+              textTransform: 'uppercase',
+            }}
+          >
+            CS-FULM
+          </Typography>
         </Box>
 
         <Box
@@ -235,32 +270,78 @@ export const SharedNavBar: React.FC<SharedNavBarProps> = ({
           >
             {t('nav.leaderboard')}
           </Button>
+          <Button
+            color="primary"
+            component={RouterLink}
+            to="/lobby"
+            size="small"
+            startIcon={<SportsEsportsIcon />}
+            sx={{ fontWeight: 600 }}
+          >
+            Lobby
+          </Button>
+          <Button
+            color="primary"
+            component={RouterLink}
+            to="/inventory"
+            size="small"
+            startIcon={<Inventory2Icon />}
+            sx={{ fontWeight: 600 }}
+          >
+            Inventory
+          </Button>
         </Box>
       </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        {/* Reserve space for CTA so match-status changes don't "jump" the header layout */}
-        <Box
-          sx={{
-            display: { xs: 'none', sm: 'flex' },
-            alignItems: 'center',
-            minWidth: 210,
-          }}
-        >
-          {ctaLabel ? (
+        <Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center' }}>
+          {activeLobby ? (
             <Button
               component={RouterLink}
-              to={`/player/${playerSteamId}`}
-              variant="contained"
-              color="primary"
+              to={`/lobby/${activeLobby.id}`}
               size="small"
-              startIcon={<SportsEsportsIcon />}
-              sx={{ fontWeight: 600, textTransform: 'none', px: 2 }}
+              startIcon={<ArrowBackIcon />}
+              sx={{
+                fontWeight: 600,
+                textTransform: 'none',
+                px: 2,
+                color: 'primary.main',
+                borderRadius: 1,
+                animation: 'lobbyPulse 2s ease-in-out infinite',
+                '@keyframes lobbyPulse': {
+                  '0%, 100%': { opacity: 1 },
+                  '50%': { opacity: 0.6 },
+                },
+              }}
             >
-              {ctaLabel}
+              Return to Lobby
             </Button>
           ) : null}
         </Box>
+        {import.meta.env.DEV && isRealAdmin && !viewAsUser && (
+          <Tooltip title="View site as a regular player (non-admin)">
+            <Chip
+              icon={<VisibilityIcon sx={{ fontSize: 16 }} />}
+              label="View as User"
+              size="small"
+              variant="outlined"
+              color="warning"
+              onClick={() => setViewAsUser(true)}
+              sx={{ cursor: 'pointer' }}
+            />
+          </Tooltip>
+        )}
+        {import.meta.env.DEV && viewAsUser && (
+          <Chip
+            icon={<VisibilityIcon sx={{ fontSize: 16 }} />}
+            label="Viewing as User"
+            size="small"
+            color="warning"
+            onClick={() => setViewAsUser(false)}
+            onDelete={() => setViewAsUser(false)}
+            sx={{ cursor: 'pointer', fontWeight: 700 }}
+          />
+        )}
         <LanguageSwitcher />
 
         {needsSteamLink && (

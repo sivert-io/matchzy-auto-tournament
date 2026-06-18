@@ -35,6 +35,41 @@ export async function enrichMatchWithPlayerStats(
       // Ignore parse errors
     }
   }
+
+  // Fallback: if no player_stats event, try player_match_stats table
+  // This covers lobby/manual matches where stats are tracked per-player
+  if (!match.team1Players && !match.team2Players) {
+    try {
+      const rows = await db.queryAsync<{
+        player_id: string; team: string; kills: number; deaths: number;
+        assists: number; total_damage: number; adr: number;
+      }>(
+        `SELECT player_id, team, kills, deaths, assists, total_damage, adr
+         FROM player_match_stats WHERE match_slug = ?`,
+        [matchSlug]
+      );
+      if (rows.length > 0) {
+        const t1: Record<string, Record<string, unknown>> = {};
+        const t2: Record<string, Record<string, unknown>> = {};
+        for (const row of rows) {
+          const entry = {
+            steamid: row.player_id,
+            name: row.player_id,
+            kills: row.kills || 0,
+            deaths: row.deaths || 0,
+            assists: row.assists || 0,
+            damage: row.total_damage || 0,
+          };
+          if (row.team === 'team1') t1[row.player_id] = entry;
+          else t2[row.player_id] = entry;
+        }
+        if (Object.keys(t1).length > 0) match.team1Players = t1;
+        if (Object.keys(t2).length > 0) match.team2Players = t2;
+      }
+    } catch {
+      // Ignore errors
+    }
+  }
 }
 
 /**

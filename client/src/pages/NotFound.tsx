@@ -8,7 +8,7 @@ export default function NotFound() {
   const { t } = useTranslation();
 
   useEffect(() => {
-    document.title = t('notFound.title');
+    document.title = `FULM: ${t('notFound.title')}`;
   }, [t]);
 
   return (

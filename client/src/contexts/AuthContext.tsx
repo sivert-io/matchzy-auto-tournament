@@ -83,12 +83,20 @@ interface AuthContextType {
    * but were never added by an admin (or self‑registration is off).
    */
   hasPlayerRecord: boolean;
+  /**
+   * When true, the admin sees the app as a regular player (isAuthenticated = false).
+   * Toggle via the dev tools or navbar.
+   */
+  isRealAdmin: boolean;
+  viewAsUser: boolean;
+  setViewAsUser: (value: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [viewAsUser, setViewAsUser] = useState(false);
   const [playerSteamId, setPlayerSteamId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [adminHasSteamLinked, setAdminHasSteamLinked] = useState(false);
@@ -314,15 +322,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       value={{
         loginWithSteam,
         logout,
-        isAuthenticated: isAdmin,
+        isAuthenticated: isAdmin && !viewAsUser,
         playerSteamId,
         isPlayerAuthenticated: !!playerSteamId,
-        needsSteamLink: isAdmin && !adminHasSteamLinked,
+        needsSteamLink: isAdmin && !viewAsUser && !adminHasSteamLinked,
         isLoading,
         adminProvider,
         adminProfileName,
         adminProfileAvatarUrl,
         hasPlayerRecord,
+        isRealAdmin: isAdmin,
+        viewAsUser,
+        setViewAsUser,
       }}
     >
       {children}

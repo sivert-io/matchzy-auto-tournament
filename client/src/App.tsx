@@ -26,6 +26,9 @@ import Templates from './pages/Templates';
 import ELOTemplates from './pages/ELOTemplates';
 import Layout from './components/layout/Layout';
 import NotFound from './pages/NotFound';
+import Lobbies from './pages/Lobbies';
+import LobbyRoom from './pages/LobbyRoom';
+import Inventory from './pages/Inventory';
 import { theme } from './theme';
 
 interface ProtectedRouteProps {
@@ -58,7 +61,7 @@ function ProtectedRoute({ children, adminOnly = true }: ProtectedRouteProps) {
         <Box textAlign="center">
           <Box
             component="img"
-            src="/icon.svg"
+            src="/faviconv2.png"
             alt="Logo"
             sx={{
               width: 80,
@@ -180,6 +183,29 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
+      {/* Player-facing routes — accessible by any signed-in user */}
+      <Route
+        path="/lobby"
+        element={
+          <ProtectedRoute adminOnly={false}>
+            <Layout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Lobbies />} />
+        <Route path=":id" element={<LobbyRoom />} />
+      </Route>
+      <Route
+        path="/inventory"
+        element={
+          <ProtectedRoute adminOnly={false}>
+            <Layout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Inventory />} />
+      </Route>
 
       <Route
         path="/"

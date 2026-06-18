@@ -39,9 +39,16 @@ interface Server {
   enabled: boolean;
 }
 
+interface Player {
+  id: string;
+  name: string;
+  isAdmin?: boolean;
+}
+
 const AdminTools: React.FC = () => {
   const { setHeaderActions } = usePageHeader();
   const [servers, setServers] = useState<Server[]>([]);
+  const [players, setPlayers] = useState<Player[]>([]);
   const [selectedServerId, setSelectedServerId] = useState<string>('all');
   const [loadingServers, setLoadingServers] = useState(true);
   const [commandInputs, setCommandInputs] = useState<Record<string, string>>({});
@@ -78,13 +85,21 @@ const AdminTools: React.FC = () => {
     }
   }, []);
 
+  const loadPlayers = React.useCallback(async () => {
+    try {
+      const response = await api.get<{ players: Player[] }>('/api/players');
+      setPlayers(response.players || []);
+    } catch { /* ignore */ }
+  }, []);
+
   React.useEffect(() => {
     loadServers();
-  }, [loadServers]);
+    loadPlayers();
+  }, [loadServers, loadPlayers]);
 
   // Set dynamic page title
   React.useEffect(() => {
-    document.title = t('layout.pageTitle.adminTools');
+    document.title = `FULM: ${t('layout.pageTitle.adminTools')}`;
   }, [t]);
 
   React.useEffect(() => {
@@ -120,7 +135,24 @@ const AdminTools: React.FC = () => {
       return;
     }
 
-    await executeCommand(serverIds, command.command, value);
+    let finalCommand = command.command;
+    let finalValue = value;
+
+    if (command.id === 'plugins-list') {
+      finalCommand = 'custom';
+      finalValue = 'css_plugins list';
+    } else if (command.id === 'plugins-load' && value) {
+      finalCommand = 'custom';
+      finalValue = `css_plugins load ${value.trim()}`;
+    } else if (command.id === 'plugins-unload' && value) {
+      finalCommand = 'custom';
+      finalValue = `css_plugins unload ${value.trim()}`;
+    } else if (command.id === 'plugins-reload' && value) {
+      finalCommand = 'custom';
+      finalValue = `css_plugins reload ${value.trim()}`;
+    }
+
+    await executeCommand(serverIds, finalCommand, finalValue);
 
     // Clear input after execution
     if (command.requiresInput) {
@@ -442,6 +474,86 @@ const AdminTools: React.FC = () => {
       >
         {t('adminToolsPage.recovery.button')}
       </Button>
+
+      <Divider sx={{ my: 4 }} />
+
+      {/* CSS Admin Management */}
+      <Typography variant="h5" fontWeight={600} mb={3}>
+        Server Admin Management
+      </Typography>
+      <Card sx={{ mb: 4 }}>
+        <CardContent>
+          <Typography variant="body2" color="text.secondary" mb={2}>
+            Manage CounterStrikeSharp admins by editing admins.json directly. Changes are applied by running css_reloadadmins on all servers.
+          </Typography>
+          <Box display="flex" gap={2} flexWrap="wrap" alignItems="flex-end" mb={2}>
+            <FormControl size="small" sx={{ minWidth: 240 }}>
+              <InputLabel>Player</InputLabel>
+              <Select
+                value={commandInputs['admin-player'] || ''}
+                label="Player"
+                onChange={(e) => handleInputChange('admin-player', e.target.value)}
+              >
+                {players.map((p) => (
+                  <MenuItem key={p.id} value={p.id}>
+                    {p.name} — {p.id}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl size="small" sx={{ minWidth: 160 }}>
+              <InputLabel>Group</InputLabel>
+              <Select
+                value={commandInputs['admin-group'] || '#css/admin'}
+                label="Group"
+                onChange={(e) => handleInputChange('admin-group', e.target.value)}
+              >
+                <MenuItem value="#css/admin">#css/admin (Full)</MenuItem>
+                <MenuItem value="#css/moderator">#css/moderator</MenuItem>
+              </Select>
+            </FormControl>
+            <Button
+              variant="contained"
+              color="success"
+              size="small"
+              disabled={executing || !commandInputs['admin-player']}
+              onClick={async () => {
+                try {
+                  const selectedPlayer = players.find((p) => p.id === commandInputs['admin-player']);
+                  const res = await api.post<{ success: boolean; message?: string; error?: string }>('/api/rcon/manage-admin', {
+                    action: 'add',
+                    steamId: commandInputs['admin-player'],
+                    name: selectedPlayer?.name || commandInputs['admin-player'],
+                    group: commandInputs['admin-group'] || '#css/admin',
+                  });
+                  if (res.success) showSuccess(res.message || 'Admin added');
+                  else showError(res.error || 'Failed');
+                } catch (err) { showError((err as Error).message); }
+              }}
+            >
+              Add Admin
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              size="small"
+              disabled={executing || !commandInputs['admin-player']}
+              onClick={async () => {
+                try {
+                  const res = await api.post<{ success: boolean; message?: string; error?: string }>('/api/rcon/manage-admin', {
+                    action: 'remove',
+                    steamId: commandInputs['admin-player'],
+                  });
+                  if (res.success) showSuccess(res.message || 'Admin removed');
+                  else showError(res.error || 'Failed');
+                } catch (err) { showError((err as Error).message); }
+              }}
+            >
+              Remove Admin
+            </Button>
+          </Box>
+        </CardContent>
+      </Card>
 
       <Divider sx={{ my: 4 }} />
 

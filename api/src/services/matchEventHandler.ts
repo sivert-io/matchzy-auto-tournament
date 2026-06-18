@@ -819,6 +819,25 @@ async function handleSeriesEnd(event: MatchZyEvent): Promise<void> {
       // rosters from the stored match config.
       await trackPlayerStatsForManualMatch(match, matchSlug, team1Score, team2Score);
 
+      // Update ELO ratings for lobby/manual matches too
+      if (team1Score !== team2Score) {
+        try {
+          const cfg = typeof match.config === 'string' ? JSON.parse(match.config) : match.config;
+          const t1Players = (cfg?.team1?.players || [])
+            .map((p: { steamid?: string }) => p.steamid)
+            .filter((id: string | undefined): id is string => !!id && !id.startsWith('BOT_'));
+          const t2Players = (cfg?.team2?.players || [])
+            .map((p: { steamid?: string }) => p.steamid)
+            .filter((id: string | undefined): id is string => !!id && !id.startsWith('BOT_'));
+          if (t1Players.length > 0 && t2Players.length > 0) {
+            await updatePlayerRatings(t1Players, t2Players, team1Score > team2Score, matchSlug);
+            log.success(`Updated ratings for lobby/manual match ${matchSlug}`);
+          }
+        } catch (ratingErr) {
+          log.warn('Failed to update ratings for manual match', { error: ratingErr, matchSlug });
+        }
+      }
+
       // Now that stats have been recorded, emit a match update so that any
       // listening UIs (including the public player page) can immediately
       // reload and see a fully populated match history row.

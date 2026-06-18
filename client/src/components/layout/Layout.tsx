@@ -46,6 +46,7 @@ import type { SettingsResponse } from '../../types/api.types';
 import { useIsDevelopment } from '../../hooks/useIsDevelopment';
 import { useTranslation } from 'react-i18next';
 import { SharedNavBar } from './SharedNavBar';
+import { useAuth } from '../../contexts/AuthContext';
 
 const drawerWidth = 240;
 
@@ -157,6 +158,7 @@ export default function Layout() {
   });
 
   const isDevelopment = useIsDevelopment();
+  const { isAuthenticated: isAdmin } = useAuth();
 
   // Page header configuration - maps routes to their titles and icons
   const pageHeaders: Record<string, { title: string; icon: React.ComponentType; color?: string }> =
@@ -185,28 +187,31 @@ export default function Layout() {
 
   // Group navigation items logically
   const mainNavItems = [
-    { label: t('nav.tournament'), path: '/tournament', icon: EmojiEventsIcon },
-    { label: t('nav.bracket'), path: '/bracket', icon: AccountTreeIcon },
-    { label: t('nav.matches'), path: '/matches', icon: SportsEsportsIcon },
+    { label: 'Lobby', path: '/lobby', icon: SportsEsportsIcon },
+    ...(isAdmin ? [
+      { label: t('nav.tournament'), path: '/tournament', icon: EmojiEventsIcon },
+      { label: t('nav.bracket'), path: '/bracket', icon: AccountTreeIcon },
+      { label: t('nav.matches'), path: '/matches', icon: SportsEsportsIcon },
+    ] : []),
   ];
 
-  const resourcesNavItems = [
+  const resourcesNavItems = isAdmin ? [
     { label: t('nav.teams'), path: '/teams', icon: GroupsIcon },
     { label: t('nav.players'), path: '/players', icon: PersonIcon },
     { label: t('nav.servers'), path: '/servers', icon: StorageIcon },
     { label: t('nav.maps'), path: '/maps', icon: MapIcon },
-  ];
+  ] : [];
 
-  const configurationNavItems = [
+  const configurationNavItems = isAdmin ? [
     { label: t('nav.templates'), path: '/templates', icon: DescriptionIcon },
     { label: t('nav.eloTemplates'), path: '/elo-templates', icon: TrendingUpIcon },
     { label: t('nav.settings'), path: '/settings', icon: SettingsIcon },
-  ];
+  ] : [];
 
-  const systemNavItems = [
+  const systemNavItems = isAdmin ? [
     { label: t('nav.adminTools'), path: '/admin', icon: CampaignIcon },
     ...(isDevelopment ? [{ label: t('nav.devTools'), path: '/dev', icon: BuildIcon }] : []),
-  ];
+  ] : [];
 
   React.useEffect(() => {
     let isMounted = true;
@@ -364,7 +369,7 @@ export default function Layout() {
     // Let individual pages manage their own titles where possible, but ensure that
     // the Matches page always exposes a stable, human‑readable title for tests.
     if (location.pathname.startsWith('/matches')) {
-      document.title = t('layout.pageTitle.matches');
+      document.title = `FULM: ${t('layout.pageTitle.matches')}`;
     }
   }, [location.pathname, t]);
 
@@ -514,9 +519,9 @@ export default function Layout() {
             }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Box component="img" src="/icon.svg" alt="Logo" sx={{ width: 32, height: 32 }} />
+              <Box component="img" src="/faviconv2.png" alt="Logo" sx={{ width: 32, height: 32 }} />
               <Typography variant="body2" noWrap component="div" sx={{ fontWeight: 600 }}>
-                Matchzy Auto Tournament
+                CS-FULM SCRIM
               </Typography>
             </Box>
             <IconButton onClick={handleDrawerClose}>
@@ -584,75 +589,66 @@ export default function Layout() {
           </ListSubheader>
           {renderNavItems(mainNavItems)}
         </List>
-        <Divider />
-        <List>
-          <ListSubheader
-            sx={{
-              fontSize: 12,
-              fontWeight: 600,
-              height: 36,
-              px: 2.5,
-              py: 0,
-              lineHeight: '36px',
-            }}
-          >
-            {t('nav.resourcesSection')}
-          </ListSubheader>
-          {renderNavItems(resourcesNavItems)}
-        </List>
-        <Divider />
-        <List>
-          <ListSubheader
-            sx={{
-              fontSize: 12,
-              fontWeight: 600,
-              height: 36,
-              px: 2.5,
-              py: 0,
-              lineHeight: '36px',
-            }}
-          >
-            {t('nav.configurationSection')}
-          </ListSubheader>
-          {renderNavItems(configurationNavItems)}
-        </List>
-        <Divider />
-        <List>
-          <ListSubheader
-            sx={{
-              fontSize: 12,
-              fontWeight: 600,
-              height: 36,
-              px: 2.5,
-              py: 0,
-              lineHeight: '36px',
-            }}
-          >
-            {t('nav.systemSection')}
-          </ListSubheader>
-          {renderNavItems(systemNavItems)}
-        </List>
-        <Divider />
-        <List>
-          <ListItem disablePadding sx={{ display: 'block' }}>
-            <ListItemButton
-              component="a"
-                href="https://docs.sivert.io/docs/mat"
-              target="_blank"
-              rel="noopener noreferrer"
-              sx={{
-                minHeight: 48,
-                px: 2.5,
-                justifyContent: 'initial',
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 0, justifyContent: 'center', mr: 3 }}>
-                <LibraryBooksIcon />
-              </ListItemIcon>
-              <ListItemText primary={t('nav.documentation')} />
-            </ListItemButton>
-          </ListItem>
-        </List>
+        {resourcesNavItems.length > 0 && (
+          <>
+            <Divider />
+            <List>
+              <ListSubheader
+                sx={{
+                  fontSize: 12,
+                  fontWeight: 600,
+                  height: 36,
+                  px: 2.5,
+                  py: 0,
+                  lineHeight: '36px',
+                }}
+              >
+                {t('nav.resourcesSection')}
+              </ListSubheader>
+              {renderNavItems(resourcesNavItems)}
+            </List>
+          </>
+        )}
+        {configurationNavItems.length > 0 && (
+          <>
+            <Divider />
+            <List>
+              <ListSubheader
+                sx={{
+                  fontSize: 12,
+                  fontWeight: 600,
+                  height: 36,
+                  px: 2.5,
+                  py: 0,
+                  lineHeight: '36px',
+                }}
+              >
+                {t('nav.configurationSection')}
+              </ListSubheader>
+              {renderNavItems(configurationNavItems)}
+            </List>
+          </>
+        )}
+        {systemNavItems.length > 0 && (
+          <>
+            <Divider />
+            <List>
+              <ListSubheader
+                sx={{
+                  fontSize: 12,
+                  fontWeight: 600,
+                  height: 36,
+                  px: 2.5,
+                  py: 0,
+                  lineHeight: '36px',
+                }}
+              >
+                {t('nav.systemSection')}
+              </ListSubheader>
+              {renderNavItems(systemNavItems)}
+            </List>
+          </>
+        )}
       </MuiDrawer>
 
       {/* Desktop Drawer (permanent mini variant) */}
@@ -754,90 +750,72 @@ export default function Layout() {
           )}
           {renderNavItems(mainNavItems)}
         </List>
-        <Divider />
-        <List>
-          {open && (
-            <ListSubheader
-              sx={{
-                fontSize: 12,
-                fontWeight: 600,
-                height: 36,
-                px: 2.5,
-                py: 0,
-                lineHeight: '36px',
-              }}
-            >
-              {t('nav.resourcesSection')}
-            </ListSubheader>
-          )}
-          {renderNavItems(resourcesNavItems)}
-        </List>
-        <Divider />
-        <List>
-          {open && (
-            <ListSubheader
-              sx={{
-                fontSize: 12,
-                fontWeight: 600,
-                height: 36,
-                px: 2.5,
-                py: 0,
-                lineHeight: '36px',
-              }}
-            >
-              {t('nav.configurationSection')}
-            </ListSubheader>
-          )}
-          {renderNavItems(configurationNavItems)}
-        </List>
-        <Divider />
-        <List>
-          {open && (
-            <ListSubheader
-              sx={{
-                fontSize: 12,
-                fontWeight: 600,
-                height: 36,
-                px: 2.5,
-                py: 0,
-                lineHeight: '36px',
-              }}
-            >
-              {t('nav.systemSection')}
-            </ListSubheader>
-          )}
-          {renderNavItems(systemNavItems)}
-        </List>
-        <Divider />
-        <List>
-          <ListItem disablePadding sx={{ display: 'block' }}>
-            <Tooltip title={!open ? t('nav.documentation') : ''} placement="right">
-              <ListItemButton
-                component="a"
-                href="https://docs.sivert.io/docs/mat"
-                target="_blank"
-                rel="noopener noreferrer"
-                sx={[
-                  { minHeight: 48, px: 2.5 },
-                  open ? { justifyContent: 'initial' } : { justifyContent: 'center' },
-                ]}
-              >
-                <ListItemIcon
-                  sx={[
-                    { minWidth: 0, justifyContent: 'center' },
-                    open ? { mr: 3 } : { mr: 'auto' },
-                  ]}
+        {resourcesNavItems.length > 0 && (
+          <>
+            <Divider />
+            <List>
+              {open && (
+                <ListSubheader
+                  sx={{
+                    fontSize: 12,
+                    fontWeight: 600,
+                    height: 36,
+                    px: 2.5,
+                    py: 0,
+                    lineHeight: '36px',
+                  }}
                 >
-                  <LibraryBooksIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary={t('nav.documentation')}
-                  sx={open ? { opacity: 1 } : { opacity: 0 }}
-                />
-              </ListItemButton>
-            </Tooltip>
-          </ListItem>
-        </List>
+                  {t('nav.resourcesSection')}
+                </ListSubheader>
+              )}
+              {renderNavItems(resourcesNavItems)}
+            </List>
+          </>
+        )}
+        {configurationNavItems.length > 0 && (
+          <>
+            <Divider />
+            <List>
+              {open && (
+                <ListSubheader
+                  sx={{
+                    fontSize: 12,
+                    fontWeight: 600,
+                    height: 36,
+                    px: 2.5,
+                    py: 0,
+                    lineHeight: '36px',
+                  }}
+                >
+                  {t('nav.configurationSection')}
+                </ListSubheader>
+              )}
+              {renderNavItems(configurationNavItems)}
+            </List>
+          </>
+        )}
+        {systemNavItems.length > 0 && (
+          <>
+            <Divider />
+            <List>
+              {open && (
+                <ListSubheader
+                  sx={{
+                    fontSize: 12,
+                    fontWeight: 600,
+                    height: 36,
+                    px: 2.5,
+                    py: 0,
+                    lineHeight: '36px',
+                  }}
+                >
+                  {t('nav.systemSection')}
+                </ListSubheader>
+              )}
+              {renderNavItems(systemNavItems)}
+            </List>
+          </>
+        )}
       </Drawer>
 
       <Box
@@ -885,25 +863,17 @@ export default function Layout() {
           <Box sx={{ width: '100%', maxWidth: (theme) => theme.breakpoints.values.lg }}>
             {/* Page Header */}
             {currentPageHeader && (
-              <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-                <Box display="flex" alignItems="center" gap={2}>
+              <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+                <Box display="flex" alignItems="center" gap={1.5}>
                   <Box
+                    component={currentPageHeader.icon}
                     sx={{
-                      width: 48,
-                      height: 48,
-                      display: 'grid',
-                      placeItems: 'center',
+                      fontSize: 28,
+                      color: currentPageHeader.color || 'primary.main',
+                      flexShrink: 0,
                     }}
-                  >
-                    <Box
-                      component={currentPageHeader.icon}
-                      sx={{
-                        fontSize: 40,
-                        color: currentPageHeader.color || 'primary.main',
-                      }}
-                    />
-                  </Box>
-                  <Typography variant="h4" fontWeight={600}>
+                  />
+                  <Typography variant="h5" fontWeight={700}>
                     {currentPageHeader.title}
                   </Typography>
                 </Box>

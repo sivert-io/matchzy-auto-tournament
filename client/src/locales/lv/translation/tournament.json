@@ -1,0 +1,86 @@
+{
+  "tournament": {
+    "steps": {
+      "create": "Izveidot turnīru",
+      "review": "Pārskatīt un apstiprināt",
+      "live": "Aktīvs turnīrs"
+    },
+    "welcome": {
+      "heading": "Izveidot turnīru",
+      "chooseMethod": "Izvēlieties, kā vēlaties izveidot savu turnīru",
+      "createNewTitle": "Izveidot jaunu turnīru",
+      "createNewDescription": "Sāciet no nulles un konfigurējiet visus turnīra iestatījumus manuāli"
+    },
+    "typeSelector": {
+      "categories": {
+        "professional": {
+          "label": "Profesionālā sērija"
+        },
+        "party": {
+          "label": "Ballīte un izklaide"
+        }
+      },
+      "types": {
+        "single_elimination": {
+          "label": "Vienkāršā izslēgšana",
+          "description": "Viens zaudējums un esi ārā. Klasiskais izslēgšanas formāts, ko izmanto profesionālos turnīros."
+        },
+        "double_elimination": {
+          "label": "Dubultā izslēgšana",
+          "description": "Divi zaudējumi, lai tiktu izslēgts. Komandas saņem otru iespēju apakšējā grupā."
+        },
+        "round_robin": {
+          "label": "Apļa sistēma",
+          "description": "Visi spēlē pret visiem. Ideāli piemērots līgas formāta sacensībām."
+        },
+        "swiss": {
+          "label": "Šveices sistēma",
+          "description": "Līdzīgi rezultāti tiekas savā starpā. Līdzsvarotas spēles visa turnīra garumā."
+        },
+        "shuffle": {
+          "label": "Jaukšanas turnīrs",
+          "description": "Spēlētāji tiek dinamiski sajaukti līdzsvarotās komandās katrā raundā. Individuāla spēlētāju sacensība ar ELO balstītu komandu līdzsvarošanu."
+        }
+      },
+      "selectedChip": "Izvēlēts"
+    },
+    "review": {
+      "summary": {
+        "info": "Pārskatiet savus turnīra iestatījumus un nospiediet \"Izveidot turnīru\", kad esat gatavs.",
+        "nameLabel": "Turnīra nosaukums",
+        "typeLabel": "Turnīra veids",
+        "formatLabel": "Spēles formāts",
+        "notSet": "Nav iestatīts",
+        "estimatedVolume": "Aptuveni {{matches}} spēl{{matches, plural, one {e} other {es}}} {{rounds}} raund{{rounds, plural, one {ā} other {os}}} (best of {{mapsPerMatch}}, līdz {{totalMaps}} kart{{totalMaps, plural, one {e} other {ēm}}} kopā)."
+      }
+    },
+    "formSteps": {
+      "steps": {
+        "name": "Nosaukums",
+        "type": "Veids",
+        "format": "Formāts",
+        "maps": "Kartes",
+        "teams": "Komandas",
+        "review": "Pārskats"
+      },
+      "backToWelcome": "Atpakaļ uz sākumu",
+      "back": "Atpakaļ",
+      "next": "Tālāk"
+    },
+    "emptyBracket": {
+      "title": "Nav turnīra tabulas ko attēlot",
+      "description": "Izveidojiet turnīru un ģenerējiet tabulu, lai sāktu"
+    },
+    "common": {
+      "createTournament": "Izveidot turnīru"
+    },
+    "nameLabel": "Turnīra nosaukums",
+    "namePlaceholder": "MAT 2025 Pavasara turnīrs"
+  },
+  "bracket": {
+    "empty": {
+      "noBracketTitle": "Nav turnīra tabulas ko attēlot",
+      "noBracketDescription": "Izveidojiet turnīru un ģenerējiet tabulu, lai sāktu"
+    }
+  }
+}

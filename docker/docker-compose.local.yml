@@ -70,6 +70,7 @@ services:
       # are loaded from .env via env_file directive above
     volumes:
       - ./data:/app/data
+      - ${CS2_CONFIG_PATH:-/home/steam/cs2/game/csgo/addons/counterstrikesharp/configs}:/cs2-configs
     healthcheck:
       test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://localhost:3069/health']
       interval: 30s
