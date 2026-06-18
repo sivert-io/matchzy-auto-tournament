@@ -46,9 +46,9 @@ export default function TeamMatch() {
 
   useEffect(() => {
     if (team?.name) {
-      document.title = `FULM: ${team.name}`;
+      document.title = `Fragbase: ${team.name}`;
     } else {
-      document.title = `FULM: ${t('teamPage.pageTitle')}`;
+      document.title = `Fragbase: ${t('teamPage.pageTitle')}`;
     }
   }, [team, t]);
 

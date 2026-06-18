@@ -369,7 +369,7 @@ export default function Layout() {
     // Let individual pages manage their own titles where possible, but ensure that
     // the Matches page always exposes a stable, human‑readable title for tests.
     if (location.pathname.startsWith('/matches')) {
-      document.title = `FULM: ${t('layout.pageTitle.matches')}`;
+      document.title = `Fragbase: ${t('layout.pageTitle.matches')}`;
     }
   }, [location.pathname, t]);
 
@@ -519,9 +519,9 @@ export default function Layout() {
             }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Box component="img" src="/faviconv2.png" alt="Logo" sx={{ width: 32, height: 32 }} />
+              <Box component="img" src="/fragbase-logo.png" alt="Fragbase" sx={{ width: 32, height: 32, borderRadius: 999 }} />
               <Typography variant="body2" noWrap component="div" sx={{ fontWeight: 600 }}>
-                CS-FULM SCRIM
+                Fragbase
               </Typography>
             </Box>
             <IconButton onClick={handleDrawerClose}>

@@ -58,7 +58,7 @@ export default function Lobbies() {
   const [menuAnchor, setMenuAnchor] = useState<{ el: HTMLElement; lobbyId: string } | null>(null);
   const navigatingRef = React.useRef(false);
 
-  useEffect(() => { document.title = 'FULM: Lobby'; }, []);
+  useEffect(() => { document.title = 'Fragbase: Lobby'; }, []);
 
   const loadLobbies = useCallback(async () => {
     if (navigatingRef.current) return;
@@ -195,7 +195,7 @@ export default function Lobbies() {
                       <GroupsIcon sx={{ color: isFinished ? 'text.disabled' : 'primary.main', fontSize: 28 }} />
                       <Box>
                         <Box display="flex" alignItems="center" gap={1}>
-                          <Typography variant="h6" fontWeight={600} sx={{ fontFamily: '"Rajdhani", sans-serif' }}>
+                          <Typography variant="h6" fontWeight={600} sx={{ fontFamily: 'Inter, Montserrat, sans-serif' }}>
                             {lobby.state.lobbyName || `${lobby.teamSize}v${lobby.teamSize} ${lobby.format.toUpperCase()}`}
                           </Typography>
                           <Chip label={lobby.gameMode.charAt(0).toUpperCase() + lobby.gameMode.slice(1)} size="small" variant="outlined" sx={CHIP_SX} />

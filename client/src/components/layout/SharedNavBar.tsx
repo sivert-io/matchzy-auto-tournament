@@ -227,27 +227,30 @@ export const SharedNavBar: React.FC<SharedNavBarProps> = ({
             display: 'flex',
             alignItems: 'center',
             textDecoration: 'none',
+            bgcolor: '#000',
+            border: '1px solid rgba(255,255,255,0.16)',
+            borderRadius: 999,
+            px: 1.25,
+            py: 0.5,
           }}
         >
           <Box
             component="img"
-            src="/faviconv2.png"
-            alt="CS-FULM SCRIM"
-            sx={{ height: 32 }}
+            src="/fragbase-logo.png"
+            alt="Fragbase"
+            sx={{ width: 28, height: 28, borderRadius: 999 }}
           />
           <Typography
             sx={{
-              fontFamily: '"High Speed", sans-serif',
-              fontSize: '1.3rem',
-              fontWeight: 400,
-              letterSpacing: '0.08em',
-              color: 'primary.main',
+              fontSize: '1rem',
+              fontWeight: 800,
+              letterSpacing: 0,
+              color: '#fff',
               ml: 1,
               lineHeight: 1,
-              textTransform: 'uppercase',
             }}
           >
-            CS-FULM
+            Fragbase
           </Typography>
         </Box>
 
@@ -276,7 +279,7 @@ export const SharedNavBar: React.FC<SharedNavBarProps> = ({
             to="/lobby"
             size="small"
             startIcon={<SportsEsportsIcon />}
-            sx={{ fontWeight: 600 }}
+            sx={{ fontWeight: 700 }}
           >
             Lobby
           </Button>
@@ -286,9 +289,9 @@ export const SharedNavBar: React.FC<SharedNavBarProps> = ({
             to="/inventory"
             size="small"
             startIcon={<Inventory2Icon />}
-            sx={{ fontWeight: 600 }}
+            sx={{ fontWeight: 700 }}
           >
-            Inventory
+            Skins
           </Button>
         </Box>
       </Box>

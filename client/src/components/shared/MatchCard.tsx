@@ -439,7 +439,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
                   sx={{
                     fontSize: '0.7rem',
                     height: 22,
-                    fontFamily: '"Rajdhani", sans-serif',
+                    fontFamily: 'Inter, Montserrat, sans-serif',
                     fontWeight: 600,
                     color: result.team1Score > result.team2Score ? 'primary.main' : result.team2Score > result.team1Score ? 'error.main' : 'text.secondary',
                   }}

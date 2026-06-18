@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Card, Button, Alert, Container, Link, Stack, Typography } from '@mui/material';
-import { OpenInNew as OpenInNewIcon } from '@mui/icons-material';
 import { SiDiscord, SiGithub, SiKeycloak } from 'react-icons/si';
-import { useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { SteamIcon } from '../components/icons/SteamIcon';
@@ -25,7 +23,6 @@ export default function Login() {
   >([]);
   const [loadingProviders, setLoadingProviders] = useState(false);
   const [providersError, setProvidersError] = useState<string | null>(null);
-  const location = useLocation();
   const hasLoadedProvidersRef = React.useRef(false);
   // __APP_VERSION__ is injected by Vite at build time (see client/vite.config.ts)
   const appVersion = __APP_VERSION__;
@@ -37,7 +34,7 @@ export default function Login() {
     }
     hasLoadedProvidersRef.current = true;
 
-    document.title = `FULM: ${t('login.title')}`;
+    document.title = `Fragbase: ${t('login.title')}`;
   }, [t]);
 
   useEffect(() => {
@@ -116,7 +113,7 @@ export default function Login() {
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        background: 'linear-gradient(135deg, #1C1B1F 0%, #2B2930 100%)',
+        background: '#000',
       }}
     >
       <TopNavBar />
@@ -134,8 +131,9 @@ export default function Login() {
           sx={{
             p: { xs: 4, md: 5 },
             backgroundColor: 'background.paper',
-            borderRadius: 3,
-            boxShadow: (theme) => theme.shadows[location.pathname === '/login' ? 8 : 2],
+            borderRadius: 4,
+            border: '1px solid rgba(255,255,255,0.12)',
+            boxShadow: 'none',
           }}
         >
           <Stack spacing={4} alignItems="center">
@@ -149,9 +147,9 @@ export default function Login() {
                 }}
               >
                 <img
-                  src="/nice.png"
-                  alt="CS-FULM SCRIM"
-                  style={{ width: '108px', height: '108px' }}
+                  src="/fragbase-logo.png"
+                  alt="Fragbase"
+                  style={{ width: '96px', height: '96px', borderRadius: '999px' }}
                 />
               </Box>
 

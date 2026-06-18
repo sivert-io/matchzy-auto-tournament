@@ -340,7 +340,7 @@ export default function Settings() {
   }, [showError, t]);
 
   useEffect(() => {
-    document.title = `FULM: ${t('settingsPage.title')}`;
+    document.title = `Fragbase: ${t('settingsPage.title')}`;
     void fetchSettings();
   }, [fetchSettings, t]);
 

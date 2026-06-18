@@ -61,7 +61,7 @@ function ProtectedRoute({ children, adminOnly = true }: ProtectedRouteProps) {
         <Box textAlign="center">
           <Box
             component="img"
-            src="/faviconv2.png"
+            src="/fragbase-logo.png"
             alt="Logo"
             sx={{
               width: 80,

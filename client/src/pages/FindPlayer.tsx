@@ -48,7 +48,7 @@ export default function FindPlayer() {
   const { showError } = useSnackbar();
 
   useEffect(() => {
-    document.title = `FULM: ${t('findPlayer.title')}`;
+    document.title = `Fragbase: ${t('findPlayer.title')}`;
   }, [t]);
 
   useEffect(() => {

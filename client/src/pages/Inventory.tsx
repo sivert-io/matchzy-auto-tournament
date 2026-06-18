@@ -6,7 +6,7 @@ import Inventory2Icon from '@mui/icons-material/Inventory2';
 const INVENTORY_URL = 'https://inventory.cstrike.app';
 
 export default function Inventory() {
-  useEffect(() => { document.title = 'FULM: Inventory'; }, []);
+  useEffect(() => { document.title = 'Fragbase: Skins'; }, []);
 
   return (
     <Box sx={{ maxWidth: 600, mx: 'auto', mt: 6, px: 3 }}>
@@ -28,12 +28,12 @@ export default function Inventory() {
             rel="noopener noreferrer"
             sx={{ px: 4, py: 1.5, fontWeight: 700, fontSize: '1rem', borderRadius: 3 }}
           >
-            Open Inventory
+            Open Skins
           </Button>
           <Alert severity="info" sx={{ mt: 3, textAlign: 'left' }}>
             <strong>How to use:</strong>
             <ol style={{ margin: '8px 0 0', paddingLeft: 20 }}>
-              <li>Click the button above to open the inventory site</li>
+              <li>Click the button above to open the skins site</li>
               <li>Sign in with your Steam account</li>
               <li>Select and customize your weapon skins</li>
               <li>Join the CS2 server and type <strong>/ws</strong> in chat to apply</li>

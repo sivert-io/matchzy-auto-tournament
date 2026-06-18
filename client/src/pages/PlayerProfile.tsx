@@ -366,7 +366,7 @@ export default function PlayerProfile() {
       }
 
       setPlayer(summaryResponse.player);
-      document.title = `FULM: ${summaryResponse.player.name}`;
+      document.title = `Fragbase: ${summaryResponse.player.name}`;
 
       // Fetch FACEIT data
       try {
@@ -1010,7 +1010,7 @@ export default function PlayerProfile() {
                               alt={`Level ${faceit.skillLevel}`}
                               sx={{ width: 32, height: 32 }}
                             />
-                            <Typography fontWeight={700} sx={{ fontFamily: '"Rajdhani", sans-serif', fontSize: '1.1rem', color: getFaceitColor(faceit.skillLevel) }}>
+                            <Typography fontWeight={700} sx={{ fontFamily: 'Inter, Montserrat, sans-serif', fontSize: '1.1rem', color: getFaceitColor(faceit.skillLevel) }}>
                               {faceit.faceitElo}
                             </Typography>
                           </Box>

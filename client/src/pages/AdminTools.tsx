@@ -99,7 +99,7 @@ const AdminTools: React.FC = () => {
 
   // Set dynamic page title
   React.useEffect(() => {
-    document.title = `FULM: ${t('layout.pageTitle.adminTools')}`;
+    document.title = `Fragbase: ${t('layout.pageTitle.adminTools')}`;
   }, [t]);
 
   React.useEffect(() => {

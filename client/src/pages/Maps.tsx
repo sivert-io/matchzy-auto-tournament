@@ -41,7 +41,7 @@ export default function Maps() {
 
   // Set dynamic page title
   useEffect(() => {
-    document.title = `FULM: ${t('mapsPage.title')}`;
+    document.title = `Fragbase: ${t('mapsPage.title')}`;
   }, [t]);
 
   // Set header actions

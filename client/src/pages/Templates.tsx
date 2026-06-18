@@ -185,7 +185,7 @@ export default function Templates() {
   }, [showError, t]);
 
   useEffect(() => {
-    document.title = `FULM: ${t('layout.pageTitle.templates')}`;
+    document.title = `Fragbase: ${t('layout.pageTitle.templates')}`;
     loadTemplates();
     loadTournamentStatus();
     loadMaps();

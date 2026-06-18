@@ -1,20 +1,19 @@
 import { createTheme } from '@mui/material/styles';
 
-// CS2/Valve esports orange theme
 export const theme = createTheme({
  palette: {
     mode: 'dark',
     primary: {
-      main: '#FF7A1A', // CS2/Valve orange
-      light: '#FFA361',
-      dark: '#C85A0F',
-      contrastText: '#241200',
+      main: '#FFFFFF',
+      light: '#FFFFFF',
+      dark: '#D7D7D7',
+      contrastText: '#000000',
     },
     secondary: {
-      main: '#8C95A3', // Steel gray-blue, tactical HUD feel
-      light: '#B0B7C2',
-      dark: '#666E79',
-      contrastText: '#1A1D21',
+      main: '#A3A3A3',
+      light: '#D4D4D4',
+      dark: '#737373',
+      contrastText: '#000000',
     },
     error: {
       main: '#FF6B57', // Warm red-orange, distinct from primary
@@ -41,25 +40,25 @@ export const theme = createTheme({
       contrastText: '#00261A',
     },
     background: {
-      default: '#16181C', // Cool near-black, tactical
-      paper: '#1E2126',
-      surface0: '#1E2126',
-      surface1: '#262A30',
-      surface2: '#2C3138',
-      surface3: '#1E2126',
-      surface4: '#191B1F',
-      surface5: '#131518',
-      surface6: '#262A30',
-      surface7: '#2C3138',
+      default: '#000000',
+      paper: '#0B0B0C',
+      surface0: '#0B0B0C',
+      surface1: '#111113',
+      surface2: '#171719',
+      surface3: '#0B0B0C',
+      surface4: '#080809',
+      surface5: '#000000',
+      surface6: '#111113',
+      surface7: '#171719',
     },
     text: {
-      primary: '#ECEDEE',
-      secondary: '#A8ADB4',
-      disabled: '#6B7178',
+      primary: '#FFFFFF',
+      secondary: '#B7B7BA',
+      disabled: '#6D6D72',
     },
   },
   shape: {
-    borderRadius: 8, // Default minimal roundness
+    borderRadius: 12,
   },
 typography: {
     fontFamily: [
@@ -73,30 +72,31 @@ typography: {
       'sans-serif',
     ].join(','),
     button: {
-      fontFamily: '"Rajdhani", sans-serif',
+      fontFamily: 'Inter, Montserrat, sans-serif',
       textTransform: 'none',
-      fontWeight: 600,
+      fontWeight: 700,
     },
-    h1: { fontFamily: '"Rajdhani", sans-serif', fontWeight: 700, lineHeight: 1.1 },
-    h2: { fontFamily: '"Rajdhani", sans-serif', fontWeight: 700, lineHeight: 1.1 },
-    h3: { fontFamily: '"Rajdhani", sans-serif', fontWeight: 600, lineHeight: 1.1 },
-    h4: { fontFamily: '"Rajdhani", sans-serif', fontWeight: 600, lineHeight: 1.1 },
-    h5: { fontFamily: '"Rajdhani", sans-serif', fontWeight: 500, lineHeight: 1.1 },
-    h6: { fontFamily: '"Rajdhani", sans-serif', fontWeight: 500, lineHeight: 1.1 },
+    h1: { fontFamily: 'Inter, Montserrat, sans-serif', fontWeight: 800, lineHeight: 1.1 },
+    h2: { fontFamily: 'Inter, Montserrat, sans-serif', fontWeight: 800, lineHeight: 1.1 },
+    h3: { fontFamily: 'Inter, Montserrat, sans-serif', fontWeight: 800, lineHeight: 1.1 },
+    h4: { fontFamily: 'Inter, Montserrat, sans-serif', fontWeight: 750, lineHeight: 1.1 },
+    h5: { fontFamily: 'Inter, Montserrat, sans-serif', fontWeight: 750, lineHeight: 1.1 },
+    h6: { fontFamily: 'Inter, Montserrat, sans-serif', fontWeight: 700, lineHeight: 1.1 },
   },
   components: {
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          scrollbarColor: '#6b6b6b #2b2b2b',
+          backgroundColor: '#000000',
+          scrollbarColor: '#5F5F63 #0B0B0C',
           '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
-            backgroundColor: '#2b2b2b',
+            backgroundColor: '#0B0B0C',
           },
           '&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb': {
-            borderRadius: 8,
-            backgroundColor: '#6b6b6b',
+            borderRadius: 999,
+            backgroundColor: '#5F5F63',
             minHeight: 24,
-            border: '3px solid #2b2b2b',
+            border: '3px solid #0B0B0C',
           },
           '&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus': {
             backgroundColor: '#959595',
@@ -120,33 +120,36 @@ typography: {
       },
       styleOverrides: {
         root: {
-          borderRadius: 44, // Rounded but not fully pill-shaped
+          borderRadius: 999,
           padding: '10px 24px',
           fontSize: '0.875rem',
-          fontWeight: 500,
-          // Make focus state same as hover state
+          fontWeight: 700,
           '&:focus-visible': {
-            backgroundColor: 'rgba(255, 122, 26, 0.08)', // Same as hover for contained buttons
+            backgroundColor: 'rgba(255, 255, 255, 0.10)',
           },
         },
         contained: {
           boxShadow: 'none',
+          backgroundColor: '#FFFFFF',
+          color: '#000000',
           '&:hover': {
             boxShadow: 'none',
+            backgroundColor: '#EDEDED',
           },
           '&:focus-visible': {
-            backgroundColor: '#C85A0F',
+            backgroundColor: '#EDEDED',
             boxShadow: 'none',
           },
         },
         outlined: {
+          borderColor: 'rgba(255, 255, 255, 0.25)',
           '&:focus-visible': {
-            backgroundColor: 'rgba(255, 122, 26, 0.08)',
+            backgroundColor: 'rgba(255, 255, 255, 0.08)',
           },
         },
         text: {
           '&:focus-visible': {
-            backgroundColor: 'rgba(255, 122, 26, 0.08)',
+            backgroundColor: 'rgba(255, 255, 255, 0.08)',
           },
         },
       },
@@ -159,7 +162,7 @@ typography: {
         root: {
           // Make focus state same as hover state
           '&:focus-visible': {
-            backgroundColor: 'rgba(255, 122, 26, 0.08)',
+            backgroundColor: 'rgba(255, 255, 255, 0.08)',
           },
         },
       },
@@ -168,6 +171,7 @@ typography: {
       styleOverrides: {
         root: {
           backgroundImage: 'none',
+          border: '1px solid rgba(255, 255, 255, 0.10)',
         },
       },
     },
@@ -190,15 +194,16 @@ typography: {
     MuiChip: {
       styleOverrides: {
         root: {
-          fontFamily: '"Rajdhani", sans-serif',
+          fontFamily: 'Inter, Montserrat, sans-serif',
           fontWeight: 600,
+          borderRadius: 999,
         },
       },
     },
     MuiListItemText: {
       styleOverrides: {
         primary: {
-          fontFamily: '"Rajdhani", sans-serif',
+          fontFamily: 'Inter, Montserrat, sans-serif',
           fontWeight: 600,
           fontSize: '0.95rem',
         },
@@ -207,10 +212,10 @@ typography: {
     MuiListSubheader: {
       styleOverrides: {
         root: {
-          fontFamily: '"Rajdhani", sans-serif',
+          fontFamily: 'Inter, Montserrat, sans-serif',
           fontWeight: 700,
           textTransform: 'uppercase',
-          letterSpacing: '0.05em',
+          letterSpacing: 0,
         },
       },
     },
@@ -218,6 +223,8 @@ typography: {
       styleOverrides: {
         root: {
           backgroundImage: 'none',
+          backgroundColor: '#000000',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.10)',
         },
       },
     },

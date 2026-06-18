@@ -95,7 +95,7 @@ export default function Servers() {
 
   // Set dynamic page title
   useEffect(() => {
-    document.title = `FULM: ${t('serversPage.title')}`;
+    document.title = `Fragbase: ${t('serversPage.title')}`;
   }, [t]);
 
   const checkServerStatus = async (

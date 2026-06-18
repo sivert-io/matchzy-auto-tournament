@@ -284,7 +284,7 @@ export default function LobbyRoom() {
         <Box flex={1} minWidth={0} display="flex" alignItems="center" gap={0.75}>
           <Typography variant="body2" fontWeight={600} noWrap>{player.name}</Typography>
           {isHost && (
-            <Typography variant="caption" sx={{ fontFamily: '"Rajdhani", sans-serif', color: 'text.disabled', fontWeight: 600, fontSize: '0.7rem' }}>
+            <Typography variant="caption" sx={{ fontFamily: 'Inter, Montserrat, sans-serif', color: 'text.disabled', fontWeight: 600, fontSize: '0.7rem' }}>
               Host
             </Typography>
           )}
@@ -297,7 +297,7 @@ export default function LobbyRoom() {
               alt={`Level ${faceitData[player.steamId].skillLevel}`}
               sx={{ width: 22, height: 22 }}
             />
-            <Typography variant="caption" fontWeight={700} sx={{ fontFamily: '"Rajdhani", sans-serif', fontSize: '0.8rem', color: getFaceitColor(faceitData[player.steamId].skillLevel) }}>
+            <Typography variant="caption" fontWeight={700} sx={{ fontFamily: 'Inter, Montserrat, sans-serif', fontSize: '0.8rem', color: getFaceitColor(faceitData[player.steamId].skillLevel) }}>
               {faceitData[player.steamId].faceitElo}
             </Typography>
           </Box>
@@ -337,7 +337,7 @@ export default function LobbyRoom() {
       <Box flex={1}>
         <Box display="flex" alignItems="center" gap={1} mb={1.5}>
           <Box sx={{ width: 4, height: 28, borderRadius: 1, bgcolor: color }} />
-          <Typography variant="h6" fontWeight={700} sx={{ fontFamily: '"Rajdhani", sans-serif' }}>{getTeamName(team)}</Typography>
+          <Typography variant="h6" fontWeight={700} sx={{ fontFamily: 'Inter, Montserrat, sans-serif' }}>{getTeamName(team)}</Typography>
           <Chip label={`${players.length}/${lobby.teamSize}`} size="small" variant="outlined" sx={{ height: 24, fontSize: '0.75rem', fontWeight: 600 }} />
           {lobby.status === 'picking' && lobby.state.pickTurn === team && (
             <Chip label="Picking..." color="warning" size="small" sx={{ height: 24, fontSize: '0.75rem', fontWeight: 700, animation: 'pulse 1.5s infinite' }} />
@@ -548,11 +548,11 @@ export default function LobbyRoom() {
                     value={lobby.state.lobbyName || ''}
                     placeholder={`${lobby.teamSize}v${lobby.teamSize} ${lobby.format.toUpperCase()}`}
                     onChange={(e) => handleUpdateConfig({ lobbyName: e.target.value })}
-                    slotProps={{ input: { disableUnderline: true, sx: { fontFamily: '"Rajdhani", sans-serif', fontSize: '1.5rem', fontWeight: 700, color: 'text.primary', p: 0 } } }}
+                    slotProps={{ input: { disableUnderline: true, sx: { fontFamily: 'Inter, Montserrat, sans-serif', fontSize: '1.5rem', fontWeight: 700, color: 'text.primary', p: 0 } } }}
                     sx={{ minWidth: 200 }}
                   />
                 ) : (
-                  <Typography variant="h5" fontWeight={700} sx={{ fontFamily: '"Rajdhani", sans-serif' }}>
+                  <Typography variant="h5" fontWeight={700} sx={{ fontFamily: 'Inter, Montserrat, sans-serif' }}>
                     {lobby.state.lobbyName || `${lobby.teamSize}v${lobby.teamSize} ${lobby.format.toUpperCase()}`}
                   </Typography>
                 )}
@@ -652,7 +652,7 @@ export default function LobbyRoom() {
                       variant="h4"
                       fontWeight={700}
                       sx={{
-                        fontFamily: '"Rajdhani", sans-serif',
+                        fontFamily: 'Inter, Montserrat, sans-serif',
                         fontSize: '2rem',
                         color: vetoCountdown <= 10 ? '#EE4B2B' : vetoCountdown <= 20 ? '#FFC800' : 'text.primary',
                         animation: 'timerBeat 1s cubic-bezier(0.34, 1.56, 0.64, 1) infinite',
