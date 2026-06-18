@@ -343,6 +343,32 @@ export function getSchemaSQL(): string {
     CREATE INDEX IF NOT EXISTS idx_player_match_stats_match ON player_match_stats(match_slug);
     CREATE INDEX IF NOT EXISTS idx_player_match_stats_team ON player_match_stats(team);
 
+    -- Fragbase AC/AI signals and per-player risk scores.
+    CREATE TABLE IF NOT EXISTS ac_ai_signals (
+      id SERIAL PRIMARY KEY,
+      player_id TEXT NOT NULL,
+      match_slug TEXT,
+      signal_type TEXT NOT NULL,
+      payload TEXT NOT NULL,
+      score REAL NOT NULL DEFAULT 0,
+      created_at INTEGER NOT NULL DEFAULT EXTRACT(EPOCH FROM NOW())::INTEGER,
+      FOREIGN KEY (player_id) REFERENCES players(id) ON DELETE CASCADE,
+      FOREIGN KEY (match_slug) REFERENCES matches(slug) ON DELETE SET NULL
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_ac_ai_signals_player ON ac_ai_signals(player_id);
+    CREATE INDEX IF NOT EXISTS idx_ac_ai_signals_match ON ac_ai_signals(match_slug);
+    CREATE INDEX IF NOT EXISTS idx_ac_ai_signals_created ON ac_ai_signals(created_at);
+
+    CREATE TABLE IF NOT EXISTS ac_ai_player_scores (
+      player_id TEXT PRIMARY KEY,
+      score REAL NOT NULL DEFAULT 0,
+      signal_count INTEGER NOT NULL DEFAULT 0,
+      last_signal_at INTEGER,
+      updated_at INTEGER NOT NULL DEFAULT EXTRACT(EPOCH FROM NOW())::INTEGER,
+      FOREIGN KEY (player_id) REFERENCES players(id) ON DELETE CASCADE
+    );
+
     -- Shuffle tournament players registration table
     CREATE TABLE IF NOT EXISTS shuffle_tournament_players (
       tournament_id INTEGER NOT NULL DEFAULT 1,
