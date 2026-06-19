@@ -41,6 +41,7 @@ import { EquippedSkinsGallery } from '../components/player/EquippedSkinsGallery'
 import { GlassCard, PageShell, pageWidth, publicPageShellSx } from '../shared/ui';
 import type { PlayerDetail } from '../types/api.types';
 import { useAuth } from '../contexts/AuthContext';
+import { useSnackbar } from '../contexts/SnackbarContext';
 import { useCurrentMatchStatus } from '../hooks/useCurrentMatchStatus';
 import { useTranslation } from 'react-i18next';
 import type {
@@ -252,7 +253,9 @@ export default function PlayerProfile() {
     gracePeriodSeconds: 300,
   });
   const socketRef = useRef<Socket | null>(null);
-  const { playerSteamId, hasPlayerRecord } = useAuth();
+  const { playerSteamId, hasPlayerRecord, allowSelfRegister, selfRegister, isSelfRegistering } =
+    useAuth();
+  const { showSuccess, showError } = useSnackbar();
   const { t } = useTranslation();
   const { matchSlug: statusMatchSlug } = useCurrentMatchStatus(
     steamId && playerSteamId === steamId ? steamId : null
@@ -765,6 +768,15 @@ export default function PlayerProfile() {
     steamId === playerSteamId &&
     hasPlayerRecord === false;
 
+  const handleSelfRegister = async () => {
+    const ok = await selfRegister();
+    if (ok) {
+      showSuccess(t('notRegistered.registerSuccess'));
+    } else {
+      showError(t('notRegistered.registerError'));
+    }
+  };
+
   if (error || !player) {
     return (
       <Box minHeight="100vh" bgcolor="background.default">
@@ -787,6 +799,18 @@ export default function PlayerProfile() {
                       flexWrap="wrap"
                       useFlexGap
                     >
+                      {allowSelfRegister && (
+                        <Button
+                          variant="contained"
+                          disabled={isSelfRegistering}
+                          onClick={() => void handleSelfRegister()}
+                          data-testid="player-profile-self-register"
+                        >
+                          {isSelfRegistering
+                            ? t('notRegistered.registering')
+                            : t('notRegistered.registerCta')}
+                        </Button>
+                      )}
                       <Button
                         variant="contained"
                         component={RouterLink}

@@ -858,12 +858,15 @@ router.get('/me', async (req: Request, res: Response) => {
       // treat lookup failure as no record
     }
 
+    const allowSelfRegister = await settingsService.isSelfRegistrationAllowed();
+
     log.info('/api/auth/me: returning authenticated Steam identity', { steamId, hasPlayerRecord });
 
     return res.json({
       authenticated: true,
       steamId,
       hasPlayerRecord,
+      allowSelfRegister,
     });
   } catch (error) {
     log.warn('Failed to read player_steam_id cookie', error as Error);

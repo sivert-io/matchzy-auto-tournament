@@ -39,6 +39,20 @@
         "statusNotConfigured": "Steam API-Key ist nicht gesetzt. Vanity-URLs können erst aufgelöst werden, wenn du einen Key hinzufügst.",
         "statusUnreachable": "Steam API-Key scheint gesetzt zu sein, aber Steam ist nicht erreichbar. Prüfe Netzwerk und Key.",
         "statusError": "Steam API-Status konnte nicht geprüft werden. Bitte erneut versuchen."
+      },
+      "mercadoPago": {
+        "title": "Mercado Pago",
+        "description": "Connect a Mercado Pago account to accept payments for registrations and tournaments.",
+        "connected": "Connected",
+        "notConnected": "Not connected",
+        "connect": "Connect Mercado Pago",
+        "connecting": "Connecting…",
+        "connectedSuccess": "Mercado Pago connected successfully.",
+        "connectError": "Failed to start Mercado Pago connection.",
+        "statusError": "Failed to load Mercado Pago status.",
+        "userId": "Account user ID: {{userId}}",
+        "liveMode": "Live mode",
+        "testMode": "Test mode"
       }
     },
     "matchRating": {

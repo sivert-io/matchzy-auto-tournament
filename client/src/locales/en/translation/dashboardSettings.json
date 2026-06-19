@@ -148,6 +148,20 @@
         "rateLimit": "GitHub API rate limit exceeded. Please try again in a few minutes. You can set GITHUB_TOKEN environment variable to increase the rate limit.",
         "rateLimitShort": "GitHub API rate limit exceeded. Please try again in a few minutes.",
         "githubError": "Unable to reach GitHub repository. Please check your internet connection and try again later."
+      },
+      "mercadoPago": {
+        "title": "Mercado Pago",
+        "description": "Connect a Mercado Pago account to accept payments for registrations and tournaments.",
+        "connected": "Connected",
+        "notConnected": "Not connected",
+        "connect": "Connect Mercado Pago",
+        "connecting": "Connecting…",
+        "connectedSuccess": "Mercado Pago connected successfully.",
+        "connectError": "Failed to start Mercado Pago connection.",
+        "statusError": "Failed to load Mercado Pago status.",
+        "userId": "Account user ID: {{userId}}",
+        "liveMode": "Live mode",
+        "testMode": "Test mode"
       }
     },
     "matchRating": {

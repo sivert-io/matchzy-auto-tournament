@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { usePageHeader } from '../contexts/PageHeaderContext';
 import { useSnackbar } from '../contexts/SnackbarContext';
 import {
@@ -22,6 +23,7 @@ import {
   DialogContent,
   DialogActions,
   Slider,
+  Chip,
 } from '@mui/material';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -181,6 +183,12 @@ export default function Settings() {
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const isDev = useIsDevelopment();
   const [tabIndex, setTabIndex] = useState(0);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [mpConnected, setMpConnected] = useState(false);
+  const [mpUserId, setMpUserId] = useState<number | undefined>();
+  const [mpLiveMode, setMpLiveMode] = useState<boolean | undefined>();
+  const [mpStatusLoading, setMpStatusLoading] = useState(true);
+  const [mpConnecting, setMpConnecting] = useState(false);
   const { t } = useTranslation();
 
   const ACCORDION_SX = {
@@ -344,6 +352,55 @@ export default function Settings() {
     document.title = `Fragbase: ${t('settingsPage.title')}`;
     void fetchSettings();
   }, [fetchSettings, t]);
+
+  const loadMercadoPagoStatus = useCallback(async () => {
+    setMpStatusLoading(true);
+    try {
+      const response = await api.get<{
+        success: boolean;
+        status?: { connected?: boolean; userId?: number; liveMode?: boolean };
+      }>('/api/payments/mercadopago/status');
+      if (response.success && response.status) {
+        setMpConnected(Boolean(response.status.connected));
+        setMpUserId(response.status.userId);
+        setMpLiveMode(response.status.liveMode);
+      }
+    } catch {
+      showError(t('settingsPage.integrations.mercadoPago.statusError'));
+    } finally {
+      setMpStatusLoading(false);
+    }
+  }, [showError, t]);
+
+  useEffect(() => {
+    void loadMercadoPagoStatus();
+  }, [loadMercadoPagoStatus]);
+
+  useEffect(() => {
+    if (searchParams.get('mp') === 'connected') {
+      showSuccess(t('settingsPage.integrations.mercadoPago.connectedSuccess'));
+      setSearchParams({}, { replace: true });
+      void loadMercadoPagoStatus();
+    }
+  }, [searchParams, setSearchParams, showSuccess, t, loadMercadoPagoStatus]);
+
+  const handleMercadoPagoConnect = async () => {
+    setMpConnecting(true);
+    try {
+      const response = await api.get<{ success: boolean; authorizationUrl?: string }>(
+        '/api/payments/mercadopago/connect'
+      );
+      if (response.success && response.authorizationUrl) {
+        window.location.href = response.authorizationUrl;
+        return;
+      }
+      showError(t('settingsPage.integrations.mercadoPago.connectError'));
+    } catch {
+      showError(t('settingsPage.integrations.mercadoPago.connectError'));
+    } finally {
+      setMpConnecting(false);
+    }
+  };
 
   useEffect(() => {
     // No header actions needed for settings page
@@ -979,10 +1036,53 @@ export default function Settings() {
                       : t('settingsPage.integrations.mapSync.buttonIdle')}
                   </Button>
                 </Box>
+
+                <Box>
+                  <Typography variant="h6" fontWeight={600} gutterBottom>
+                    {t('settingsPage.integrations.mercadoPago.title')}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" mb={2}>
+                    {t('settingsPage.integrations.mercadoPago.description')}
+                  </Typography>
+                  {mpStatusLoading ? (
+                    <CircularProgress size={20} />
+                  ) : (
+                    <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap" useFlexGap>
+                      <Chip
+                        size="small"
+                        color={mpConnected ? 'success' : 'default'}
+                        label={
+                          mpConnected
+                            ? t('settingsPage.integrations.mercadoPago.connected')
+                            : t('settingsPage.integrations.mercadoPago.notConnected')
+                        }
+                      />
+                      {mpConnected && mpUserId != null && (
+                        <Typography variant="caption" color="text.secondary">
+                          {t('settingsPage.integrations.mercadoPago.userId', { userId: mpUserId })}
+                          {' · '}
+                          {mpLiveMode
+                            ? t('settingsPage.integrations.mercadoPago.liveMode')
+                            : t('settingsPage.integrations.mercadoPago.testMode')}
+                        </Typography>
+                      )}
+                      {!mpConnected && (
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          disabled={mpConnecting}
+                          onClick={() => void handleMercadoPagoConnect()}
+                        >
+                          {mpConnecting
+                            ? t('settingsPage.integrations.mercadoPago.connecting')
+                            : t('settingsPage.integrations.mercadoPago.connect')}
+                        </Button>
+                      )}
+                    </Stack>
+                  )}
+                </Box>
               </Stack>
             </TabPanel>
-
-            {/* Players & access control */}
             <TabPanel value={tabIndex} index={1}>
               <Stack spacing={3}>
                 <Box>

@@ -46,9 +46,12 @@ Build de produção: `yarn build` (server + os dois apps) ou `yarn client:build:
   - **a11y**: `PageShell` como `<main id="main-content">`, skip link (Layout + PublicTopBar), `aria-label` na navegação
   - `yarn lint` → 0 errors; `yarn client:build:apps` → OK
 - [ ] **Fase 4 — Produto + QA** (manual / backend):
-  - QA visual com backend (`yarn db` + `dev:player` / `dev:org`)
-  - Inscrições player, UI Mercado Pago, multi-org (schema + API — ver `docs/architecture/portals.md`)
-  - Remount opcional **DashboardStats** → `StatTile`
+  - [x] **Self-register (player)**: `/api/auth/me` expõe `allowSelfRegister`; `AuthContext.selfRegister()`; CTAs em **PlayerHome** e **PlayerProfile** quando auto-cadastro está ativo
+  - [x] **Mercado Pago (org)**: seção em **Settings** — status OAuth, botão conectar, snackbar em `?mp=connected` (checkout/inscrição ainda não)
+  - [ ] QA visual com backend (`yarn db` + `dev:player` / `dev:org`)
+  - [ ] Inscrições em torneios (player), fluxo de pagamento completo
+  - [ ] Multi-org (schema + API — ver `docs/architecture/portals.md`)
+  - [ ] Remount opcional **DashboardStats** → `StatTile`
 
 ## Cobertura Fase 2
 
@@ -124,4 +127,4 @@ Primitivas em `client/src/shared/ui/`: `PageShell`, `SectionHeader`, `GlassCard`
 
 1. **QA visual** com backend: `yarn db` + `yarn dev:player` / `yarn dev:org`
 2. Merge `feat/split-player-org-apps` → `main`
-3. **Fase 4 (produto)**: inscrições player, Mercado Pago UI, multi-org no backend
+3. **Fase 4 (restante)**: inscrições player + checkout MP, multi-org no backend, QA visual

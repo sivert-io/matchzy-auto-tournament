@@ -39,6 +39,20 @@
         "statusNotConfigured": "A chave da API da Steam não está definida. As vanity URLs não podem ser resolvidas até adicionares uma chave.",
         "statusUnreachable": "A chave da API da Steam parece definida, mas a Steam não está acessível. Verifica a rede ou a chave.",
         "statusError": "Falha ao verificar o estado da API da Steam. Tenta novamente."
+      },
+      "mercadoPago": {
+        "title": "Mercado Pago",
+        "description": "Conecte uma conta Mercado Pago para aceitar pagamentos de inscrições e torneios.",
+        "connected": "Conectado",
+        "notConnected": "Não conectado",
+        "connect": "Conectar Mercado Pago",
+        "connecting": "Conectando…",
+        "connectedSuccess": "Mercado Pago conectado com sucesso.",
+        "connectError": "Falha ao iniciar conexão com Mercado Pago.",
+        "statusError": "Falha ao carregar status do Mercado Pago.",
+        "userId": "ID da conta: {{userId}}",
+        "liveMode": "Modo produção",
+        "testMode": "Modo teste"
       }
     },
     "matchRating": {

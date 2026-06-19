@@ -13,6 +13,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { portalPaths } from '../config/portals';
 import { useAuth } from '../contexts/AuthContext';
+import { useSnackbar } from '../contexts/SnackbarContext';
 import { EquippedSkinsGallery } from '../components/player/EquippedSkinsGallery';
 import { PageShell, SectionHeader, GlassCard, pageWidth } from '../shared/ui';
 
@@ -41,9 +42,25 @@ const highlightDefs: { key: 'profileTeam' | 'tournaments'; icon: SvgIconComponen
 
 export default function PlayerHome() {
   const { t } = useTranslation();
-  const { playerSteamId, hasPlayerRecord } = useAuth();
+  const { showSuccess, showError } = useSnackbar();
+  const {
+    playerSteamId,
+    hasPlayerRecord,
+    allowSelfRegister,
+    selfRegister,
+    isSelfRegistering,
+  } = useAuth();
   const profilePath = playerSteamId ? `/player/${playerSteamId}` : portalPaths.player.players;
   const [skinCount, setSkinCount] = useState(0);
+
+  const handleSelfRegister = async () => {
+    const ok = await selfRegister();
+    if (ok) {
+      showSuccess(t('notRegistered.registerSuccess'));
+    } else {
+      showError(t('notRegistered.registerError'));
+    }
+  };
 
   return (
     <PageShell maxWidth={pageWidth.default}>
@@ -69,6 +86,18 @@ export default function PlayerHome() {
                 <Typography color="text.secondary" variant="body2">
                   {t('playerHome.pendingRegistration.description')}
                 </Typography>
+                {allowSelfRegister && (
+                  <Button
+                    variant="contained"
+                    size="small"
+                    sx={{ mt: 2 }}
+                    disabled={isSelfRegistering}
+                    onClick={() => void handleSelfRegister()}
+                    data-testid="player-home-self-register"
+                  >
+                    {isSelfRegistering ? t('notRegistered.registering') : t('notRegistered.registerCta')}
+                  </Button>
+                )}
               </Box>
             </Stack>
           </GlassCard>

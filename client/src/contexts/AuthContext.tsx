@@ -83,6 +83,11 @@ interface AuthContextType {
    * but were never added by an admin (or self‑registration is off).
    */
   hasPlayerRecord: boolean;
+  /** Whether admins allow Steam users to self-register as players. */
+  allowSelfRegister: boolean;
+  /** Best-effort player self-registration (requires Steam cookie). */
+  selfRegister: () => Promise<boolean>;
+  isSelfRegistering: boolean;
   /**
    * When true, the admin sees the app as a regular player (isAuthenticated = false).
    * Toggle via the dev tools or navbar.
@@ -104,6 +109,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [adminProfileName, setAdminProfileName] = useState<string | null>(null);
   const [adminProfileAvatarUrl, setAdminProfileAvatarUrl] = useState<string | null>(null);
   const [hasPlayerRecord, setHasPlayerRecord] = useState(false);
+  const [allowSelfRegister, setAllowSelfRegister] = useState(false);
+  const [isSelfRegistering, setIsSelfRegistering] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -127,6 +134,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           if (!response.ok) {
             setPlayerSteamId(null);
             setHasPlayerRecord(false);
+            setAllowSelfRegister(false);
             return;
           }
 
@@ -134,6 +142,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             authenticated?: boolean;
             steamId?: string;
             hasPlayerRecord?: boolean;
+            allowSelfRegister?: boolean;
             avatarUrl?: string;
           } = await response.json();
           if (adminSteamId) {
@@ -149,6 +158,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             cookieHasPlayerRecord = Boolean(data.hasPlayerRecord);
             setPlayerSteamId(data.steamId);
             setHasPlayerRecord(Boolean(data.hasPlayerRecord));
+            setAllowSelfRegister(Boolean(data.allowSelfRegister));
 
             if (
               typeof data.avatarUrl === 'string' &&
@@ -162,6 +172,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             cookieHasPlayerRecord = false;
             setPlayerSteamId(null);
             setHasPlayerRecord(false);
+            setAllowSelfRegister(false);
           }
         } catch (error) {
           if (!isMounted) return;
@@ -277,6 +288,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  const selfRegister = async (): Promise<boolean> => {
+    if (!playerSteamId || hasPlayerRecord) return hasPlayerRecord;
+    setIsSelfRegistering(true);
+    try {
+      const resp = await fetch('/api/auth/self-register', {
+        method: 'POST',
+        credentials: 'include',
+      });
+      if (!resp.ok) return false;
+      const data: { success?: boolean; created?: boolean } = await resp.json();
+      if (!data.success) return false;
+      const meResp = await fetch('/api/auth/me', { credentials: 'include' });
+      if (meResp.ok) {
+        const me = await meResp.json();
+        if (me.authenticated && me.steamId) {
+          setPlayerSteamId(me.steamId);
+          setHasPlayerRecord(Boolean(me.hasPlayerRecord));
+          setAllowSelfRegister(Boolean(me.allowSelfRegister));
+        }
+      }
+      return true;
+    } catch {
+      return false;
+    } finally {
+      setIsSelfRegistering(false);
+    }
+  };
+
   const loginWithSteam = () => {
     window.location.href = '/api/auth/steam';
   };
@@ -286,6 +325,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsAdmin(false);
     setPlayerSteamId(null);
     setHasPlayerRecord(false);
+    setAllowSelfRegister(false);
     setAdminProvider(null);
     setAdminProfileName(null);
     setAdminProfileAvatarUrl(null);
@@ -331,6 +371,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         adminProfileName,
         adminProfileAvatarUrl,
         hasPlayerRecord,
+        allowSelfRegister,
+        selfRegister,
+        isSelfRegistering,
         isRealAdmin: isAdmin,
         viewAsUser,
         setViewAsUser,

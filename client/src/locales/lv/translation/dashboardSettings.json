@@ -148,6 +148,20 @@
         "rateLimit": "GitHub API pieprasījumu limits pārsniegts. Lūdzu, mēģiniet vēlreiz pēc dažām minūtēm. Varat iestatīt GITHUB_TOKEN vides mainīgo, lai palielinātu pieprasījumu limitu.",
         "rateLimitShort": "GitHub API pieprasījumu limits pārsniegts. Lūdzu, mēģiniet vēlreiz pēc dažām minūtēm.",
         "githubError": "Nevar sasniegt GitHub repozitoriju. Lūdzu, pārbaudiet interneta savienojumu un mēģiniet vēlreiz vēlāk."
+      },
+      "mercadoPago": {
+        "title": "Mercado Pago",
+        "description": "Connect a Mercado Pago account to accept payments for registrations and tournaments.",
+        "connected": "Connected",
+        "notConnected": "Not connected",
+        "connect": "Connect Mercado Pago",
+        "connecting": "Connecting…",
+        "connectedSuccess": "Mercado Pago connected successfully.",
+        "connectError": "Failed to start Mercado Pago connection.",
+        "statusError": "Failed to load Mercado Pago status.",
+        "userId": "Account user ID: {{userId}}",
+        "liveMode": "Live mode",
+        "testMode": "Test mode"
       }
     },
     "matchRating": {
