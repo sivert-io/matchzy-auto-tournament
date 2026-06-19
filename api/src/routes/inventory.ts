@@ -9,6 +9,16 @@ const router = Router();
 const INVENTORY_BASE_URL = 'https://inventory.cstrike.app';
 const REQUEST_TIMEOUT_MS = 8_000;
 const STEAM_ID_RE = /^\d{17}$/;
+const CACHE_TTL_MS = 30_000;
+
+interface CachedInventory {
+  expires: number;
+  value: { items: EquippedSkin[]; version: number | null };
+}
+
+// Short-lived in-memory cache so repeated profile views / refreshes don't hammer
+// cstrike.app for the same player. Only successful responses are cached.
+const inventoryCache = new Map<string, CachedInventory>();
 
 interface ExternalInventoryItem {
   equipped?: boolean;
@@ -53,6 +63,11 @@ if (CS2Economy.items.size === 0) {
 async function loadEquippedSkins(
   steamId: string
 ): Promise<{ items: EquippedSkin[]; version: number | null }> {
+  const cached = inventoryCache.get(steamId);
+  if (cached && cached.expires > Date.now()) {
+    return cached.value;
+  }
+
   const controller = new globalThis.AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
@@ -108,7 +123,9 @@ async function loadEquippedSkins(
       ];
     });
 
-    return { items, version: data.version ?? null };
+    const value = { items, version: data.version ?? null };
+    inventoryCache.set(steamId, { expires: Date.now() + CACHE_TTL_MS, value });
+    return value;
   } finally {
     clearTimeout(timeout);
   }
