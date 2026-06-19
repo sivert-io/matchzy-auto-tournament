@@ -53,6 +53,9 @@ Build de produção: `yarn build` (server + os dois apps) ou `yarn client:build:
   - [x] **Mercado Pago (org)**: OAuth connect + checkout preference + webhook
   - [x] **Multi-org (schema + seed)**: tables + default org; API `GET /api/organizations/current`
   - [x] **Deploy topologies doc**: `docs/architecture/deployment-topologies.md`
+  - [x] **Docker per org**: `docker-compose.org.yml`, `org-stack.sh`, `example.env.org`
+  - [x] **Player hub stack**: `docker-compose.hub.yml`, `hub-stack.sh`, `example.env.hub`
+  - [x] **ORGANIZATION_ID env**: seed + tournament `organization_id` from instance env
   - [ ] QA visual com backend (`yarn db` + `dev:player` / `dev:org`)
   - [ ] Multi-org API scoping (queries filtered by `organization_id`)
   - [ ] Remount opcional **DashboardStats** → `StatTile`

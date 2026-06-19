@@ -1,77 +1,110 @@
 # Deployment topologies for Fragbase
 
-Fragbase can run as a **single MAT instance** (current default) or evolve into a **hub + org instances** model. This document compares options so product and infra decisions stay aligned with the codebase.
+## Chosen model (2026): hub + **one Docker stack per org**
 
-## Current default (single stack)
-
-One API + one PostgreSQL + two static portals (`/play`, `/org`):
+Fragbase standardizes **isolated MAT stacks** for each organizer/camp. That avoids shared tournament state, DB collisions, and Mercado Pago config bleeding between orgs.
 
 ```text
-Caddy / Render
-  ├── play.*  → client player SPA + /api proxy
-  ├── org.*   → client org SPA + /api proxy
-  └── PostgreSQL (all tournaments, teams, players, registrations)
+                    ┌─────────────────────────────────────┐
+                    │  Hub (optional, one VPS or Render)   │
+                    │  play.fragbase.gg                   │
+                    │  Global players, teams, Steam auth  │
+                    │  (future: federate to org APIs)     │
+                    └─────────────────────────────────────┘
+
+┌──────────────────────────┐   ┌──────────────────────────┐
+│ Org stack: camp-alpha    │   │ Org stack: camp-beta     │
+│ admin.camp-alpha.*       │   │ admin.camp-beta.*        │
+│ Postgres (isolated)      │   │ Postgres (isolated)      │
+│ MAT API + org/play SPAs  │   │ MAT API + org/play SPAs  │
+│ Mercado Pago OAuth       │   │ Mercado Pago OAuth       │
+│ CS2 webhooks → this API  │   │ CS2 webhooks → this API  │
+└──────────────────────────┘   └──────────────────────────┘
+         ▲                              ▲
+         │         CS2 servers          │
+         └──────── (separate hosts) ────┘
 ```
 
-- **Pros**: simplest ops, one migration path, matches today's `organization_id` column as optional metadata.
-- **Cons**: all organizers share one DB and one tournament slot (`tournament.id = 1` legacy).
+**Repo tooling**
 
-## Option A — Logical multi-org (recommended next step)
+| Artifact | Purpose |
+|----------|---------|
+| `docker/docker-compose.org.yml` | Template compose (Postgres + app per org) |
+| `docker/docker-compose.hub.yml` | Global player hub (play.fragbase.gg) |
+| `docker/example.env.org` | Example env per org |
+| `docker/example.env.hub` | Example env for hub |
+| `scripts/org-stack.sh` | `up` / `down` / `logs` for one org slug |
+| `scripts/hub-stack.sh` | `up` / `down` / `logs` for hub |
 
-Same deployment, **scoped data** by `organization_id`:
-
-- Global **players** and identity (Steam) can remain shared or be org-scoped per policy.
-- Each **organization** owns tournaments, servers, registrations, audit log.
-- One Docker Compose / one Render web service + managed Postgres.
-
-This is what the schema foundation (`organizations`, `registrations`, `audit_log`) prepares for. Ops stay simple; isolation is application-level.
-
-## Option B — Hub + per-org MAT containers
-
-```text
-Hub (global)
-  ├── Player portal: profiles, global team registry, cross-org search
-  ├── Shared Postgres: players, teams (global IDs), auth
-  └── API: identity + team CRUD
-
-Org instance (per organizer)
-  ├── Org portal + API
-  ├── Postgres: tournaments, matches, servers, registrations for that org only
-  └── CS2 server webhooks → org API only
+```bash
+cp docker/example.env.org docker/env/camp-alpha.env
+# edit secrets, HOST_PORT, domains
+./scripts/org-stack.sh camp-alpha up
 ```
 
-- **Pros**: hard isolation, independent upgrades, blast radius per camp.
-- **Cons**: many databases, many envs, cross-org leaderboards need federation APIs, Mercado Pago OAuth per org instance (or hub proxy).
+Each org needs: unique `HOST_PORT` (if same VPS), `ORG_SLUG`, `SESSION_SECRET`, `SERVER_TOKEN`, `DB_PASSWORD`, public URLs, and optional `MERCADOPAGO_*`.
 
-**Docker per org is feasible** but is an **ops product**: each org needs `DATABASE_URL`, `SERVER_TOKEN`, `MERCADOPAGO_*`, backups, and DNS (`camp1.fragbase.gg`). The hub would expose SSO/Steam and pass team rosters to org APIs.
+Set `ORGANIZATION_ID` is injected from `ORG_SLUG` in compose (for future API scoping).
 
-## Option C — Hybrid (practical for Fragbase)
+---
 
-1. **One public hub** (`play.fragbase.gg`): players, teams with championship roster (5+1+2), Mercado Pago checkout redirects.
-2. **Org workers** optional later: only heavy organizers get a dedicated MAT stack; small orgs stay on shared Option A.
+## VPS sizing (e.g. KVM 2: 2 vCPU, 8 GB RAM, 100 GB disk)
 
-## Registration & payments (product)
+| Workload | On the same KVM? | Rough RAM |
+|----------|------------------|-----------|
+| **1 org stack** (Postgres + MAT) | Yes | ~1.5–2.5 GB |
+| **2 org stacks** | Tight on 8 GB | ~3–5 GB |
+| **3+ org stacks** | Not recommended on 8 GB | — |
+| **CS2 game servers** | **No** — use dedicated game hosts | ~2–4 GB **per server** |
+
+**Conclusion:** KVM 2 **dá** para **1 camp org stack** (+ hub leve ou só org). Para várias orgs em produção, use **um KVM por org** ou upgrade RAM (16 GB+ for 2–3 small org stacks).
+
+Bandwidth 8 TB and 100 GB disk are ample for the web platform; demos/replays grow disk on game servers, not on MAT.
+
+---
+
+## Alternatives (not the default path)
+
+### Single stack (legacy dev / small private LAN)
+
+`docker/docker-compose.yml` — one tournament, one DB. Fine for homelab, not for multi-tenant prod.
+
+### Logical multi-org (one DB, many `organization_id`)
+
+Cheaper ops but shared blast radius; we keep schema support but **prod standard is docker-per-org**.
+
+---
+
+## Registration & payments
 
 | Mode | Who registers | Payment |
 |------|----------------|---------|
-| **Shuffle** | Individual players on public leaderboard | Free today; paid path can reuse `registrations` |
-| **Bracket / Swiss / RR** | **Team captain** on public team page | Mercado Pago Checkout Pro (**PIX + card**) when `registrationFeeCents > 0` |
+| **Shuffle** | Individual players (leaderboard) | Free or MP via org stack |
+| **Bracket / Swiss / RR** | Team captain (team page) | Mercado Pago Checkout Pro (**PIX + card**) when fee > 0 |
 
-Roster expectation for paid camps: **5 starters, 1 coach, 2 reserves** (validated when `role` is set on team players).
+Roster for camps: **5 starters, 1 coach, 2 reserves** when `role` is set on team players.
 
-## Recommendation
-
-1. Ship **Option A** (multi-org scoping in one DB) on the current monorepo — lowest risk.
-2. Keep **hub global players/teams** as a product choice (not separate Docker) until you have multiple paying orgs.
-3. Introduce **per-org Docker** only for enterprise tenants that need isolated servers/DB; automate with the same `docker/docker-compose.yml` template + unique env file per org.
+---
 
 ## Environment variables (payments)
 
 | Variable | Purpose |
 |----------|---------|
-| `MERCADOPAGO_CLIENT_ID` / `SECRET` | OAuth for organizers |
-| `MERCADOPAGO_REDIRECT_URI` | OAuth callback |
-| `API_BASE_URL` | Webhook + notification URL (must be reachable by Mercado Pago) |
-| `PLAYER_PORTAL_URL` | Return URLs after checkout (defaults to `FRONTEND_BASE_URL`) |
+| `MERCADOPAGO_CLIENT_ID` / `SECRET` | Per-org OAuth |
+| `MERCADOPAGO_REDIRECT_URI` | Must match org admin URL |
+| `API_BASE_URL` | Webhook (`/api/payments/mercadopago/webhook`) |
+| `PLAYER_PORTAL_URL` | Checkout return URLs (often hub `play.*`) |
 
 Webhook: `GET /api/payments/mercadopago/webhook?topic=payment&id=...`
+
+---
+
+## DNS pattern (per org)
+
+| Host | Role |
+|------|------|
+| `admin.<org>.fragbase.gg` | Organizer console (`ORG_HOST`) |
+| `play.<org>.fragbase.gg` | Player portal for that camp (optional) |
+| `play.fragbase.gg` | Global hub (optional central player/teams) |
+
+Edge: Cloudflare Tunnel or Caddy on the VPS forwarding to `HOST_PORT` per org stack.

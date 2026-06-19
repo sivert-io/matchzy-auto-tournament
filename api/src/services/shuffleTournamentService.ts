@@ -6,6 +6,7 @@
 import { db } from '../config/database';
 import { log } from '../utils/logger';
 import { settingsService } from './settingsService';
+import { getCurrentOrganizationId } from './organizationService';
 import { balanceTeams, type BalancedTeam } from './teamBalancingService';
 import { playerService, type PlayerRecord } from './playerService';
 import { teamService } from './teamService';
@@ -126,6 +127,7 @@ export async function createShuffleTournament(
         ? config.overtimeSegments
         : null,
     elo_template_id: config.eloTemplateId || null,
+    organization_id: getCurrentOrganizationId(),
     created_at: now,
     updated_at: now,
   });

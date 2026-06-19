@@ -1,0 +1,76 @@
+# Global player hub stack (isolated Postgres + MAT for play.fragbase.gg).
+#
+# Players, teams, Steam auth live here; org camps run separate org stacks.
+#
+# Quick start:
+#   cp docker/example.env.hub docker/env/hub.env
+#   ./scripts/hub-stack.sh up
+#
+# Same image as org stacks; only env + volumes differ.
+
+name: fragbase-hub
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: fragbase-hub-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:?set DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME:-fragbase_hub}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER:-postgres}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - hub-net
+
+  matchzy-tournament:
+    image: ${MAT_IMAGE:-sivertio/matchzy-auto-tournament:latest}
+    container_name: fragbase-hub-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - ${HUB_ENV_FILE:?set HUB_ENV_FILE to docker/env/hub.env}
+    ports:
+      - '${HOST_PORT:-3068}:3069'
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DB_HOST=postgres
+      - DATABASE_URL=postgresql://${DB_USER:-postgres}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-fragbase_hub}
+      - SESSION_SECRET=${SESSION_SECRET:?set SESSION_SECRET}
+      - ORGANIZATION_ID=${ORGANIZATION_ID:-hub}
+      - ORGANIZATION_NAME=${ORGANIZATION_NAME:-Fragbase Hub}
+      - ORGANIZATION_SLUG=${ORGANIZATION_SLUG:-hub}
+      - PLAYER_HOST=${PLAYER_HOST:-play.localhost}
+      - ORG_HOST=${ORG_HOST:-admin.localhost}
+      - FRONTEND_BASE_URL=${FRONTEND_BASE_URL:-http://localhost:${HOST_PORT:-3068}}
+      - API_BASE_URL=${API_BASE_URL:-http://localhost:${HOST_PORT:-3068}}
+      - PLAYER_PORTAL_URL=${PLAYER_PORTAL_URL:-http://localhost:${HOST_PORT:-3068}}
+    volumes:
+      - app-data:/app/data
+    healthcheck:
+      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://localhost:3069/health']
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+    networks:
+      - hub-net
+
+networks:
+  hub-net:
+    driver: bridge
+
+volumes:
+  postgres-data:
+    name: fragbase-hub-postgres-data
+  app-data:
+    name: fragbase-hub-app-data

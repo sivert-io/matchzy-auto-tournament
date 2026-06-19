@@ -22,7 +22,7 @@ Shared code lives under `client/src/shared/` (providers, theme, design system, A
 
 Build: `yarn client:build:apps` (both apps) or `yarn build` (API + both apps).
 
-Serving: Caddy routes by `Host` (`PLAYER_HOST` / `ORG_HOST`, defaults `play.localhost` / `admin.localhost`). Express also serves fallbacks at `/app` (player) and `/app-org` (org).
+Serving: Caddy routes by `Host` (`PLAYER_HOST` / `ORG_HOST`). Production multi-org: **one Docker stack per org** — see `docker/docker-compose.org.yml` and `docs/architecture/deployment-topologies.md`.
 
 Design-system layout: `client/src/shared/ui/layoutTokens.ts` (`pageWidth.*`, `PageShell`, `GlassCard`). See `docs/redesign-split.md` for the screen map.
 

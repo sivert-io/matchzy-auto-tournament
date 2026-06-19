@@ -1,5 +1,6 @@
 import { db } from '../config/database';
 import { log } from '../utils/logger';
+import { getCurrentOrganizationId } from './organizationService';
 import { getBracketGenerator } from './bracketGenerators';
 import { validateTeamCount, calculateTotalRounds } from '../utils/tournamentHelpers';
 import { enrichMatch } from '../utils/matchEnrichment';
@@ -119,6 +120,7 @@ class TournamentService {
       maps: JSON.stringify(maps),
       team_ids: JSON.stringify(teamIds || []), // Shuffle tournaments have no fixed teams
       settings: JSON.stringify(tournamentSettings),
+      organization_id: getCurrentOrganizationId(),
       max_rounds: maxRounds ?? 24,
       overtime_mode: overtimeMode ?? 'enabled',
       // Keep semantics aligned with shuffle and manual matches:

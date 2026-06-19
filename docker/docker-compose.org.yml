@@ -1,0 +1,84 @@
+# Per-organization Fragbase stack (isolated Postgres + MAT API + Caddy).
+#
+# One compose project per org — avoids shared DB/tournament state between camps.
+#
+# Quick start:
+#   cp docker/example.env.org docker/env/camp-alpha.env
+#   # edit docker/env/camp-alpha.env (ORG_SLUG, secrets, domains, port)
+#   ./scripts/org-stack.sh camp-alpha up
+#
+# Or manually:
+#   ORG_SLUG=camp-alpha HOST_PORT=3070 \
+#     docker compose -f docker/docker-compose.org.yml \
+#     --env-file docker/env/camp-alpha.env \
+#     -p fragbase-camp-alpha up -d
+#
+# DNS: point ORG_HOST and PLAYER_HOST (if used) to this VPS; open HOST_PORT or
+# terminate TLS on an edge proxy and forward to HOST_PORT.
+
+name: fragbase-${ORG_SLUG:?set ORG_SLUG}
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: fragbase-${ORG_SLUG}-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:?set DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME:-matchzy_tournament}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER:-postgres}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - org-net
+
+  matchzy-tournament:
+    image: ${MAT_IMAGE:-sivertio/matchzy-auto-tournament:latest}
+    container_name: fragbase-${ORG_SLUG}-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - ${ORG_ENV_FILE:?set ORG_ENV_FILE to docker/env/<slug>.env}
+    ports:
+      - '${HOST_PORT:-3069}:3069'
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DB_HOST=postgres
+      - DATABASE_URL=postgresql://${DB_USER:-postgres}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-matchzy_tournament}
+      - SESSION_SECRET=${SESSION_SECRET:?set SESSION_SECRET}
+      - ORGANIZATION_ID=${ORG_SLUG}
+      - ORGANIZATION_NAME=${ORGANIZATION_NAME:-${ORG_SLUG}}
+      - ORGANIZATION_SLUG=${ORGANIZATION_SLUG:-${ORG_SLUG}}
+      - PLAYER_HOST=${PLAYER_HOST:-play.localhost}
+      - ORG_HOST=${ORG_HOST:-admin.localhost}
+      - FRONTEND_BASE_URL=${FRONTEND_BASE_URL:-http://localhost:${HOST_PORT:-3069}}
+      - API_BASE_URL=${API_BASE_URL:-http://localhost:${HOST_PORT:-3069}}
+      - PLAYER_PORTAL_URL=${PLAYER_PORTAL_URL:-http://localhost:${HOST_PORT:-3069}}
+    volumes:
+      - app-data:/app/data
+    healthcheck:
+      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://localhost:3069/health']
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+    networks:
+      - org-net
+
+networks:
+  org-net:
+    driver: bridge
+
+volumes:
+  postgres-data:
+    name: fragbase-${ORG_SLUG}-postgres-data
+  app-data:
+    name: fragbase-${ORG_SLUG}-app-data
