@@ -39,7 +39,7 @@ Build de produção: `yarn build` (server + os dois apps) ou `yarn client:build:
 Legenda: ✅ remontada · 🚧 parcial · ⬜ pendente.
 
 - **Player:** Landing ✅, Login ✅, PlayerHome ✅, Lobbies ✅, Skins/Inventory ✅, FindPlayer ✅, LobbyRoom ⬜ (1136 linhas), PlayerProfile ⬜ (1600).
-- **Org:** Landing ✅, Login ✅, Teams ✅, Players ✅, Dashboard 🚧 (shell em PageShell; `DashboardStats` 744 linhas com charts ⬜), Tournament ⬜ (1183), Bracket ⬜ (798), Matches ⬜ (853), Servers ⬜ (1851), Maps ⬜ (386), Templates ⬜ (614), ELOTemplates ⬜ (369), AdminTools ⬜ (593), Settings ⬜ (2059), Development ⬜ (1107).
+- **Org:** Landing ✅, Login ✅, Teams ✅, Players ✅, Maps ✅ (MapCard/MapPoolCard), ELOTemplates ✅, AdminTools ✅, Templates ✅, Dashboard 🚧 (shell em PageShell; `DashboardStats` 744 linhas com charts ⬜), Tournament ⬜ (1183), Bracket ⬜ (798), Matches ⬜ (853), Servers ⬜ (1851), Settings ⬜ (2059), Development ⬜ (1107).
 
 > As pendentes são telas grandes (369–2059 linhas); cada uma é um trabalho focado. Padrão de remontagem já estabelecido: `PageShell`/`SectionHeader` no shell, `GlassCard` (com `interactive`/`onClick`/`to`) nos cards, `EmptyState` (de `shared/ui`, que re-exporta `components/shared`) nos vazios, `StatTile`/`DataTable` onde couber.
 

@@ -4,8 +4,6 @@ import { usePageHeader } from '../contexts/PageHeaderContext';
 import {
   Box,
   Typography,
-  Card,
-  CardContent,
   Button,
   Grid,
   IconButton,
@@ -39,6 +37,7 @@ import type { Map, MapPool } from '../types/api.types';
 import { useSnackbar } from '../contexts/SnackbarContext';
 import ConfirmDialog from '../components/modals/ConfirmDialog';
 import { useTranslation } from 'react-i18next';
+import { GlassCard } from '../shared/ui';
 
 const TOURNAMENT_TYPE_LABELS: Record<string, string> = {
   single_elimination: 'Single Elimination',
@@ -323,19 +322,16 @@ export default function Templates() {
   return (
     <Box sx={{ width: '100%', height: '100%' }}>
       {templates.length === 0 ? (
-        <Card>
-          <CardContent>
-            <Typography variant="body1" color="text.secondary" align="center" py={4}>
-              {t('templatesPage.empty')}
-            </Typography>
-          </CardContent>
-        </Card>
+        <GlassCard>
+          <Typography variant="body1" color="text.secondary" align="center" py={4}>
+            {t('templatesPage.empty')}
+          </Typography>
+        </GlassCard>
       ) : (
         <Grid container spacing={2}>
           {templates.map((template) => (
             <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4 }} key={template.id}>
-              <Card>
-                <CardContent>
+              <GlassCard sx={{ height: '100%' }}>
                   <Box display="flex" justifyContent="space-between" alignItems="start" mb={2}>
                     <Box>
                       <Typography variant="h6" fontWeight={600}>
@@ -413,8 +409,7 @@ export default function Templates() {
                   >
                     Create Tournament from Template
                   </Button>
-                </CardContent>
-              </Card>
+              </GlassCard>
             </Grid>
           ))}
         </Grid>
