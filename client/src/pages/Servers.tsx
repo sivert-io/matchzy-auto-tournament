@@ -17,7 +17,7 @@ import ServerModal from '../components/modals/ServerModal';
 import BatchServerModal from '../components/modals/BatchServerModal';
 import MatchDetailsModal from '../components/modals/MatchDetailsModal';
 import { EmptyState } from '../components/shared/EmptyState';
-import { GlassCard } from '../shared/ui';
+import { GlassCard, PageShell, pageWidth } from '../shared/ui';
 import ConfirmDialog from '../components/modals/ConfirmDialog';
 import type { Match, Server, ServersResponse, ServerStatusResponse, MatchesResponse } from '../types';
 import { useSnackbar } from '../contexts/SnackbarContext';
@@ -850,7 +850,7 @@ export default function Servers() {
   }, [servers]);
 
   return (
-    <Box data-testid="servers-page" sx={{ width: '100%', height: '100%' }}>
+    <PageShell maxWidth={pageWidth.full} data-testid="servers-page" >
       {servers.length === 0 ? (
           <Box>
             <EmptyState
@@ -1847,6 +1847,6 @@ export default function Servers() {
         }}
         onCancel={() => setBulkDeleteConfirmOpen(false)}
       />
-    </Box>
+    </PageShell>
   );
 }

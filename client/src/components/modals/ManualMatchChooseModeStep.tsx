@@ -1,17 +1,8 @@
 import React from 'react';
-import {
-  Box,
-  Card,
-  CardActionArea,
-  CardContent,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Typography,
-} from '@mui/material';
+import { Box, CardActionArea, CardContent, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
 import type { MatchTemplate } from './useCreateManualMatchModal';
 import { useTranslation } from 'react-i18next';
+import { GlassCard } from '../../shared/ui';
 
 interface ManualMatchChooseModeStepProps {
   templates: MatchTemplate[];
@@ -33,7 +24,7 @@ export const ManualMatchChooseModeStep: React.FC<ManualMatchChooseModeStepProps>
       </Typography>
 
       <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} gap={2}>
-        <Card
+        <GlassCard
           variant="outlined"
           sx={{
             flex: 1,
@@ -69,9 +60,9 @@ export const ManualMatchChooseModeStep: React.FC<ManualMatchChooseModeStepProps>
               </Typography>
             )}
           </CardContent>
-        </Card>
+        </GlassCard>
 
-        <Card
+        <GlassCard
           variant="outlined"
           sx={{
             flex: 1,
@@ -94,7 +85,7 @@ export const ManualMatchChooseModeStep: React.FC<ManualMatchChooseModeStepProps>
               </Typography>
             </CardContent>
           </CardActionArea>
-        </Card>
+        </GlassCard>
       </Box>
 
     </Box>

@@ -1,16 +1,9 @@
 import React from 'react';
-import {
-  Card,
-  CardContent,
-  Box,
-  Typography,
-  LinearProgress,
-  Chip,
-  Stack,
-} from '@mui/material';
+import { CardContent, Box, Typography, LinearProgress, Chip, Stack } from '@mui/material';
 import MapIcon from '@mui/icons-material/Map';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ScheduleIcon from '@mui/icons-material/Schedule';
+import { GlassCard } from '../../shared/ui';
 
 interface RoundStatus {
   roundNumber: number;
@@ -51,7 +44,7 @@ export function RoundStatusCard({
       : roundStatus.pendingMatches;
 
   return (
-    <Card variant="outlined" sx={{ mb: 2 }}>
+    <GlassCard variant="outlined" sx={{ mb: 2 }}>
       <CardContent>
         <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
           <Box display="flex" alignItems="center" gap={1}>
@@ -142,7 +135,7 @@ export function RoundStatusCard({
               advancement is controlled manually. */}
         </Stack>
       </CardContent>
-    </Card>
+    </GlassCard>
   );
 }
 

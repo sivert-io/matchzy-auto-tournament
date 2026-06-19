@@ -17,6 +17,7 @@ import { api } from '../utils/api';
 import type { Match, MatchEvent, MatchesResponse, ServerAvailabilityResponse } from '../types';
 import ConfirmDialog from '../components/modals/ConfirmDialog';
 import { useTranslation } from 'react-i18next';
+import { PageShell, pageWidth } from '../shared/ui';
 
 export default function Matches() {
   const navigate = useNavigate();
@@ -506,7 +507,7 @@ export default function Matches() {
     upcomingMatches.length > 0 || liveMatches.length > 0 || matchHistory.length > 0;
 
   return (
-    <Box data-testid="matches-page" sx={{ width: '100%', height: '100%' }}>
+    <PageShell maxWidth={pageWidth.wide} data-testid="matches-page" >
       {renderAllocationBanner()}
       {/* Manual match creation + allocation countdown */}
       {hasMatches && (
@@ -848,6 +849,6 @@ export default function Matches() {
         }}
         onCancel={() => setBulkDeleteConfirmOpen(false)}
       />
-    </Box>
+    </PageShell>
   );
 }

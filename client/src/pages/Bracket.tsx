@@ -322,7 +322,7 @@ export default function Bracket() {
 
   if (error) {
     return (
-      <Box sx={{ width: '100%', height: '100%' }}>
+      <Box >
         <Alert severity="error">{error}</Alert>
       </Box>
     );
@@ -346,7 +346,7 @@ export default function Bracket() {
   // Special-case: Shuffle tournaments don't use a traditional bracket
   if (tournament.type === 'shuffle' && !matches.length) {
     return (
-      <Box sx={{ width: '100%', height: '100%' }}>
+      <Box >
         <GlassCard data-testid="bracket-empty-state" sx={{ textAlign: 'center', py: 8, px: 3 }}>
           <EmojiEventsIcon sx={{ fontSize: 80, color: 'text.secondary', mb: 2 }} />
           <Typography variant="h6" color="text.secondary" gutterBottom>
@@ -424,7 +424,7 @@ export default function Bracket() {
 
   if (!matches.length) {
     return (
-      <Box sx={{ width: '100%', height: '100%' }}>
+      <Box >
         <GlassCard data-testid="bracket-empty-state" sx={{ textAlign: 'center', py: 8 }}>
           <EmojiEventsIcon sx={{ fontSize: 80, color: 'text.secondary', mb: 2 }} />
           <Typography variant="h6" color="text.secondary" gutterBottom>

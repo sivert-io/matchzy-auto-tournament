@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Box, Card, CardContent, Typography, Alert } from '@mui/material';
+import { Box, CardContent, Typography, Alert } from '@mui/material';
 import PeopleIcon from '@mui/icons-material/People';
 import { getMapData } from '../../constants/maps';
 import { VetoInterface } from '../veto/VetoInterface';
@@ -18,6 +18,7 @@ import { MatchServerPanel } from './MatchServerPanel';
 import { api } from '../../utils/api';
 import { useSnackbar } from '../../contexts/SnackbarContext';
 import { useAuth } from '../../contexts/AuthContext';
+import { GlassCard } from '../../shared/ui';
 
 interface MatchInfoCardProps {
   match: TeamMatchInfo;
@@ -367,7 +368,7 @@ export function MatchInfoCard({
     ['bo1', 'bo3', 'bo5'].includes(matchFormat)
   ) {
     return (
-      <Card>
+      <GlassCard>
         <CardContent>
           <Alert severity="warning">
             <Typography variant="body1" fontWeight={600} gutterBottom>
@@ -384,7 +385,7 @@ export function MatchInfoCard({
             )}
           </Alert>
         </CardContent>
-      </Card>
+      </GlassCard>
     );
   }
 
@@ -398,7 +399,7 @@ export function MatchInfoCard({
     ['bo1', 'bo3', 'bo5'].includes(matchFormat)
   ) {
     return (
-      <Card>
+      <GlassCard>
         <CardContent>
           <Alert severity="info">
             <Typography variant="body1" fontWeight={600} gutterBottom>
@@ -410,7 +411,7 @@ export function MatchInfoCard({
             </Typography>
           </Alert>
         </CardContent>
-      </Card>
+      </GlassCard>
     );
   }
 
@@ -430,7 +431,7 @@ export function MatchInfoCard({
     ['bo1', 'bo3', 'bo5'].includes(matchFormat)
   ) {
     return (
-      <Card>
+      <GlassCard>
         <CardContent>
           <Typography variant="h5" fontWeight={600} mb={3}>
             🗺️ Map Selection
@@ -451,7 +452,7 @@ export function MatchInfoCard({
             onComplete={onVetoComplete}
           />
         </CardContent>
-      </Card>
+      </GlassCard>
     );
   }
 
@@ -471,7 +472,7 @@ export function MatchInfoCard({
     const hideMapRounds = !isAuthenticated;
 
     return (
-      <Card data-testid="match-details">
+      <GlassCard data-testid="match-details">
         <CardContent>
           <Box display="flex" flexDirection="column" gap={3}>
             <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -568,7 +569,7 @@ export function MatchInfoCard({
             )}
           </Box>
         </CardContent>
-      </Card>
+      </GlassCard>
     );
   }
 

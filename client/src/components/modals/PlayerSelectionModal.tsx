@@ -1,22 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Box,
-  Grid,
-  Card,
-  CardContent,
-  Checkbox,
-  Typography,
-  TextField,
-  InputAdornment,
-  CircularProgress,
-  Chip,
-  IconButton,
-} from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Box, Grid, CardContent, Checkbox, Typography, TextField, InputAdornment, CircularProgress, Chip, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import SearchIcon from '@mui/icons-material/Search';
 import PersonIcon from '@mui/icons-material/Person';
@@ -26,6 +9,7 @@ import type { PlayerDetail } from '../../types/api.types';
 import { PlayerAvatar } from '../player/PlayerAvatar';
 import { PlayerName } from '../player/PlayerName';
 import { useTranslation } from 'react-i18next';
+import { GlassCard } from '../../shared/ui';
 
 interface PlayerSelectionModalProps {
   open: boolean;
@@ -305,7 +289,7 @@ export default function PlayerSelectionModal({
 
                 return (
                   <Grid size={{ xs: 12, sm: 6, md: 4 }} key={player.id}>
-                    <Card
+                    <GlassCard
                       sx={{
                         cursor: disabled || selectionLockedForOthers ? 'not-allowed' : 'pointer',
                         opacity: disabled || selectionLockedForOthers ? 0.6 : 1,
@@ -374,7 +358,7 @@ export default function PlayerSelectionModal({
                           </Typography>
                         )}
                       </CardContent>
-                    </Card>
+                    </GlassCard>
                   </Grid>
                 );
               })}

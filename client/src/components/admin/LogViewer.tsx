@@ -1,19 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  IconButton,
-  ToggleButton,
-  ToggleButtonGroup,
-  Alert,
-  CircularProgress,
-  Chip,
-} from '@mui/material';
+import { Box, CardContent, Typography, IconButton, ToggleButton, ToggleButtonGroup, Alert, CircularProgress, Chip } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { api } from '../../utils/api';
 import type { LogEntry, LogsResponse } from '../../types';
+import { GlassCard } from '../../shared/ui';
 
 export const LogViewer: React.FC = () => {
   const [logs, setLogs] = useState<LogEntry[]>([]);
@@ -81,7 +71,7 @@ export const LogViewer: React.FC = () => {
   };
 
   return (
-    <Card>
+    <GlassCard>
       <CardContent>
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
           <Typography variant="h6">Application Logs</Typography>
@@ -196,6 +186,6 @@ export const LogViewer: React.FC = () => {
           {autoRefresh && ' (auto-refreshing)'}
         </Typography>
       </CardContent>
-    </Card>
+    </GlassCard>
   );
 };

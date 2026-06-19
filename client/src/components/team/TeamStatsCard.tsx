@@ -1,7 +1,8 @@
 import React from 'react';
-import { Box, Card, CardContent, Typography, Grid, Paper } from '@mui/material';
+import { Box, CardContent, Typography, Grid, Paper } from '@mui/material';
 import LeaderboardIcon from '@mui/icons-material/Leaderboard';
 import type { TeamStats, TeamStanding } from '../../types';
+import { GlassCard } from '../../shared/ui';
 
 interface TeamStatsCardProps {
   stats: TeamStats | null;
@@ -14,7 +15,7 @@ export function TeamStatsCard({ stats, standing }: TeamStatsCardProps) {
   }
 
   return (
-    <Card>
+    <GlassCard>
       <CardContent>
         <Box display="flex" alignItems="center" gap={1} mb={2}>
           <LeaderboardIcon color="primary" />
@@ -67,7 +68,7 @@ export function TeamStatsCard({ stats, standing }: TeamStatsCardProps) {
           )}
         </Grid>
       </CardContent>
-    </Card>
+    </GlassCard>
   );
 }
 

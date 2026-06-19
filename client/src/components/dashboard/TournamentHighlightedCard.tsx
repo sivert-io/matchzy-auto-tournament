@@ -1,4 +1,3 @@
-import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -7,6 +6,7 @@ import EmojiEventsRoundedIcon from '@mui/icons-material/EmojiEventsRounded';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
+import { GlassCard } from '../../shared/ui';
 
 export default function TournamentHighlightedCard() {
   const theme = useTheme();
@@ -14,7 +14,7 @@ export default function TournamentHighlightedCard() {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
-    <Card sx={{ height: '100%' }}>
+    <GlassCard sx={{ height: '100%' }}>
       <CardContent>
         <EmojiEventsRoundedIcon />
         <Typography
@@ -39,7 +39,7 @@ export default function TournamentHighlightedCard() {
           View bracket
         </Button>
       </CardContent>
-    </Card>
+    </GlassCard>
   );
 }
 

@@ -1,25 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Box,
-  Typography,
-  IconButton,
-  Stack,
-  Divider,
-  Grid,
-  Card,
-  CardContent,
-  Snackbar,
-  Alert,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Chip,
-  Button,
-} from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Box, Typography, IconButton, Stack, Divider, Grid, CardContent, Snackbar, Alert, Accordion, AccordionSummary, AccordionDetails, Chip, Button } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import GroupsIcon from '@mui/icons-material/Groups';
@@ -55,6 +35,7 @@ import { isShuffleMatch, isVetoDisabledForMatch } from '../../utils/matchFlags';
 import { normalizeConfigPlayers } from '../../utils/playerUtils';
 import { PlayerAvatar } from '../player/PlayerAvatar';
 import { useTranslation } from 'react-i18next';
+import { GlassCard } from '../../shared/ui';
 import {
   CURRENT_MAP_SCORE_LABEL,
   SERIES_SCORE_LABEL,
@@ -825,7 +806,7 @@ const InnerMatchDetailsModal: React.FC<Required<MatchDetailsModalProps>> = ({
                   <Grid container spacing={2}>
                     {/* Team 1 Players */}
                     <Grid size={{ xs: 12, md: 6 }}>
-                      <Card variant="outlined">
+                      <GlassCard variant="outlined">
                         <CardContent>
                           <Typography variant="subtitle2" fontWeight={600} mb={2} color="primary">
                             {match.team1?.name ||
@@ -905,12 +886,12 @@ const InnerMatchDetailsModal: React.FC<Required<MatchDetailsModalProps>> = ({
                             </Typography>
                           )}
                         </CardContent>
-                      </Card>
+                      </GlassCard>
                     </Grid>
 
                     {/* Team 2 Players */}
                     <Grid size={{ xs: 12, md: 6 }}>
-                      <Card variant="outlined">
+                      <GlassCard variant="outlined">
                         <CardContent>
                           <Typography variant="subtitle2" fontWeight={600} mb={2} color="primary">
                             {match.team2?.name ||
@@ -990,7 +971,7 @@ const InnerMatchDetailsModal: React.FC<Required<MatchDetailsModalProps>> = ({
                             </Typography>
                           )}
                         </CardContent>
-                      </Card>
+                      </GlassCard>
                     </Grid>
                   </Grid>
                 </Box>
@@ -1008,7 +989,7 @@ const InnerMatchDetailsModal: React.FC<Required<MatchDetailsModalProps>> = ({
                       Current Map
                     </Typography>
                   </Box>
-                  <Card
+                  <GlassCard
                     sx={{
                       position: 'relative',
                       overflow: 'hidden',
@@ -1049,7 +1030,7 @@ const InnerMatchDetailsModal: React.FC<Required<MatchDetailsModalProps>> = ({
                         </Typography>
                       )}
                     </Box>
-                  </Card>
+                  </GlassCard>
                 </Box>
               </>
             )}

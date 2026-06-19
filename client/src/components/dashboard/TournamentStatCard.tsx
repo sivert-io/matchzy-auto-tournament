@@ -1,12 +1,12 @@
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { SparkLineChart } from '@mui/x-charts/SparkLineChart';
 import { areaElementClasses } from '@mui/x-charts/LineChart';
+import { GlassCard } from '../../shared/ui';
 
 export type TournamentStatCardProps = {
   title: string;
@@ -78,7 +78,7 @@ export default function TournamentStatCard({
   const trendValues = { up: '+25%', down: '-25%', neutral: '+5%' };
 
   return (
-    <Card variant="outlined" sx={{ height: '100%', flexGrow: 1 }}>
+    <GlassCard variant="outlined" sx={{ height: '100%', flexGrow: 1 }}>
       <CardContent>
         <Typography component="h2" variant="subtitle2" gutterBottom>
           {title}
@@ -123,7 +123,7 @@ export default function TournamentStatCard({
           </Box>
         </Stack>
       </CardContent>
-    </Card>
+    </GlassCard>
   );
 }
 

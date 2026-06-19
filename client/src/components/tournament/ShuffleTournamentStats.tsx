@@ -1,8 +1,9 @@
 import React from 'react';
-import { Box, Typography, Card, CardContent, Divider } from '@mui/material';
+import { Box, Typography, CardContent, Divider } from '@mui/material';
 import GroupsIcon from '@mui/icons-material/Groups';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import DnsIcon from '@mui/icons-material/Dns';
+import { GlassCard } from '../../shared/ui';
 
 interface ShuffleTournamentStatsProps {
   playerCount: number;
@@ -20,7 +21,7 @@ export function ShuffleTournamentStats({ playerCount, teamSize }: ShuffleTournam
   const serversNeeded = matchesPerRound;
 
   return (
-    <Card sx={{ width: '33%', display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
+    <GlassCard sx={{ width: '33%', display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
       <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', flex: 1, minHeight: 0 }}>
         <Typography variant="h6" fontWeight={600} mb={3}>
           Tournament Stats
@@ -68,7 +69,7 @@ export function ShuffleTournamentStats({ playerCount, teamSize }: ShuffleTournam
           </Box>
         </Box>
       </CardContent>
-    </Card>
+    </GlassCard>
   );
 }
 

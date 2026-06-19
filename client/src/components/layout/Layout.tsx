@@ -42,6 +42,7 @@ import { usePageHeader } from '../../contexts/PageHeaderContext';
 import { useSnackbar } from '../../contexts/SnackbarContext';
 import { api } from '../../utils/api';
 import { PortalId, portalPaths } from '../../config/portals';
+import { pageWidth } from '../../shared/ui/layoutTokens';
 import type { SettingsResponse } from '../../types/api.types';
 import { useIsDevelopment } from '../../hooks/useIsDevelopment';
 import { useTranslation } from 'react-i18next';
@@ -890,7 +891,7 @@ export default function Layout({ portal }: LayoutProps) {
             justifyContent: 'center',
           }}
         >
-          <Box sx={{ width: '100%', maxWidth: (theme) => theme.breakpoints.values.lg }}>
+          <Box sx={{ width: '100%', maxWidth: pageWidth.full, mx: 'auto' }}>
             {/* Page Header */}
             {currentPageHeader && (
               <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>

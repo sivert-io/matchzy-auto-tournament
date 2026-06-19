@@ -1,6 +1,7 @@
 import React from 'react';
-import { Card, Typography, Button } from '@mui/material';
+import { Typography, Button } from '@mui/material';
 import { SvgIconComponent } from '@mui/icons-material';
+import { GlassCard } from '../../shared/ui/GlassCard';
 
 interface EmptyStateProps {
   icon: SvgIconComponent;
@@ -33,7 +34,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   };
 
   return (
-    <Card data-testid={getTestId()} sx={{ textAlign: 'center', py: 8 }}>
+    <GlassCard data-testid={getTestId()} sx={{ textAlign: 'center', py: 8 }}>
       <Icon sx={{ fontSize: 80, color: 'text.secondary', mb: 2 }} />
       <Typography variant="h6" color="text.secondary" gutterBottom>
         {title}
@@ -50,6 +51,6 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           {actionLabel}
         </Button>
       )}
-    </Card>
+    </GlassCard>
   );
 };

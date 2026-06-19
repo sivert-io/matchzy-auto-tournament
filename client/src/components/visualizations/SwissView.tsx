@@ -1,22 +1,10 @@
 import React from 'react';
-import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  Chip,
-  Grid,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from '@mui/material';
+import { Box, CardContent, Typography, Chip, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { getStatusColor, getStatusLabel } from '../../utils/matchUtils';
 import type { Match, MatchLiveStats, Team } from '../../types';
 import { deriveSeriesScore } from '../../utils/matchScoreDisplay';
 import { TeamNameLink } from '../team/TeamNameLink';
+import { GlassCard } from '../../shared/ui';
 
 interface SwissViewProps {
   matches: Match[];
@@ -113,7 +101,7 @@ export default function SwissView({ matches, teams, totalRounds, onMatchClick }:
       <Grid container spacing={3}>
         {/* Leaderboard */}
         <Grid size={{ xs: 12, md: 5 }}>
-          <Card>
+          <GlassCard>
             <CardContent>
               <Typography variant="h6" fontWeight={600} mb={2}>
                 🏆 Current Leaderboard
@@ -186,7 +174,7 @@ export default function SwissView({ matches, teams, totalRounds, onMatchClick }:
                 </Table>
               </TableContainer>
             </CardContent>
-          </Card>
+          </GlassCard>
         </Grid>
 
         {/* Rounds */}
@@ -197,7 +185,7 @@ export default function SwissView({ matches, teams, totalRounds, onMatchClick }:
               const hasMatches = roundMatches.length > 0;
 
               return (
-                <Card key={round}>
+                <GlassCard key={round}>
                   <CardContent>
                     <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                       <Typography variant="h6" fontWeight={600}>
@@ -227,7 +215,7 @@ export default function SwissView({ matches, teams, totalRounds, onMatchClick }:
                               showScore && !(isNotStarted && isUnknownZero) ? series.team2 : null;
 
                             return (
-                          <Card
+                          <GlassCard
                             key={match.id}
                             variant="outlined"
                             sx={{
@@ -300,7 +288,7 @@ export default function SwissView({ matches, teams, totalRounds, onMatchClick }:
                                 />
                               </Box>
                             </CardContent>
-                          </Card>
+                          </GlassCard>
                             );
                           })()
                         ))}
@@ -315,7 +303,7 @@ export default function SwissView({ matches, teams, totalRounds, onMatchClick }:
                       </Typography>
                     )}
                   </CardContent>
-                </Card>
+                </GlassCard>
               );
             })}
           </Box>

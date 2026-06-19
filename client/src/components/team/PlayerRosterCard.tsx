@@ -1,11 +1,12 @@
 import React from 'react';
-import { Box, Card, CardContent, Typography, Stack, Paper, IconButton, Tooltip } from '@mui/material';
+import { Box, CardContent, Typography, Stack, Paper, IconButton, Tooltip } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { SteamIcon } from '../icons/SteamIcon';
 import { PlayerAvatar } from '../player/PlayerAvatar';
 import type { Team } from '../../types';
 import { getPlayerPageUrl } from '../../utils/playerLinks';
+import { GlassCard } from '../../shared/ui';
 
 interface PlayerRosterCardProps {
   team: Team | null;
@@ -31,7 +32,7 @@ export function PlayerRosterCard({ team }: PlayerRosterCardProps) {
     .sort((a, b) => b.displayElo - a.displayElo);
 
   return (
-    <Card>
+    <GlassCard>
       <CardContent>
         <Box display="flex" alignItems="center" gap={1} mb={2}>
           <PersonIcon color="primary" />
@@ -112,6 +113,6 @@ export function PlayerRosterCard({ team }: PlayerRosterCardProps) {
           })}
         </Stack>
       </CardContent>
-    </Card>
+    </GlassCard>
   );
 }

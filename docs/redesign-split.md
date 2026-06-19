@@ -30,40 +30,64 @@ Build de produção: `yarn build` (server + os dois apps) ou `yarn client:build:
 
 - [x] **Fase 0 — Split** (commit `5c2fe63`): dois entries/configs/builds, scripts, Caddy por Host, Express ajustado. Builds e lint OK. Sem mudança visual.
 - [x] **Limpeza de legado**: removidos `client/index.html`, `client/src/main.tsx`, `client/src/App.tsx`, `client/vite.config.ts`; scripts repontados; eslint ignora os novos vite configs.
-- [x] **Fase 1 — Entrada + shells** (implementada, falta QA visual): `pages/Landing.tsx` (compartilhada, dirigida por `portal`) com hero + CTAs + destaques glass; `Login` agora é portal-aware (copy/marca por portal via `login.{portal}.*`, link "voltar"); `components/layout/PublicTopBar.tsx` (barra pública leve p/ landing+login, sem o polling do `SharedNavBar`); raiz `/` de cada app virou um gate (logado → home; senão → Landing); corrigido bug latente do `TopNavBar` que não passava `portal` ao `SharedNavBar`. i18n em `auth.json` (en + pt-PT): seções `landing.*` e `login.{player,organizer}.*`. Build dos dois apps e lint OK (só o erro pré-existente do `vite-env.d.ts`).
-- [~] **Fase 2 — Reescrita das telas** (em andamento). Design system glass criado em `client/src/shared/ui/` (`PageShell`, `SectionHeader`, `GlassCard`, `StatTile`, `EmptyState`, `DataTable` + barrel `index.ts`). Telas-piloto: **PlayerHome** remontada sobre os primitivos (PageShell + SectionHeader + GlassCard); **Dashboard** envolvida em `PageShell` no nível de página. **Pendente:** remount interno do `DashboardStats` (744 linhas, cards compostos + charts MUI-X) — é tarefa própria; hoje continua glass/funcional via tema. Build + lint OK. Telas autenticadas não têm QA visual (precisa de backend/auth).
-- [ ] **Fase 3 — Polish/perf/a11y/i18n** e limpeza final.
+- [x] **Fase 1 — Entrada + shells**: landings, login por portal, `PublicTopBar`, gate na raiz, i18n `auth.json`.
+- [x] **Fase 2 — Design system em todo o client** (jun/2026):
+  - **41 componentes** convertidos `Card` → `GlassCard` via `scripts/convert-cards-to-glass.mjs`
+  - **Todas as pages** com `GlassCard` e/ou `PageShell`
+  - **Zero** `<Card>` no JSX fora de `GlassCard.tsx` (único wrapper interno)
+  - `EmptyState` usa `GlassCard`; import circular com barrel corrigido
+  - Build player + org: **EXIT 0**
+- [ ] **Fase 3 — Polish/perf/a11y/i18n** e QA visual com backend.
 
-## Telas a remontar (Fase 2)
+## Cobertura Fase 2
 
-Legenda: ✅ remontada · 🚧 parcial · ⬜ pendente.
+### Pages (todas)
 
-- **Player:** Landing ✅, Login ✅, PlayerHome ✅, Lobbies ✅, Skins/Inventory ✅, FindPlayer ✅, LobbyRoom ⬜ (1136 linhas), PlayerProfile ⬜ (1600).
-- **Org:** Landing ✅, Login ✅, Teams ✅, Players ✅, Maps ✅ (MapCard/MapPoolCard), ELOTemplates ✅, AdminTools ✅, Templates ✅, Bracket ✅ (empties + list cards via MatchListCard), Matches ✅ (via MatchCard), Dashboard ✅ (shell em PageShell; cards do `DashboardStats` já renderizam no tema glass — redesign p/ StatTile é opcional), Tournament ⬜ (1183), Servers ⬜ (1851), Settings ⬜ (2059), Development ⬜ (1107).
-- **Compartilhados remontados:** `components/shared/MatchCard`, `MatchListCard` → GlassCard (afetam Matches, Bracket e onde mais forem usados).
+**Player:** Landing, Login, PlayerHome, Lobbies, Inventory, FindPlayer, LobbyRoom, PlayerProfile, TeamMatch, TournamentLeaderboard, NotFound.
 
-> Pendentes restantes (1107–2059 linhas): **Tournament, Development, LobbyRoom, PlayerProfile, Servers, Settings.**
->
-> **Análise (jun/2026):** a remontagem *mecânica* (Card→GlassCard) já não rende nessas — o `theme.ts` aplica `glassSurface` a TODO `MuiCard`, então os `Card` internos **já são glass**; trocá-los por `GlassCard` é praticamente no-op visual e só adiciona risco em arquivos enormes que não dá pra QA sem backend. Além disso **Tournament (0 Cards)** é orquestrador (delega a ~12 sub-componentes em `components/tournament/`) e **Settings (0 Cards)** é formulário (Paper/Accordion). O valor que resta é **redesign de hierarquia** (regroup, `SectionHeader`, `StatTile`, `DataTable`) — trabalho que **exige QA visual** (rodar o app). Recomendado: subir `dev:org`/`dev:player` com Postgres e fazer esses 6 com olho na tela, um a um. Padrão já estabelecido nas 16 telas feitas.
+**Org:** Landing, Login, ConnectSteam, Dashboard, Tournament, Settings, Teams, Players, Maps, ELOTemplates, Templates, Bracket, Matches, AdminTools, Servers, Development.
+
+### Componentes convertidos (amostra)
+
+Dashboard (`DashboardStats`, charts, onboarding), Tournament (form, stepper, live, shuffle, veto), Team (`MatchInfoCard`, roster, stats), Admin (`LogViewer`, `ServerEventsMonitor`), Modals (`MatchDetailsModal`, `PlayerSelectionModal`), Veto, SwissView, LobbyMatchPanel, EquippedSkinsGallery, EmptyState, StatusLegend, MatchCard, MatchListCard, MapCard, MapPoolCard, etc.
+
+### Exceções intencionais
+
+- **Bracket**: mantém `Box` com `ref` para fullscreen API (não dá pra substituir por `PageShell` no root).
+- **Settings / Tournament sub-forms**: usam `Paper`/`Accordion` — estrutura de formulário, não cards de superfície.
+- **GlassCard.tsx**: único lugar que importa MUI `Card` diretamente.
 
 ## Design system (Fase 2, base)
 
-Primitivas glass em `client/src/shared/ui/` consumidas pelos dois apps: `PageShell`, `SectionHeader`, `GlassCard`, `StatTile`, `DataTable`, `EmptyState`. Manter marca P&B + wallpaper de mapa. Cada tela é **remontada** (hierarquia/agrupamento), não só repintada.
+Primitivas em `client/src/shared/ui/`: `PageShell`, `SectionHeader`, `GlassCard`, `StatTile`, `DataTable`, `EmptyState` (re-export). Manter marca P&B + wallpaper de mapa.
+
+### Larguras padronizadas (`layoutTokens.ts`)
+
+| Token | px | Uso |
+|-------|-----|-----|
+| `pageWidth.narrow` | 640 | Login, ConnectSteam, NotFound, FindPlayer |
+| `pageWidth.content` | 960 | PlayerProfile, TeamMatch |
+| `pageWidth.default` | 1200 | Hub org/player, leaderboard, landing |
+| `pageWidth.wide` | 1440 | Matches, Tournament, LobbyRoom |
+| `pageWidth.full` | 1680 | Dashboard, Servers, bracket (conteúdo interno) |
+
+- **`Layout.tsx`**: cap externo em `pageWidth.full` (1680) — pages escolhem tier interno via `PageShell`.
+- **Páginas públicas** (TopNavBar / PublicTopBar): `PageShell` + `publicPageShellSx` (ritmo vertical abaixo da barra).
+- **Script**: `scripts/standardize-page-widths.mjs` — troca números mágicos por tokens.
 
 ## Decisões/pendências (precisam do dono)
 
-1. **Domínio real + subdomínios**: confirmar hostnames de produção e como o **Cloudflare Tunnel/DNS** mapeia `play.*` e `admin.*` → container `:3069`. Hoje os hostnames são env (`PLAYER_HOST`/`ORG_HOST`) com default `*.localhost`. **Serving de prod não foi testado.**
-2. **Telas públicas** (PlayerProfile, TeamMatch, Leaderboard) hoje vivem no app **Player**. Confirmar se é isso mesmo ou se devem ser acessíveis também pelo Org.
-3. **Login**: na Fase 1, separar landing/login por portal (decidido). Definir copy/marca de cada um.
+1. **Domínio real + subdomínios**: confirmar hostnames de produção e Cloudflare Tunnel/DNS.
+2. **Telas públicas** no app Player — confirmar se org também precisa acessá-las.
+3. **Copy/marca** final de landing/login.
 
-## Known issues (pré-existentes, não do split)
+## Known issues (pré-existentes)
 
-- `yarn lint` acusa **1 erro** em `client/src/vite-env.d.ts` (triple-slash p/ `theme.d.ts`) — já existia no `main` (commit `7ead4e5`). Não mexi: é augmentation de tipos e o build não typecheck-a, então o fix tem risco sem validação. Tratar na Fase 3.
-- `tsc -p api/tsconfig.json` tem vários erros **pré-existentes** em serviços do backend; o build real usa esbuild (`yarn build:server`), que passa.
+- `yarn lint` — 1 erro em `client/src/vite-env.d.ts` (Fase 3).
+- `tsc -p api` — erros pré-existentes; build usa esbuild.
 
-## Próximos passos (próxima sessão)
+## Próximos passos (pós-merge Fase 2)
 
-1. **QA visual da Fase 1**: subir `dev:player` e `dev:org`, conferir landing (anônimo), login por portal, gate da raiz (logado → home) e o glass nas duas barras públicas.
-2. Definir copy/marca final de cada landing/login (hoje há defaults em `auth.json`); confirmar secondary CTA do org (hoje aponta p/ docs `docs.sivert.io`).
-3. **Fase 2** — telas-piloto: **PlayerHome** e **Dashboard** como referência do redesign.
-4. Definir o **design system** (`shared/ui/`) e atacar as telas restantes em lote.
+1. Merge `feat/split-player-org-apps` → `main`
+2. QA visual com `yarn db` + `dev:player` / `dev:org`
+3. Fase 3: pt-BR i18n, strings hardcoded, a11y, produto (inscrições, pagamentos, multi-org)

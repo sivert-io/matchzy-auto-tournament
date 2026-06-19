@@ -1,6 +1,8 @@
 // Glass design-system primitives shared by the Player and Org apps.
 export { PageShell } from './PageShell';
 export type { PageShellProps } from './PageShell';
+export { pageWidth, pageShellBaseSx, publicPageShellSx } from './layoutTokens';
+export type { PageWidthKey } from './layoutTokens';
 export { SectionHeader } from './SectionHeader';
 export type { SectionHeaderProps } from './SectionHeader';
 export { GlassCard } from './GlassCard';

@@ -1,15 +1,7 @@
 import React from 'react';
-import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  CardActionArea,
-  Grid,
-  Chip,
-  Alert,
-} from '@mui/material';
+import { Box, Typography, CardContent, CardActionArea, Grid, Chip, Alert } from '@mui/material';
 import { MATCH_FORMATS } from '../../constants/tournament';
+import { GlassCard } from '../../shared/ui';
 
 interface TournamentFormatStepProps {
   type: string;
@@ -48,7 +40,7 @@ export function TournamentFormatStep({
 
           return (
             <Grid size={{ xs: 12, sm: 6 }} key={option.value}>
-              <Card
+              <GlassCard
                 sx={{
                   height: '100%',
                   width: '100%',
@@ -86,7 +78,7 @@ export function TournamentFormatStep({
                     </Box>
                   </CardContent>
                 </CardActionArea>
-              </Card>
+              </GlassCard>
             </Grid>
           );
         })}

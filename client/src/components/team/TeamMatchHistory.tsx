@@ -1,18 +1,11 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  Stack,
-  Chip,
-  CardActionArea,
-} from '@mui/material';
+import { Box, CardContent, Typography, Stack, Chip, CardActionArea } from '@mui/material';
 import HistoryIcon from '@mui/icons-material/History';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../../utils/matchUtils';
 import type { TeamMatchHistory } from '../../types';
 import { TeamMatchHistoryModal } from './TeamMatchHistoryModal';
+import { GlassCard } from '../../shared/ui';
 
 interface TeamMatchHistoryProps {
   matchHistory: TeamMatchHistory[];
@@ -40,7 +33,7 @@ export function TeamMatchHistoryCard({
       </Box>
       <Stack spacing={2}>
         {matchHistory.map((historyMatch) => (
-          <Card
+          <GlassCard
             key={historyMatch.slug}
             sx={{
               borderLeft: 4,
@@ -77,7 +70,7 @@ export function TeamMatchHistoryCard({
                 </Typography>
               </CardContent>
             </CardActionArea>
-          </Card>
+          </GlassCard>
         ))}
       </Stack>
 

@@ -1,18 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Box,
-  Typography,
-  Grid,
-  Button,
-  Alert,
-  Card,
-  CardContent,
-  Stack,
-  Chip,
-  Paper,
-  LinearProgress,
-} from '@mui/material';
+import { Box, Typography, Grid, Button, Alert, CardContent, Stack, Chip, Paper, LinearProgress } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { VetoMapCard } from './VetoMapCard';
@@ -22,6 +10,7 @@ import { api } from '../../utils/api';
 import type { VetoState, MapSide } from '../../types';
 import type { MapsResponse } from '../../types/api.types';
 import { FadeInImage } from '../common/FadeInImage';
+import { GlassCard } from '../../shared/ui';
 
 interface VetoInterfaceProps {
   matchSlug: string;
@@ -571,7 +560,7 @@ export const VetoInterface: React.FC<VetoInterfaceProps> = ({
           const fallbackData = getMapData(sidePickMapName);
 
           return (
-            <Card sx={{ mb: 3 }}>
+            <GlassCard sx={{ mb: 3 }}>
               <CardContent>
                 {/* Map Display */}
                 {sidePickMapName && (
@@ -669,7 +658,7 @@ export const VetoInterface: React.FC<VetoInterfaceProps> = ({
                   </Grid>
                 </Grid>
               </CardContent>
-            </Card>
+            </GlassCard>
           );
         })()}
 
@@ -738,7 +727,7 @@ export const VetoInterface: React.FC<VetoInterfaceProps> = ({
 
       {/* Veto History */}
       {Array.isArray(vetoState.actions) && vetoState.actions.length > 0 && (
-        <Card sx={{ mt: 3 }}>
+        <GlassCard sx={{ mt: 3 }}>
           <CardContent>
             <Typography variant="h6" fontWeight={600} mb={2}>
               {t('vetoInterface.vetoHistory')}
@@ -779,7 +768,7 @@ export const VetoInterface: React.FC<VetoInterfaceProps> = ({
               ))}
             </Stack>
           </CardContent>
-        </Card>
+        </GlassCard>
       )}
     </Box>
   );

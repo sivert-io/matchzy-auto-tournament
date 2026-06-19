@@ -1,20 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Button,
-  Chip,
-  Alert,
-  Paper,
-  IconButton,
-  Tooltip,
-} from '@mui/material';
+import { Box, CardContent, Typography, FormControl, InputLabel, Select, MenuItem, Button, Chip, Alert, Paper, IconButton, Tooltip } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ClearIcon from '@mui/icons-material/Clear';
 import PauseIcon from '@mui/icons-material/Pause';
@@ -23,6 +8,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { api } from '../../utils/api';
 import { io, Socket } from 'socket.io-client';
 import type { ServerEvent, ServerEventsResponse } from '../../types';
+import { GlassCard } from '../../shared/ui';
 
 export const ServerEventsMonitor: React.FC = () => {
   const [servers, setServers] = useState<Array<{ id: string; name: string; events?: number }>>([]);
@@ -296,7 +282,7 @@ export const ServerEventsMonitor: React.FC = () => {
   };
 
   return (
-    <Card>
+    <GlassCard>
       <CardContent>
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
           <Box display="flex" alignItems="center" gap={2}>
@@ -419,7 +405,7 @@ export const ServerEventsMonitor: React.FC = () => {
           </Typography>
         </Box>
       </CardContent>
-    </Card>
+    </GlassCard>
   );
 };
 

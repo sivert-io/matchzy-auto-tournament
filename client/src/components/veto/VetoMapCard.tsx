@@ -1,9 +1,10 @@
 import React from 'react';
-import { Card, CardContent, Typography, Box, Chip } from '@mui/material';
+import { CardContent, Typography, Box, Chip } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import BlockIcon from '@mui/icons-material/Block';
 import type { MapSide } from '../../types';
 import { FadeInImage } from '../common/FadeInImage';
+import { GlassCard } from '../../shared/ui';
 
 interface VetoMapCardProps {
   mapName: string;
@@ -37,7 +38,7 @@ export const VetoMapCard: React.FC<VetoMapCardProps> = ({
   const isClickable = !disabled && state === 'available' && onClick;
 
   return (
-    <Card
+    <GlassCard
       data-testid={`veto-map-card-${_mapName}`}
       sx={{
         position: 'relative',
@@ -192,6 +193,6 @@ export const VetoMapCard: React.FC<VetoMapCardProps> = ({
           {displayName}
         </Typography>
       </CardContent>
-    </Card>
+    </GlassCard>
   );
 };

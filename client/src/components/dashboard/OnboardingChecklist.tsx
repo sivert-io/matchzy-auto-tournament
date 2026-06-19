@@ -1,20 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  LinearProgress,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Chip,
-  Divider,
-  Alert,
-} from '@mui/material';
+import { Box, CardContent, Typography, Button, LinearProgress, List, ListItem, ListItemIcon, ListItemText, Chip, Divider, Alert } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import StorageIcon from '@mui/icons-material/Storage';
@@ -24,6 +10,7 @@ import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useOnboardingStatus } from '../../hooks/useOnboardingStatus';
 import { useTranslation } from 'react-i18next';
+import { GlassCard } from '../../shared/ui';
 
 export const OnboardingChecklist: React.FC = () => {
   const navigate = useNavigate();
@@ -43,11 +30,11 @@ export const OnboardingChecklist: React.FC = () => {
 
   if (loading) {
     return (
-      <Card>
+      <GlassCard>
         <CardContent>
           <LinearProgress />
         </CardContent>
-      </Card>
+      </GlassCard>
     );
   }
 
@@ -70,7 +57,7 @@ export const OnboardingChecklist: React.FC = () => {
   }
 
   return (
-    <Card
+    <GlassCard
       sx={{
         background: 'linear-gradient(135deg, rgba(103, 80, 164, 0.05) 0%, rgba(103, 80, 164, 0.02) 100%)',
         border: '2px solid',
@@ -345,7 +332,7 @@ export const OnboardingChecklist: React.FC = () => {
           </>
         )}
       </CardContent>
-    </Card>
+    </GlassCard>
   );
 };
 

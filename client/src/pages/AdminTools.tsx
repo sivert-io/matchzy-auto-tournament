@@ -28,7 +28,7 @@ import { ServerEventsMonitor } from '../components/admin/ServerEventsMonitor';
 import { LogViewer } from '../components/admin/LogViewer';
 import { useSnackbar } from '../contexts/SnackbarContext';
 import { useTranslation } from 'react-i18next';
-import { GlassCard, SectionHeader } from '../shared/ui';
+import { GlassCard, SectionHeader, PageShell, pageWidth } from '../shared/ui';
 
 interface Server {
   id: string;
@@ -243,7 +243,7 @@ const AdminTools: React.FC = () => {
 
   if (loadingServers) {
     return (
-      <Box sx={{ width: '100%', height: '100%' }}>
+      <Box >
         <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
           <CircularProgress />
         </Box>
@@ -252,7 +252,7 @@ const AdminTools: React.FC = () => {
   }
 
   return (
-    <Box sx={{ width: '100%', height: '100%' }}>
+    <PageShell maxWidth={pageWidth.default} >
       <SectionHeader
         title={t('adminToolsPage.title')}
         subtitle={t('adminToolsPage.description')}
@@ -576,7 +576,7 @@ const AdminTools: React.FC = () => {
         </AccordionDetails>
       </Accordion>
 
-    </Box>
+    </PageShell>
   );
 };
 

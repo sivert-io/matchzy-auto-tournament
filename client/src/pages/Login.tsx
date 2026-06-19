@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Card, Button, Alert, Container, Stack, Typography } from '@mui/material';
+import { Box, Button, Alert, Stack, Typography } from '@mui/material';
 import { SiDiscord, SiGithub, SiKeycloak } from 'react-icons/si';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +7,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { SteamIcon } from '../components/icons/SteamIcon';
 import { PublicTopBar } from '../components/layout/PublicTopBar';
+import { GlassCard, PageShell, pageWidth } from '../shared/ui';
 import { PortalId } from '../config/portals';
 
 export default function Login({ portal = 'player' }: { portal?: PortalId }) {
@@ -128,8 +129,8 @@ export default function Login({ portal = 'player' }: { portal?: PortalId }) {
           justifyContent: 'center',
         }}
       >
-        <Container maxWidth="xs">
-        <Card
+        <PageShell maxWidth={pageWidth.narrow}>
+        <GlassCard
           elevation={0}
           sx={{
             p: { xs: 4, md: 5 },
@@ -296,8 +297,8 @@ export default function Login({ portal = 'player' }: { portal?: PortalId }) {
               </Typography>
             </Stack>
           </Stack>
-        </Card>
-      </Container>
+        </GlassCard>
+      </PageShell>
       </Box>
     </Box>
   );

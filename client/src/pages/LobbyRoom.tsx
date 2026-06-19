@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Button,
-  Card,
   CardContent,
   Chip,
   Typography,
@@ -48,6 +47,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 // Accordion removed — match controls inline in sidebar
 import { useParams, useNavigate } from 'react-router-dom';
 import { portalPaths } from '../config/portals';
+import { GlassCard, PageShell, pageWidth } from '../shared/ui';
 import { api } from '../utils/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useSnackbar } from '../contexts/SnackbarContext';
@@ -394,7 +394,7 @@ export default function LobbyRoom() {
   };
 
   const sidePanelContent = (
-    <Card sx={{ width: 240, flexShrink: 0 }}>
+    <GlassCard sx={{ width: 240, flexShrink: 0, p: 0 }}>
       <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
         <Stack spacing={0.75}>
           {/* Leave + Cancel */}
@@ -516,10 +516,11 @@ export default function LobbyRoom() {
           )}
         </Stack>
       </CardContent>
-    </Card>
+    </GlassCard>
   );
 
   return (
+    <PageShell maxWidth={pageWidth.wide}>
     <Box>
       <Button startIcon={<ArrowBackIcon />} onClick={() => navigate(portalPaths.player.lobbies)} sx={{ mb: 2 }}>
         Back to Lobbies
@@ -538,7 +539,7 @@ export default function LobbyRoom() {
         <Box flex={1} minWidth={0}>
 
       {/* Header */}
-      <Card sx={{ mb: 3, ...(matchOver ? { opacity: 0.6 } : {}) }}>
+      <GlassCard sx={{ mb: 3, p: 0, ...(matchOver ? { opacity: 0.6 } : {}) }}>
         <CardContent>
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Box>
@@ -589,7 +590,7 @@ export default function LobbyRoom() {
             })()}
           </Box>
         </CardContent>
-      </Card>
+      </GlassCard>
 
       {/* Picking phase banner */}
       {lobby.status === 'picking' && (
@@ -610,7 +611,7 @@ export default function LobbyRoom() {
 
       {/* Unassigned players pool */}
       {/* Spectators */}
-      <Card sx={{ mb: 3 }}>
+      <GlassCard sx={{ mb: 3, p: 0 }}>
         <CardContent>
           <Typography variant="h6" fontWeight={600} gutterBottom>
             {lobby.status === 'picking' ? 'Available Players' : 'Spectators'}
@@ -638,11 +639,11 @@ export default function LobbyRoom() {
             </Box>
           )}
         </CardContent>
-      </Card>
+      </GlassCard>
 
       {/* Map Veto */}
       {lobby.status === 'veto' && veto && (
-        <Card sx={{ mb: 3 }}>
+        <GlassCard sx={{ mb: 3, p: 0 }}>
           <CardContent>
             <Typography variant="h6" fontWeight={700} gutterBottom>Map Veto</Typography>
             {!veto.completed && (
@@ -775,7 +776,7 @@ export default function LobbyRoom() {
               </Box>
             )}
           </CardContent>
-        </Card>
+        </GlassCard>
       )}
 
       {/* Match Panel — shown when server is allocated */}
@@ -800,7 +801,7 @@ export default function LobbyRoom() {
 
       {/* Ready but no server yet */}
       {lobby.status === 'ready' && !lobby.server && !lobby.matchSlug && (
-        <Card sx={{ mb: 3 }}>
+        <GlassCard sx={{ mb: 3, p: 0 }}>
           <CardContent sx={{ textAlign: 'center', py: 3 }}>
             <Typography variant="h6" fontWeight={700} gutterBottom>
               {veto?.completed ? 'Maps Selected' : 'Ready to Start'}
@@ -838,12 +839,12 @@ export default function LobbyRoom() {
               </Stack>
             )}
           </CardContent>
-        </Card>
+        </GlassCard>
       )}
 
       {/* Match created, waiting for server */}
       {lobby.matchSlug && !lobby.server && (
-        <Card sx={{ mb: 3 }}>
+        <GlassCard sx={{ mb: 3, p: 0 }}>
           <CardContent sx={{ textAlign: 'center', py: 3 }}>
             <Typography variant="h6" fontWeight={700} gutterBottom>Allocating Server...</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
@@ -888,7 +889,7 @@ export default function LobbyRoom() {
               </Box>
             )}
           </CardContent>
-        </Card>
+        </GlassCard>
       )}
 
       {/* Mobile actions fallback */}
@@ -900,7 +901,7 @@ export default function LobbyRoom() {
 
       {/* Debug JSON output */}
       {debugJson && (
-        <Card sx={{ mb: 3 }}>
+        <GlassCard sx={{ mb: 3, p: 0 }}>
           <CardContent>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
               <Typography variant="subtitle2" fontWeight={600}>Match Config JSON</Typography>
@@ -929,12 +930,12 @@ export default function LobbyRoom() {
               {debugJson}
             </Box>
           </CardContent>
-        </Card>
+        </GlassCard>
       )}
 
       {/* Match Configuration */}
       {lobby.status === 'waiting' && (
-        <Card sx={{ ...(!isCreator ? { opacity: 0.6, pointerEvents: 'none' } : {}) }}>
+        <GlassCard sx={{ p: 0, ...(!isCreator ? { opacity: 0.6, pointerEvents: 'none' } : {}) }}>
           <CardContent>
             <Typography variant="h6" fontWeight={700} gutterBottom>
               Match Configuration {!isCreator && <Chip label="Host only" size="small" variant="outlined" sx={{ ml: 1, verticalAlign: 'middle' }} />}
@@ -1003,7 +1004,7 @@ export default function LobbyRoom() {
                       : map.imageUrl || `https://raw.githubusercontent.com/sivert-io/cs2-server-manager/master/map_thumbnails/${map.id}.webp`;
 
                     return (
-                      <Card
+                      <GlassCard
                         key={map.id}
                         onClick={isCreator ? () => {
                           if (vetoEnabled) {
@@ -1016,6 +1017,7 @@ export default function LobbyRoom() {
                           }
                         } : undefined}
                         sx={{
+                          p: 0,
                           cursor: isCreator ? 'pointer' : 'default',
                           border: '2px solid',
                           borderColor: isSelected ? 'primary.main' : 'transparent',
@@ -1044,7 +1046,7 @@ export default function LobbyRoom() {
                         <Box sx={{ px: 1, py: 0.75, textAlign: 'center' }}>
                           <Typography variant="caption" fontWeight={600} noWrap>{map.displayName}</Typography>
                         </Box>
-                      </Card>
+                      </GlassCard>
                     );
                   })}
                 </Box>
@@ -1057,7 +1059,7 @@ export default function LobbyRoom() {
               )}
             </Stack>
           </CardContent>
-        </Card>
+        </GlassCard>
       )}
         </Box>{/* end main content */}
       </Box>{/* end flex row */}
@@ -1123,6 +1125,7 @@ export default function LobbyRoom() {
         </DialogActions>
       </Dialog>
     </Box>
+    </PageShell>
   );
 }
 

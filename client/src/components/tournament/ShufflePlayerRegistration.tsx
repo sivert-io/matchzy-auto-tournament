@@ -1,21 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  Button,
-  Alert,
-  CircularProgress,
-  Tooltip,
-  IconButton,
-} from '@mui/material';
+import { Box, Typography, CardContent, Button, Alert, CircularProgress, Tooltip, IconButton } from '@mui/material';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import InfoIcon from '@mui/icons-material/Info';
 import { api } from '../../utils/api';
 import PlayerSelectionModal from '../modals/PlayerSelectionModal';
 // RegisteredPlayer matches the PlayerRecord type from the API
 import { useSnackbar } from '../../contexts/SnackbarContext';
+import { GlassCard } from '../../shared/ui';
 
 interface ShufflePlayerRegistrationProps {
   tournamentId: number;
@@ -122,7 +113,7 @@ export function ShufflePlayerRegistration({
 
   return (
     <>
-      <Card sx={{ width: '33%', display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
+      <GlassCard sx={{ width: '33%', display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
         <CardContent
           sx={{
             display: 'flex',
@@ -203,7 +194,7 @@ export function ShufflePlayerRegistration({
             </>
           )}
         </CardContent>
-      </Card>
+      </GlassCard>
 
       <PlayerSelectionModal
         open={playerSelectionOpen}

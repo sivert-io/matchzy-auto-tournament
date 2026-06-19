@@ -1,21 +1,11 @@
 import React from 'react';
-import {
-  Card,
-  CardContent,
-  Typography,
-  List,
-  ListItem,
-  ListItemText,
-  Chip,
-  Box,
-  Stack,
-  Divider,
-} from '@mui/material';
+import { CardContent, Typography, List, ListItem, ListItemText, Chip, Box, Stack, Divider } from '@mui/material';
 import { SportsEsports as MatchIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import type { MatchListItem } from '../../types';
 import { formatDate } from '../../utils/matchUtils';
 import { TeamNameLink } from '../team/TeamNameLink';
+import { GlassCard } from '../../shared/ui';
 
 interface RecentMatchesListProps {
   matches: MatchListItem[];
@@ -63,7 +53,7 @@ export default function RecentMatchesList({ matches, maxItems = 10 }: RecentMatc
 
   if (recentMatches.length === 0) {
     return (
-      <Card variant="outlined" sx={{ height: '100%' }}>
+      <GlassCard variant="outlined" sx={{ height: '100%' }}>
         <CardContent>
           <Box display="flex" alignItems="center" gap={1} mb={2}>
             <MatchIcon color="primary" />
@@ -75,12 +65,12 @@ export default function RecentMatchesList({ matches, maxItems = 10 }: RecentMatc
             No matches available yet.
           </Typography>
         </CardContent>
-      </Card>
+      </GlassCard>
     );
   }
 
   return (
-    <Card variant="outlined" sx={{ height: '100%' }}>
+    <GlassCard variant="outlined" sx={{ height: '100%' }}>
       <CardContent>
         <Box display="flex" alignItems="center" gap={1} mb={2}>
           <MatchIcon color="primary" />
@@ -151,7 +141,7 @@ export default function RecentMatchesList({ matches, maxItems = 10 }: RecentMatc
           ))}
         </List>
       </CardContent>
-    </Card>
+    </GlassCard>
   );
 }
 

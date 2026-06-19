@@ -2,12 +2,10 @@ import React, { useEffect } from 'react';
 import { useParams, Link as RouterLink } from 'react-router-dom';
 import {
   Box,
-  Card,
   CardContent,
   Typography,
   Alert,
   CircularProgress,
-  Container,
   Stack,
   Button,
 } from '@mui/material';
@@ -22,6 +20,7 @@ import { useTournamentStatus } from '../hooks/useTournamentStatus';
 import { TournamentRulesAccordion } from '../components/tournament/TournamentRulesAccordion';
 import { useAuth } from '../contexts/AuthContext';
 import { TopNavBar } from '../components/layout/TopNavBar';
+import { GlassCard, PageShell, pageWidth, publicPageShellSx } from '../shared/ui';
 import { useTranslation } from 'react-i18next';
 
 export default function TeamMatch() {
@@ -86,11 +85,9 @@ export default function TeamMatch() {
     return (
       <Box minHeight="100vh" bgcolor="background.default">
         <TopNavBar />
-        <Container maxWidth="md">
-          <Box py={6}>
-            <Alert severity="error">{error}</Alert>
-          </Box>
-        </Container>
+        <PageShell maxWidth={pageWidth.content} sx={publicPageShellSx}>
+          <Alert severity="error">{error}</Alert>
+        </PageShell>
       </Box>
     );
   }
@@ -103,12 +100,12 @@ export default function TeamMatch() {
     return (
       <Box minHeight="100vh" bgcolor="background.default">
         <TopNavBar />
-        <Container maxWidth="md">
-          <Stack spacing={3} py={6}>
+        <PageShell maxWidth={pageWidth.content} sx={publicPageShellSx}>
+          <Stack spacing={3}>
             <TeamHeader team={team} hideSoundControls />
 
             {playerSteamId && (
-              <Card>
+              <GlassCard sx={{ p: 0 }}>
                 <CardContent
                   sx={{
                     display: 'flex',
@@ -128,7 +125,7 @@ export default function TeamMatch() {
                     {t('teamPage.openMyPlayerPage')}
                   </Button>
                 </CardContent>
-              </Card>
+              </GlassCard>
             )}
 
             <TournamentRulesAccordion
@@ -138,7 +135,7 @@ export default function TeamMatch() {
               overtimeSegments={rulesOvertimeSegments}
             />
 
-            <Card>
+            <GlassCard sx={{ p: 0 }}>
               <CardContent sx={{ textAlign: 'center', py: 6 }}>
                 <SportsEsportsIcon
                   sx={{ fontSize: 80, color: 'text.secondary', mb: 2 }}
@@ -175,13 +172,13 @@ export default function TeamMatch() {
                   </>
                 )}
               </CardContent>
-            </Card>
+            </GlassCard>
 
             <PlayerRosterCard team={team} />
             <TeamStatsCard stats={stats} standing={standing} />
             <TeamMatchHistoryCard matchHistory={matchHistory} teamId={teamId} />
           </Stack>
-        </Container>
+        </PageShell>
       </Box>
     );
   }
@@ -189,8 +186,7 @@ export default function TeamMatch() {
   return (
     <Box minHeight="100vh" bgcolor="background.default">
       <TopNavBar />
-      <Container maxWidth="md">
-        <Box py={6}>
+      <PageShell maxWidth={pageWidth.content} sx={publicPageShellSx}>
           <Stack spacing={3}>
             {tournamentName && (
               <Typography
@@ -232,8 +228,7 @@ export default function TeamMatch() {
             <TeamStatsCard stats={stats} standing={standing} />
             <TeamMatchHistoryCard matchHistory={matchHistory} teamId={teamId} />
           </Stack>
-        </Box>
-      </Container>
+      </PageShell>
     </Box>
   );
 }

@@ -1,10 +1,10 @@
-import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import { BarChart } from '@mui/x-charts/BarChart';
 import { useTheme } from '@mui/material/styles';
+import { GlassCard } from '../../shared/ui';
 
 interface ServerActivityChartProps {
   totalServers: number;
@@ -33,7 +33,7 @@ export default function ServerActivityChart({
   const idleData = serverData.map((d) => d.idle);
 
   return (
-    <Card variant="outlined" sx={{ width: '100%' }}>
+    <GlassCard variant="outlined" sx={{ width: '100%' }}>
       <CardContent>
         <Typography component="h2" variant="subtitle2" gutterBottom>
           Server activity
@@ -88,7 +88,7 @@ export default function ServerActivityChart({
           hideLegend
         />
       </CardContent>
-    </Card>
+    </GlassCard>
   );
 }
 

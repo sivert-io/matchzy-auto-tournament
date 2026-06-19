@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Box, Typography, Card, CardContent, Grid } from '@mui/material';
+import { Box, Typography, CardContent, Grid } from '@mui/material';
 import MapIcon from '@mui/icons-material/Map';
 import { api } from '../../utils/api';
 import type { Map } from '../../types/api.types';
 import { getMapDisplayName } from '../../constants/maps';
+import { GlassCard } from '../../shared/ui';
 
 interface ShuffleMapsCardProps {
   maps: string[];
@@ -99,7 +100,7 @@ export function ShuffleMapsCard({ maps }: ShuffleMapsCardProps) {
   }, [maps, availableMaps]);
 
   return (
-    <Card sx={{ width: '33%', display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
+    <GlassCard sx={{ width: '33%', display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
       <CardContent
         sx={{
           display: 'flex',
@@ -192,6 +193,6 @@ export function ShuffleMapsCard({ maps }: ShuffleMapsCardProps) {
           </Grid>
         )}
       </CardContent>
-    </Card>
+    </GlassCard>
   );
 }

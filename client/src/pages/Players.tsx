@@ -21,7 +21,7 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { api } from '../utils/api';
 import PlayerModal from '../components/modals/PlayerModal';
 import { PlayerImportModal } from '../components/modals/PlayerImportModal';
-import { EmptyState, GlassCard } from '../shared/ui';
+import { EmptyState, GlassCard, PageShell, pageWidth } from '../shared/ui';
 import ConfirmDialog from '../components/modals/ConfirmDialog';
 import type { PlayerDetail, PlayersResponse } from '../types/api.types';
 import { getPlayerPageUrl } from '../utils/playerLinks';
@@ -250,7 +250,7 @@ export default function Players() {
   }
 
   return (
-    <Box data-testid="players-page" sx={{ width: '100%', height: '100%' }}>
+    <PageShell maxWidth={pageWidth.default} data-testid="players-page" >
       {players.length > 0 && (
         <Box mb={3}>
           <TextField
@@ -421,7 +421,7 @@ export default function Players() {
         onCancel={() => setBulkDeleteConfirmOpen(false)}
       />
 
-    </Box>
+    </PageShell>
   );
 }
 

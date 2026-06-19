@@ -3,12 +3,10 @@ import { useParams } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import {
   Box,
-  Card,
   CardContent,
   Typography,
   Alert,
   CircularProgress,
-  Container,
   Stack,
   Chip,
   Table,
@@ -37,6 +35,7 @@ import { getPlayerPageUrl } from '../utils/playerLinks';
 import { PlayerAvatar } from '../components/player/PlayerAvatar';
 import { PlayerName } from '../components/player/PlayerName';
 import { TopNavBar } from '../components/layout/TopNavBar';
+import { GlassCard, PageShell, pageWidth, publicPageShellSx } from '../shared/ui';
 import { TeamNameLink } from '../components/team/TeamNameLink';
 import type { Tournament } from '../types/tournament.types';
 
@@ -261,11 +260,11 @@ export default function TournamentLeaderboard() {
     return (
       <Box minHeight="100vh" bgcolor="background.default">
         <TopNavBar />
-        <Container maxWidth="lg" sx={{ py: 6 }}>
+        <PageShell maxWidth={pageWidth.default} sx={publicPageShellSx}>
           <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
             <CircularProgress />
           </Box>
-        </Container>
+        </PageShell>
       </Box>
     );
   }
@@ -274,9 +273,9 @@ export default function TournamentLeaderboard() {
     return (
       <Box minHeight="100vh" bgcolor="background.default">
         <TopNavBar />
-        <Container maxWidth="lg" sx={{ py: 6 }}>
+        <PageShell maxWidth={pageWidth.default} sx={publicPageShellSx}>
           <Alert severity="error">{error}</Alert>
-        </Container>
+        </PageShell>
       </Box>
     );
   }
@@ -291,9 +290,9 @@ export default function TournamentLeaderboard() {
         data-testid="public-leaderboard-page"
       >
         <TopNavBar />
-        <Container maxWidth="lg" sx={{ py: 6 }}>
+        <PageShell maxWidth={pageWidth.default} sx={publicPageShellSx}>
           <Stack spacing={3}>
-            <Card>
+            <GlassCard sx={{ p: 0 }}>
               <CardContent>
                 <Box
                   display="flex"
@@ -324,9 +323,9 @@ export default function TournamentLeaderboard() {
                   </Box>
                 </Box>
               </CardContent>
-            </Card>
+            </GlassCard>
           </Stack>
-        </Container>
+        </PageShell>
       </Box>
     );
   }
@@ -465,10 +464,10 @@ export default function TournamentLeaderboard() {
       data-testid="public-leaderboard-page"
     >
       <TopNavBar />
-      <Container maxWidth="lg" sx={{ py: 6 }}>
+      <PageShell maxWidth={pageWidth.default} sx={publicPageShellSx}>
         <Stack spacing={3}>
           {/* Tournament Header */}
-          <Card>
+          <GlassCard sx={{ p: 0 }}>
             <CardContent>
               <Box display="flex" alignItems="center" gap={2} mb={2}>
                 <EmojiEventsIcon sx={{ fontSize: 48, color: 'primary.main' }} />
@@ -636,11 +635,11 @@ export default function TournamentLeaderboard() {
                 </Alert>
               )}
             </CardContent>
-          </Card>
+          </GlassCard>
 
           {/* Team Standings (for standard tournaments) */}
           {teams && teams.length > 0 && (
-            <Card sx={{ mb: 3 }}>
+            <GlassCard sx={{ mb: 3, p: 0 }}>
               <CardContent>
                 <Box display="flex" alignItems="center" gap={1} mb={2}>
                   <EmojiEventsIcon color="secondary" />
@@ -721,11 +720,11 @@ export default function TournamentLeaderboard() {
                   </Table>
                 </TableContainer>
               </CardContent>
-            </Card>
+            </GlassCard>
           )}
 
           {/* Player Leaderboard */}
-          <Card data-testid="public-leaderboard">
+          <GlassCard data-testid="public-leaderboard" sx={{ p: 0 }}>
             <CardContent>
               <Box
                 display="flex"
@@ -942,10 +941,10 @@ export default function TournamentLeaderboard() {
                 </TableContainer>
               )}
             </CardContent>
-          </Card>
+          </GlassCard>
 
           {/* Info Card */}
-          <Card>
+          <GlassCard sx={{ p: 0 }}>
             <CardContent>
               <Typography variant="h6" fontWeight={600} gutterBottom>
                 {tournamentTypeLabel}
@@ -960,9 +959,9 @@ export default function TournamentLeaderboard() {
                 profile, match history, and Skill Rating progression.
               </Typography>
             </CardContent>
-          </Card>
+          </GlassCard>
         </Stack>
-      </Container>
+      </PageShell>
     </Box>
   );
 }

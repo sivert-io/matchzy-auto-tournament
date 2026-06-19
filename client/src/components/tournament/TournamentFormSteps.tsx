@@ -1,23 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Card,
-  CardContent,
-  Box,
-  Button,
-  Stepper,
-  Step,
-  StepLabel,
-  Stack,
-  Alert,
-  Typography,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  FormHelperText,
-  Tooltip,
-} from '@mui/material';
+import { CardContent, Box, Button, Stepper, Step, StepLabel, Stack, Alert, Typography, TextField, FormControl, InputLabel, Select, MenuItem, FormHelperText, Tooltip } from '@mui/material';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import { useSnackbar } from '../../contexts/SnackbarContext';
 import { TournamentNameStep } from './TournamentNameStep';
@@ -42,6 +24,7 @@ import type { Team, Server } from '../../types';
 import type { MapPoolsResponse } from '../../types/api.types';
 import type { EloCalculationTemplate } from '../../types/elo.types';
 import { validateMapCount } from '../../utils/tournamentVerification';
+import { GlassCard } from '../../shared/ui';
 
 interface TournamentFormStepsProps {
   name: string;
@@ -785,7 +768,7 @@ export function TournamentFormSteps({
   };
 
   return (
-    <Card>
+    <GlassCard>
       <CardContent>
         <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
           {STEPS.map((stepKey, index) => (
@@ -956,6 +939,6 @@ export function TournamentFormSteps({
         }}
         existingServers={servers}
       />
-    </Card>
+    </GlassCard>
   );
 }

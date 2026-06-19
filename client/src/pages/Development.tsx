@@ -32,7 +32,7 @@ import { useSnackbar } from '../contexts/SnackbarContext';
 import { generateTeamName } from '../generation/teamName';
 import { generatePlayerProfile } from '../generation/playerProfile';
 import { useTranslation } from 'react-i18next';
-import { GlassCard } from '../shared/ui';
+import { GlassCard, PageShell, pageWidth } from '../shared/ui';
 
 const Development: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -397,7 +397,7 @@ const Development: React.FC = () => {
   };
 
   return (
-    <Box sx={{ width: '100%', height: '100%' }}>
+    <PageShell maxWidth={pageWidth.default} >
       <Alert severity="warning" sx={{ mb: 3 }}>
         {t('devToolsPage.alert')}
       </Alert>
@@ -1100,7 +1100,7 @@ const Development: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </Box>
+    </PageShell>
   );
 };
 

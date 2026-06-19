@@ -1,14 +1,5 @@
 import React from 'react';
-import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  CardActionArea,
-  Grid,
-  Chip,
-  Stack,
-} from '@mui/material';
+import { Box, Typography, CardContent, CardActionArea, Grid, Chip, Stack } from '@mui/material';
 import {
   EmojiEvents,
   WorkspacePremium,
@@ -22,6 +13,7 @@ import {
   type TournamentType,
 } from '../../constants/tournament';
 import { useTranslation } from 'react-i18next';
+import { GlassCard } from '../../shared/ui';
 
 interface TournamentTypeSelectorProps {
   selectedType: string;
@@ -72,7 +64,7 @@ export function TournamentTypeSelector({
 
                 return (
                   <Grid size={{ xs: 12, sm: 6 }} key={type.value}>
-                    <Card
+                    <GlassCard
                       data-testid={type.value === 'shuffle' ? 'tournament-type-option-shuffle' : `tournament-type-option-${type.value}`}
                       sx={{
                         height: '100%',
@@ -134,7 +126,7 @@ export function TournamentTypeSelector({
                           </Stack>
                         </CardContent>
                       </CardActionArea>
-                    </Card>
+                    </GlassCard>
                   </Grid>
                 );
               })}

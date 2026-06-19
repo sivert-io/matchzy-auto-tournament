@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Box, Button, Card, CardContent, Chip, Typography } from '@mui/material';
+import { Box, Button, CardContent, Chip, Typography } from '@mui/material';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CheckIcon from '@mui/icons-material/Check';
 import { useLiveStats } from '../../hooks/useLiveStats';
+import { GlassCard } from '../../shared/ui';
 
 interface LobbyPlayerInfo {
   steamId: string;
@@ -69,7 +70,7 @@ export function LobbyMatchPanel({
   };
 
   return (
-    <Card sx={{ border: '1px solid', borderColor: 'divider' }}>
+    <GlassCard sx={{ border: '1px solid', borderColor: 'divider' }}>
       <CardContent>
         <Box display="flex" flexDirection="column" gap={2}>
           {/* Connect bar — top priority */}
@@ -99,7 +100,7 @@ export function LobbyMatchPanel({
           </Typography>
 
           {/* Scoreboard */}
-          <Card variant="outlined">
+          <GlassCard variant="outlined">
             <CardContent sx={{ py: 1.5, '&:last-child': { pb: 1.5 } }}>
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Box flex={1} textAlign="center">
@@ -117,7 +118,7 @@ export function LobbyMatchPanel({
                 </Box>
               </Box>
             </CardContent>
-          </Card>
+          </GlassCard>
 
           {/* Player stats */}
           {(() => {
@@ -191,6 +192,6 @@ export function LobbyMatchPanel({
           </Box>
         </Box>
       </CardContent>
-    </Card>
+    </GlassCard>
   );
 }

@@ -5,7 +5,7 @@ import { OnboardingChecklist } from '../components/dashboard/OnboardingChecklist
 import { useOnboardingStatus } from '../hooks/useOnboardingStatus';
 import { DashboardStats } from '../components/dashboard/DashboardStats';
 import { useTranslation } from 'react-i18next';
-import { PageShell } from '../shared/ui';
+import { PageShell, pageWidth } from '../shared/ui';
 
 export default function Dashboard() {
   const { t } = useTranslation();
@@ -53,7 +53,7 @@ export default function Dashboard() {
         overflow: 'auto',
       })}
     >
-      <PageShell maxWidth={1700} sx={{ px: 3, mt: { xs: 8, md: 0 } }}>
+      <PageShell maxWidth={pageWidth.full} sx={{ px: 3, mt: { xs: 8, md: 0 } }}>
         <Stack spacing={2}>
           {/* Onboarding checklist */}
           {showOnboarding && <OnboardingChecklist />}

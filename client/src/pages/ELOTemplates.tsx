@@ -20,7 +20,7 @@ import {
   Info as InfoIcon,
 } from '@mui/icons-material';
 import { api } from '../utils/api';
-import { EmptyState, GlassCard } from '../shared/ui';
+import { EmptyState, GlassCard, PageShell, pageWidth } from '../shared/ui';
 import EloTemplateEditorModal from '../components/modals/EloTemplateEditorModal';
 import ConfirmDialog from '../components/modals/ConfirmDialog';
 import { EloTemplateImportModal } from '../components/modals/EloTemplateImportModal';
@@ -180,7 +180,7 @@ export default function ELOTemplates() {
   }
 
   return (
-    <Box sx={{ width: '100%', height: '100%' }}>
+    <PageShell maxWidth={pageWidth.default} >
       {templates.length === 0 ? (
         <EmptyState
           icon={InfoIcon}
@@ -355,7 +355,7 @@ export default function ELOTemplates() {
         onClose={() => setImportModalOpen(false)}
         onImport={handleImportTemplates}
       />
-    </Box>
+    </PageShell>
   );
 }
 

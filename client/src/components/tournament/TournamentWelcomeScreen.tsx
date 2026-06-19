@@ -1,17 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  Box,
-  Grid,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  CircularProgress,
-} from '@mui/material';
+import { CardContent, Typography, Button, Box, Grid, FormControl, InputLabel, Select, MenuItem, CircularProgress } from '@mui/material';
 import {
   Add as AddIcon,
   Description as DescriptionIcon,
@@ -20,6 +8,7 @@ import {
 import { api } from '../../utils/api';
 import type { TournamentTemplate } from '../../types/tournament.types';
 import { useTranslation } from 'react-i18next';
+import { GlassCard } from '../../shared/ui';
 
 interface TournamentWelcomeScreenProps {
   onCreateNew: () => void;
@@ -65,7 +54,7 @@ export function TournamentWelcomeScreen({
   };
 
   return (
-    <Card>
+    <GlassCard>
       <CardContent>
         <Box textAlign="center" mb={4}>
           <EmojiEventsIcon sx={{ fontSize: 64, color: 'primary.main', mb: 2 }} />
@@ -79,7 +68,7 @@ export function TournamentWelcomeScreen({
 
         <Grid container spacing={3} justifyContent="center">
           <Grid item xs={12} sm={templates.length > 0 && !loading ? 6 : 12}>
-            <Card
+            <GlassCard
               variant="outlined"
               data-testid="tournament-welcome-create-new"
               sx={{
@@ -102,12 +91,12 @@ export function TournamentWelcomeScreen({
                   {t('tournament.welcome.createNewDescription')}
                 </Typography>
               </CardContent>
-            </Card>
+            </GlassCard>
           </Grid>
 
           {!loading && templates.length > 0 && (
             <Grid item xs={12} sm={6}>
-              <Card variant="outlined" sx={{ height: '100%' }}>
+              <GlassCard variant="outlined" sx={{ height: '100%' }}>
                 <CardContent>
                   <Box textAlign="center" mb={3}>
                     <DescriptionIcon sx={{ fontSize: 48, color: 'secondary.main', mb: 2 }} />
@@ -143,13 +132,13 @@ export function TournamentWelcomeScreen({
                     Load Template
                   </Button>
                 </CardContent>
-              </Card>
+              </GlassCard>
             </Grid>
           )}
 
           {loading && (
             <Grid item xs={12} sm={6}>
-              <Card variant="outlined" sx={{ height: '100%' }}>
+              <GlassCard variant="outlined" sx={{ height: '100%' }}>
                 <CardContent>
                   <Box textAlign="center" mb={3}>
                     <DescriptionIcon sx={{ fontSize: 48, color: 'secondary.main', mb: 2 }} />
@@ -164,12 +153,12 @@ export function TournamentWelcomeScreen({
                     <CircularProgress size={24} />
                   </Box>
                 </CardContent>
-              </Card>
+              </GlassCard>
             </Grid>
           )}
         </Grid>
       </CardContent>
-    </Card>
+    </GlassCard>
   );
 }
 

@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
-import { Alert, Box, Button, Card, CardContent, Chip, CircularProgress, Stack, Typography } from '@mui/material';
+import { Alert, Box, Button, CardContent, Chip, CircularProgress, Stack, Typography } from '@mui/material';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import { useAuth } from '../../contexts/AuthContext';
+import { GlassCard } from '../../shared/ui';
 
 export const INVENTORY_URL = 'https://inventory.cstrike.app';
 
@@ -138,7 +139,7 @@ export function EquippedSkinsGallery({
 
   if (needsAuth) {
     return (
-      <Card variant="outlined">
+      <GlassCard variant="outlined">
         <CardContent sx={{ py: 7, textAlign: 'center' }}>
           <Inventory2Icon sx={{ fontSize: 56, color: 'text.secondary', mb: 1 }} />
           <Typography variant="h6" fontWeight={700}>Conecte sua conta Steam</Typography>
@@ -149,7 +150,7 @@ export function EquippedSkinsGallery({
             Conectar Steam
           </Button>
         </CardContent>
-      </Card>
+      </GlassCard>
     );
   }
 
@@ -178,7 +179,7 @@ export function EquippedSkinsGallery({
 
   if (items.length === 0) {
     return (
-      <Card variant="outlined">
+      <GlassCard variant="outlined">
         <CardContent sx={{ py: 7, textAlign: 'center' }}>
           <Inventory2Icon sx={{ fontSize: 56, color: 'text.secondary', mb: 1 }} />
           <Typography variant="h6" fontWeight={700}>Nenhuma skin equipada</Typography>
@@ -189,14 +190,14 @@ export function EquippedSkinsGallery({
             Abrir cstrike.app
           </Button>
         </CardContent>
-      </Card>
+      </GlassCard>
     );
   }
 
   const renderCard = (item: EquippedSkin) => {
     const wear = formatWear(item.wear);
     return (
-      <Card
+      <GlassCard
         key={item.uid}
         variant="outlined"
         sx={{
@@ -228,7 +229,7 @@ export function EquippedSkinsGallery({
             )}
           </Stack>
         </CardContent>
-      </Card>
+      </GlassCard>
     );
   };
 

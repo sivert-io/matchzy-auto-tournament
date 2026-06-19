@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Box, Card, CardContent, Stack, Divider, Alert, Button, Typography } from '@mui/material';
+import { Box, CardContent, Stack, Divider, Alert, Button, Typography } from '@mui/material';
 import { Error as ErrorIcon, Add as AddIcon } from '@mui/icons-material';
 import { TOURNAMENT_TYPES } from '../../constants/tournament';
 import { Team } from '../../types';
@@ -14,6 +14,7 @@ import { useTournamentFormData } from './useTournamentFormData';
 import { api } from '../../utils/api';
 import type { MapPoolsResponse } from '../../types/api.types';
 import type { TournamentSettings } from '../../types/tournament.types';
+import { GlassCard } from '../../shared/ui';
 
 interface TournamentFormProps {
   name: string;
@@ -203,7 +204,7 @@ export const TournamentForm: React.FC<TournamentFormProps> = ({
   };
 
   return (
-    <Card ref={formRef} sx={{ position: 'relative', overflow: 'visible' }}>
+    <GlassCard ref={formRef} sx={{ position: 'relative', overflow: 'visible' }}>
       <CardContent sx={{ position: 'relative', overflow: 'visible' }}>
         <Box
           ref={checklistRef}
@@ -343,6 +344,6 @@ export const TournamentForm: React.FC<TournamentFormProps> = ({
           }
         }}
       />
-    </Card>
+    </GlassCard>
   );
 };

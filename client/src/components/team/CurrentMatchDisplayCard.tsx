@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { Card, CardContent, Typography, Button, Box } from '@mui/material';
+import { CardContent, Typography, Button, Box } from '@mui/material';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import PersonIcon from '@mui/icons-material/Person';
 import type { Team, TeamMatchInfo } from '../../types';
+import { GlassCard } from '../../shared/ui';
 
 interface CurrentMatchDisplayCardProps {
   match: TeamMatchInfo;
@@ -42,7 +43,7 @@ export function CurrentMatchDisplayCard({
   const rightName = opponent?.name ?? match.team2?.name ?? 'Team 2';
 
   return (
-    <Card
+    <GlassCard
       sx={{
         background:
           'linear-gradient(135deg, rgba(103, 80, 164, 0.08) 0%, rgba(103, 80, 164, 0.03) 100%)',
@@ -75,6 +76,6 @@ export function CurrentMatchDisplayCard({
           </Button>
         )}
       </CardContent>
-    </Card>
+    </GlassCard>
   );
 }

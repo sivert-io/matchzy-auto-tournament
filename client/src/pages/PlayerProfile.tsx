@@ -3,12 +3,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link as RouterLink } from 'react-router-dom';
 import {
   Box,
-  Card,
   CardContent,
   Typography,
   Alert,
   CircularProgress,
-  Container,
   Stack,
   Chip,
   Table,
@@ -40,6 +38,7 @@ import { TournamentRulesAccordion } from '../components/tournament/TournamentRul
 import { PlayerAvatar } from '../components/player/PlayerAvatar';
 import { PlayerName } from '../components/player/PlayerName';
 import { EquippedSkinsGallery } from '../components/player/EquippedSkinsGallery';
+import { GlassCard, PageShell, pageWidth, publicPageShellSx } from '../shared/ui';
 import type { PlayerDetail } from '../types/api.types';
 import { useAuth } from '../contexts/AuthContext';
 import { useCurrentMatchStatus } from '../hooks/useCurrentMatchStatus';
@@ -746,17 +745,16 @@ export default function PlayerProfile() {
     return (
       <Box minHeight="100vh" bgcolor="background.default">
         <TopNavBar />
-        <Container maxWidth="md">
+        <PageShell maxWidth={pageWidth.content} sx={publicPageShellSx}>
           <Box
             display="flex"
             justifyContent="center"
             alignItems="center"
             minHeight="400px"
-            py={6}
           >
             <CircularProgress />
           </Box>
-        </Container>
+        </PageShell>
       </Box>
     );
   }
@@ -771,9 +769,8 @@ export default function PlayerProfile() {
     return (
       <Box minHeight="100vh" bgcolor="background.default">
         <TopNavBar />
-        <Container maxWidth="sm">
-          <Box py={6}>
-            <Card>
+        <PageShell maxWidth={pageWidth.narrow} sx={publicPageShellSx}>
+          <GlassCard sx={{ p: 0 }}>
               <CardContent sx={{ textAlign: 'center', py: 4 }}>
                 {isOwnUnregistered ? (
                   <>
@@ -826,9 +823,8 @@ export default function PlayerProfile() {
                   </>
                 )}
               </CardContent>
-            </Card>
-          </Box>
-        </Container>
+            </GlassCard>
+        </PageShell>
       </Box>
     );
   }
@@ -914,8 +910,7 @@ export default function PlayerProfile() {
       data-testid="public-player-page"
     >
       <TopNavBar />
-      <Container maxWidth="md">
-        <Box py={6}>
+      <PageShell maxWidth={pageWidth.content} sx={publicPageShellSx}>
         <Stack spacing={3}>
           <MatchNotificationAudio
             vetoReady={vetoReadyForPlayer}
@@ -932,7 +927,7 @@ export default function PlayerProfile() {
           </Box>
 
           {/* Player Header */}
-          <Card>
+          <GlassCard sx={{ p: 0 }}>
             <CardContent>
               <Box display="flex" justifyContent="space-between" alignItems="flex-start" gap={3}>
                 <Box display="flex" alignItems="center" gap={3}>
@@ -1054,7 +1049,7 @@ export default function PlayerProfile() {
                 )}
               </Box>
             </CardContent>
-          </Card>
+          </GlassCard>
 
           {currentMatch && (
             <TournamentRulesAccordion
@@ -1083,7 +1078,7 @@ export default function PlayerProfile() {
               viewerIsTeamMemberOverride={playerSteamId === steamId}
             />
           ) : (
-            <Card>
+            <GlassCard sx={{ p: 0 }}>
               <CardContent sx={{ textAlign: 'center', py: 4 }}>
                 <SportsEsportsIcon sx={{ fontSize: 56, color: 'text.secondary', mb: 2 }} />
                 {tournamentIsCompleted && hasAnyMatches ? (
@@ -1115,13 +1110,13 @@ export default function PlayerProfile() {
                   </>
                 )}
               </CardContent>
-            </Card>
+            </GlassCard>
           )}
 
           {/* Stats Overview */}
           <Grid container spacing={2}>
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <Card>
+              <GlassCard sx={{ p: 0 }}>
                 <CardContent>
                   <Typography variant="body2" color="text.secondary" gutterBottom>
                     {t('playerPage.matchesPlayed')}
@@ -1130,10 +1125,10 @@ export default function PlayerProfile() {
                     {uniqueMatchHistory.length}
                   </Typography>
                 </CardContent>
-              </Card>
+              </GlassCard>
             </Grid>
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <Card>
+              <GlassCard sx={{ p: 0 }}>
                 <CardContent>
                   <Typography variant="body2" color="text.secondary" gutterBottom>
                     {t('playerPage.winRate')}
@@ -1142,10 +1137,10 @@ export default function PlayerProfile() {
                     {winRate.toFixed(1)}%
                   </Typography>
                 </CardContent>
-              </Card>
+              </GlassCard>
             </Grid>
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <Card>
+              <GlassCard sx={{ p: 0 }}>
                 <CardContent>
                   <Typography variant="body2" color="text.secondary" gutterBottom>
                     {t('playerPage.winsLosses')}
@@ -1154,10 +1149,10 @@ export default function PlayerProfile() {
                     {wins} / {losses}
                   </Typography>
                 </CardContent>
-              </Card>
+              </GlassCard>
             </Grid>
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <Card>
+              <GlassCard sx={{ p: 0 }}>
                 <CardContent>
                   <Typography variant="body2" color="text.secondary" gutterBottom>
                     {t('playerPage.averageAdr')}
@@ -1166,7 +1161,7 @@ export default function PlayerProfile() {
                     {averageAdr > 0 ? averageAdr.toFixed(1) : 'N/A'}
                   </Typography>
                 </CardContent>
-              </Card>
+              </GlassCard>
             </Grid>
           </Grid>
 
@@ -1183,7 +1178,7 @@ export default function PlayerProfile() {
 
           {/* Recent form and performance highlights */}
           {hasAnyMatches && (
-            <Card>
+            <GlassCard sx={{ p: 0 }}>
               <CardContent>
                 <Typography variant="h6" fontWeight={600} gutterBottom textAlign="center">
                   {t('playerPage.recentFormHighlights')}
@@ -1318,7 +1313,7 @@ export default function PlayerProfile() {
                   )}
                 </Box>
               </CardContent>
-            </Card>
+            </GlassCard>
           )}
 
           {/* Skill Rating Progression Chart */}
@@ -1350,7 +1345,7 @@ export default function PlayerProfile() {
           {/* Rating History */}
           {/* Match History */}
           {uniqueMatchHistory.length > 0 && (
-            <Card>
+            <GlassCard sx={{ p: 0 }}>
               <CardContent>
                 <Typography variant="h6" fontWeight={600} gutterBottom>
                   {t('playerPage.matchHistory')}
@@ -1484,11 +1479,11 @@ export default function PlayerProfile() {
                   </Typography>
                 )}
               </CardContent>
-            </Card>
+            </GlassCard>
           )}
 
           {(assignedTeam || (currentTeam && currentTeam.players?.length)) && (
-            <Card data-testid="public-player-my-team">
+            <GlassCard data-testid="public-player-my-team" sx={{ p: 0 }}>
               <CardContent>
                 <Box
                   display="flex"
@@ -1568,11 +1563,11 @@ export default function PlayerProfile() {
                   ))}
                 </Grid>
               </CardContent>
-            </Card>
+            </GlassCard>
           )}
 
           {uniqueMatchHistory.length === 0 && ratingHistory.length === 0 && (
-            <Card>
+            <GlassCard sx={{ p: 0 }}>
               <CardContent>
                 <Box textAlign="center" py={4}>
                   <SportsEsportsIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
@@ -1581,7 +1576,7 @@ export default function PlayerProfile() {
                   </Typography>
                 </Box>
               </CardContent>
-            </Card>
+            </GlassCard>
           )}
           {selectedMatch && (
             <PlayerMatchDetailsModal
@@ -1593,8 +1588,7 @@ export default function PlayerProfile() {
             />
           )}
         </Stack>
-        </Box>
-      </Container>
+      </PageShell>
     </Box>
   );
 }

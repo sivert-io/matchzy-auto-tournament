@@ -1,17 +1,5 @@
 import React from 'react';
-import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  Button,
-  Chip,
-  Alert,
-  Grid,
-  Tooltip,
-  IconButton,
-  TextField,
-} from '@mui/material';
+import { Box, Typography, CardContent, Button, Chip, Alert, Grid, Tooltip, IconButton, TextField } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -24,6 +12,7 @@ import { RestartTournamentButton } from '../dashboard/RestartTournamentButton';
 import { api } from '../../utils/api';
 import type { Map } from '../../types/api.types';
 import { getMapDisplayName } from '../../constants/maps';
+import { GlassCard } from '../../shared/ui';
 
 interface TournamentLiveProps {
   tournament: {
@@ -125,7 +114,7 @@ export const TournamentLive: React.FC<TournamentLiveProps> = ({
   };
 
   return (
-    <Card sx={{ mb: 3 }}>
+    <GlassCard sx={{ mb: 3 }}>
       <CardContent>
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
           <Box display="flex" alignItems="center" gap={1} sx={{ flex: 1, minWidth: 0 }}>
@@ -398,6 +387,6 @@ export const TournamentLive: React.FC<TournamentLiveProps> = ({
           </Tooltip>
         </Box>
       </CardContent>
-    </Card>
+    </GlassCard>
   );
 };

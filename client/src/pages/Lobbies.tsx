@@ -23,7 +23,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useSnackbar } from '../contexts/SnackbarContext';
 import type { Lobby } from '../types/lobby.types';
 import io from 'socket.io-client';
-import { SectionHeader, GlassCard, EmptyState } from '../shared/ui';
+import { SectionHeader, GlassCard, EmptyState, PageShell, pageWidth } from '../shared/ui';
 
 const CHIP_SX = { height: 24, fontSize: '0.75rem', fontWeight: 600 };
 
@@ -124,7 +124,7 @@ export default function Lobbies() {
   };
 
   return (
-    <Box>
+    <PageShell maxWidth={pageWidth.default}>
       <SectionHeader
         title="Lobby"
         sx={{ mb: 3 }}
@@ -245,6 +245,6 @@ export default function Lobbies() {
           <DeleteIcon fontSize="small" sx={{ mr: 1 }} /> Delete Lobby
         </MenuItem>
       </Menu>
-    </Box>
+    </PageShell>
   );
 }

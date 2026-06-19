@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Box, Button, Card, Chip, Container, Stack, Typography } from '@mui/material';
+import { Box, Button, Chip, Stack, Typography } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { SvgIconComponent } from '@mui/icons-material';
@@ -11,6 +11,7 @@ import BoltIcon from '@mui/icons-material/Bolt';
 import TuneIcon from '@mui/icons-material/Tune';
 import { PublicTopBar } from '../components/layout/PublicTopBar';
 import { PortalId, portalPaths } from '../config/portals';
+import { GlassCard, PageShell, pageWidth } from '../shared/ui';
 
 interface PortalContent {
   featureKeys: string[];
@@ -47,7 +48,7 @@ export default function Landing({ portal = 'player' }: { portal?: PortalId }) {
       <PublicTopBar loginLabel={t(`${base}.primaryCta`)} />
 
       <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', py: { xs: 6, md: 8 } }}>
-        <Container maxWidth="lg">
+        <PageShell maxWidth={pageWidth.default}>
           <Stack spacing={{ xs: 5, md: 7 }}>
             {/* Hero */}
             <Stack spacing={3} sx={{ maxWidth: 720 }}>
@@ -97,7 +98,7 @@ export default function Landing({ portal = 'player' }: { portal?: PortalId }) {
               {content.featureKeys.map((key, i) => {
                 const Icon = content.featureIcons[i];
                 return (
-                  <Card key={key} sx={{ p: 3, height: '100%' }}>
+                  <GlassCard key={key} sx={{ p: 3, height: '100%' }}>
                     <Stack spacing={1.5}>
                       <Box
                         sx={{
@@ -117,12 +118,12 @@ export default function Landing({ portal = 'player' }: { portal?: PortalId }) {
                         {t(`${base}.features.${key}.desc`)}
                       </Typography>
                     </Stack>
-                  </Card>
+                  </GlassCard>
                 );
               })}
             </Box>
           </Stack>
-        </Container>
+        </PageShell>
       </Box>
     </Box>
   );

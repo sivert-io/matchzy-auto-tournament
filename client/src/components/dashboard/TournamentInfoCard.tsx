@@ -1,15 +1,8 @@
 import React from 'react';
-import {
-  Card,
-  CardContent,
-  Typography,
-  Chip,
-  Box,
-  Stack,
-  Divider,
-} from '@mui/material';
+import { CardContent, Typography, Chip, Box, Stack, Divider } from '@mui/material';
 import { EmojiEvents as TournamentIcon } from '@mui/icons-material';
 import type { Tournament } from '../../types';
+import { GlassCard } from '../../shared/ui';
 
 interface TournamentInfoCardProps {
   tournament: Tournament | null;
@@ -18,7 +11,7 @@ interface TournamentInfoCardProps {
 export default function TournamentInfoCard({ tournament }: TournamentInfoCardProps) {
   if (!tournament) {
     return (
-      <Card variant="outlined" sx={{ height: '100%' }}>
+      <GlassCard variant="outlined" sx={{ height: '100%' }}>
         <CardContent>
           <Box display="flex" alignItems="center" gap={1} mb={2}>
             <TournamentIcon color="primary" />
@@ -30,7 +23,7 @@ export default function TournamentInfoCard({ tournament }: TournamentInfoCardPro
             No tournament information available.
           </Typography>
         </CardContent>
-      </Card>
+      </GlassCard>
     );
   }
 
@@ -48,7 +41,7 @@ export default function TournamentInfoCard({ tournament }: TournamentInfoCardPro
   };
 
   return (
-    <Card variant="outlined" sx={{ height: '100%' }}>
+    <GlassCard variant="outlined" sx={{ height: '100%' }}>
       <CardContent>
         <Box display="flex" alignItems="center" gap={1} mb={2}>
           <TournamentIcon color="primary" />
@@ -101,7 +94,7 @@ export default function TournamentInfoCard({ tournament }: TournamentInfoCardPro
           )}
         </Stack>
       </CardContent>
-    </Card>
+    </GlassCard>
   );
 }
 

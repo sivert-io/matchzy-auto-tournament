@@ -15,6 +15,7 @@ import { MapPoolsTab } from '../components/maps/MapPoolsTab';
 import type { Map, MapsResponse, MapPool, MapPoolsResponse } from '../types/api.types';
 import ConfirmDialog from '../components/modals/ConfirmDialog';
 import { useTranslation } from 'react-i18next';
+import { PageShell, pageWidth } from '../shared/ui';
 
 export default function Maps() {
   const { setHeaderActions } = usePageHeader();
@@ -295,7 +296,7 @@ export default function Maps() {
   }
 
   return (
-    <Box data-testid="maps-page" sx={{ width: '100%', height: '100%' }}>
+    <PageShell maxWidth={pageWidth.default} data-testid="maps-page" >
       <Tabs value={activeTab} onChange={(_, newValue) => setActiveTab(newValue)} sx={{ mb: 3 }}>
         <Tab
           data-testid="maps-tab"
@@ -381,6 +382,6 @@ export default function Maps() {
         loading={deletingPool}
       />
 
-    </Box>
+    </PageShell>
   );
 }

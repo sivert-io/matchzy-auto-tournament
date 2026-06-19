@@ -1,16 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  Button,
-  Chip,
-  Grid,
-  Divider,
-  CircularProgress,
-  Tooltip,
-} from '@mui/material';
+import { Box, Typography, CardContent, Button, Chip, Grid, Divider, CircularProgress, Tooltip } from '@mui/material';
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -23,6 +12,7 @@ import { useIsDevelopment } from '../../hooks/useIsDevelopment';
 import { useSimulationMode } from '../../hooks/useSimulationMode';
 import type { Map } from '../../types/api.types';
 import { getMapDisplayName } from '../../constants/maps';
+import { GlassCard } from '../../shared/ui';
 
 interface TournamentReviewProps {
   tournament: {
@@ -104,7 +94,7 @@ export const TournamentReview: React.FC<TournamentReviewProps> = ({
     onStart();
   };
   return (
-    <Card sx={{ mb: 3 }}>
+    <GlassCard sx={{ mb: 3 }}>
       <CardContent>
         <Typography variant="h5" fontWeight={600} mb={3} data-testid="tournament-name-display">
           {tournament.name} • {TOURNAMENT_TYPES.find((t) => t.value === tournament.type)?.label} •{' '}
@@ -245,6 +235,6 @@ export const TournamentReview: React.FC<TournamentReviewProps> = ({
           </Box>
         </Box>
       </CardContent>
-    </Card>
+    </GlassCard>
   );
 };

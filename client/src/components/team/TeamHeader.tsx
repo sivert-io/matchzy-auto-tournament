@@ -1,9 +1,10 @@
 import React from 'react';
-import { Box, Card, CardContent, Typography, IconButton, Tooltip } from '@mui/material';
+import { Box, CardContent, Typography, IconButton, Tooltip } from '@mui/material';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import SettingsIcon from '@mui/icons-material/Settings';
 import type { Team } from '../../types';
+import { GlassCard } from '../../shared/ui';
 
 interface TeamHeaderProps {
   team: Team | null;
@@ -22,7 +23,7 @@ export function TeamHeader({
   hideSoundControls,
 }: TeamHeaderProps) {
   return (
-    <Card
+    <GlassCard
       sx={{
         background:
           'linear-gradient(135deg, rgba(103, 80, 164, 0.1) 0%, rgba(103, 80, 164, 0.05) 100%)',
@@ -51,6 +52,6 @@ export function TeamHeader({
           )}
         </Box>
       </CardContent>
-    </Card>
+    </GlassCard>
   );
 }

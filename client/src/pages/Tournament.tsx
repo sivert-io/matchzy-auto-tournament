@@ -22,6 +22,7 @@ import { io } from 'socket.io-client';
 import type { TournamentTemplate } from '../types/tournament.types';
 import type { ShuffleTournamentSettings } from '../components/tournament/ShuffleTournamentConfigStep';
 import type { EloCalculationTemplate } from '../types/elo.types';
+import { PageShell, pageWidth } from '../shared/ui';
 
 interface TournamentChange {
   field: string;
@@ -909,7 +910,8 @@ const Tournament: React.FC = () => {
   }
 
   return (
-    <Box data-testid="tournament-page" sx={{ width: '100%', height: '100%' }}>
+    <PageShell maxWidth={pageWidth.wide} sx={{ px: { xs: 2, sm: 3 }, py: { xs: 2, md: 0 } }}>
+    <Box data-testid="tournament-page" >
       {/* Stepper */}
       <TournamentStepper currentStep={getCurrentStep()} />
 
@@ -1177,6 +1179,7 @@ const Tournament: React.FC = () => {
         />
       )}
     </Box>
+    </PageShell>
   );
 };
 

@@ -31,6 +31,7 @@ import { api } from '../utils/api';
 import type { SettingsResponse } from '../types/api.types';
 import { useIsDevelopment } from '../hooks/useIsDevelopment';
 import { useTranslation } from 'react-i18next';
+import { PageShell, pageWidth } from '../shared/ui';
 
 declare const __APP_VERSION__: string | undefined;
 
@@ -902,7 +903,8 @@ export default function Settings() {
   };
 
   return (
-    <Box sx={{ width: '100%', height: '100%' }}>
+    <PageShell maxWidth={pageWidth.default}>
+    <Box >
       <Typography variant="body2" color="text.secondary" mb={4}>
         {t('settingsPage.intro')}
       </Typography>
@@ -2055,5 +2057,6 @@ export default function Settings() {
         </>
       )}
     </Box>
+    </PageShell>
   );
 }

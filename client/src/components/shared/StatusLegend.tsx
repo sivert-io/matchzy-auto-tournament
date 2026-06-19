@@ -1,15 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  Chip,
-  IconButton,
-  Collapse,
-  Stack,
-  Divider,
-} from '@mui/material';
+import { Box, CardContent, Typography, Chip, IconButton, Collapse, Stack, Divider } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -18,6 +8,7 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { getStatusColor, getStatusLabel, getStatusExplanation } from '../../utils/matchUtils';
+import { GlassCard } from '../../shared/ui';
 
 interface StatusInfo {
   status: string;
@@ -57,7 +48,7 @@ export const StatusLegend: React.FC = () => {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <Card variant="outlined" sx={{ bgcolor: 'background.paper' }}>
+    <GlassCard variant="outlined" sx={{ bgcolor: 'background.paper' }}>
       <CardContent>
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Box display="flex" alignItems="center" gap={1}>
@@ -106,7 +97,7 @@ export const StatusLegend: React.FC = () => {
           </Box>
         </Collapse>
       </CardContent>
-    </Card>
+    </GlassCard>
   );
 };
 

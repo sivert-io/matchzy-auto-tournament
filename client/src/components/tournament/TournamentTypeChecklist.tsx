@@ -1,9 +1,10 @@
 import React from 'react';
-import { Card, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import { List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { TOURNAMENT_TYPES } from '../../constants/tournament';
 import { validateMapCount } from '../../utils/tournamentVerification';
+import { GlassCard } from '../../shared/ui';
 
 type TournamentType = (typeof TOURNAMENT_TYPES)[number];
 
@@ -60,7 +61,7 @@ export function TournamentTypeChecklist({
   });
 
   return (
-    <Card sx={{ p: 2 }}>
+    <GlassCard sx={{ p: 2 }}>
       <List dense sx={{ py: 0 }}>
         {requirements.map((requirement, index) => (
           <ListItem key={index} sx={{ px: 0, py: 0.25 }}>
@@ -84,6 +85,6 @@ export function TournamentTypeChecklist({
           </ListItem>
         ))}
       </List>
-    </Card>
+    </GlassCard>
   );
 }

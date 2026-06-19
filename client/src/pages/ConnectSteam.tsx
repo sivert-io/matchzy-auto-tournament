@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
-import { Box, Button, Container, Typography, Card, CardContent, Stack } from '@mui/material';
+import { Box, Button, Typography, CardContent, Stack } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { SteamIcon } from '../components/icons/SteamIcon';
 import { PlayerAvatar } from '../components/player/PlayerAvatar';
 import { generateAvatarDataUrl } from '../generation/avatar';
+import { GlassCard, PageShell, pageWidth } from '../shared/ui';
 
 export default function ConnectSteam() {
   const {
@@ -59,8 +60,8 @@ export default function ConnectSteam() {
 
   return (
     <Box minHeight="100vh" bgcolor="background.default" display="flex" alignItems="center">
-      <Container maxWidth="sm">
-        <Card>
+      <PageShell maxWidth={pageWidth.narrow} sx={{ width: '100%' }}>
+        <GlassCard sx={{ p: 0 }}>
           <CardContent sx={{ p: 4 }}>
             <Stack spacing={2}>
               <Stack direction="row" spacing={2} alignItems="center">
@@ -119,8 +120,8 @@ export default function ConnectSteam() {
               </Stack>
             </Box>
           </CardContent>
-        </Card>
-      </Container>
+        </GlassCard>
+      </PageShell>
     </Box>
   );
 }

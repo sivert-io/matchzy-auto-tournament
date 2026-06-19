@@ -8,7 +8,7 @@ import { api } from '../utils/api';
 import TeamModal from '../components/modals/TeamModal';
 import { TeamImportModal } from '../components/modals/TeamImportModal';
 import { TeamLinkActions } from '../components/teams/TeamLinkActions';
-import { EmptyState, GlassCard } from '../shared/ui';
+import { EmptyState, GlassCard, PageShell, pageWidth } from '../shared/ui';
 import ConfirmDialog from '../components/modals/ConfirmDialog';
 import type { Team, TeamsResponse } from '../types';
 import { useTranslation } from 'react-i18next';
@@ -218,7 +218,7 @@ export default function Teams() {
   const hasHiddenShuffleTeams = teams.some((team) => team.id.startsWith('shuffle-'));
 
   return (
-    <Box data-testid="teams-page" sx={{ width: '100%', height: '100%' }}>
+    <PageShell maxWidth={pageWidth.default} data-testid="teams-page" >
       {hasHiddenShuffleTeams && (
         <Box mb={2}>
           <Typography variant="body2" color="text.secondary">
@@ -346,6 +346,6 @@ export default function Teams() {
         }}
         onCancel={() => setBulkDeleteConfirmOpen(false)}
       />
-    </Box>
+    </PageShell>
   );
 }

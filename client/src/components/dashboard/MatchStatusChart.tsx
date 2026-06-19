@@ -1,10 +1,10 @@
 import { useTheme } from '@mui/material/styles';
-import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import { LineChart } from '@mui/x-charts/LineChart';
+import { GlassCard } from '../../shared/ui';
 
 function AreaGradient({ color, id }: { color: string; id: string }) {
   return (
@@ -67,7 +67,7 @@ export default function MatchStatusChart({
   const pendingData = matchData.map((d) => d.pending);
 
   return (
-    <Card variant="outlined" sx={{ width: '100%' }}>
+    <GlassCard variant="outlined" sx={{ width: '100%' }}>
       <CardContent>
         <Typography component="h2" variant="subtitle2" gutterBottom>
           Match progression
@@ -154,7 +154,7 @@ export default function MatchStatusChart({
           <AreaGradient color={theme.palette.primary.light} id="pending" />
         </LineChart>
       </CardContent>
-    </Card>
+    </GlassCard>
   );
 }
 

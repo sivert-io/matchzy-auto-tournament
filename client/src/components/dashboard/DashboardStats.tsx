@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
-import { Card, CardContent, Typography, Chip, CircularProgress, Alert, Box, Stack } from '@mui/material';
+import { CardContent, Typography, Chip, CircularProgress, Alert, Box, Stack } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import {
   EmojiEvents as TournamentIcon,
@@ -12,6 +12,7 @@ import { LineChart, PieChart } from '@mui/x-charts';
 import { api } from '../../utils/api';
 import { getPlayerPageUrl } from '../../utils/playerLinks';
 import { useTranslation } from 'react-i18next';
+import { GlassCard } from '../../shared/ui';
 import type {
   Tournament,
   Server,
@@ -315,7 +316,7 @@ export function DashboardStats({ showOnboarding }: DashboardStatsProps) {
       <Grid container spacing={3}>
         {/* Row 1: Tournament + Summary stats */}
         <Grid size={{ xs: 12, md: 6, lg: 3 }}>
-          <Card
+          <GlassCard
             sx={{
               height: '100%',
             }}
@@ -376,12 +377,12 @@ export function DashboardStats({ showOnboarding }: DashboardStatsProps) {
                 </Typography>
               )}
             </CardContent>
-          </Card>
+          </GlassCard>
         </Grid>
 
         {/* Match Status Card */}
         <Grid size={{ xs: 12, md: 6, lg: 3 }}>
-          <Card sx={{ height: '100%' }}>
+          <GlassCard sx={{ height: '100%' }}>
             <CardContent>
               <Box display="flex" alignItems="center" gap={1} mb={2}>
                 <MatchIcon color="primary" />
@@ -428,12 +429,12 @@ export function DashboardStats({ showOnboarding }: DashboardStatsProps) {
                 </Box>
               </Box>
             </CardContent>
-          </Card>
+          </GlassCard>
         </Grid>
 
         {/* Server Status Card */}
         <Grid size={{ xs: 12, md: 6, lg: 3 }}>
-          <Card sx={{ height: '100%' }}>
+          <GlassCard sx={{ height: '100%' }}>
             <CardContent>
               <Box display="flex" alignItems="center" gap={1} mb={2}>
                 <ServerIcon color="primary" />
@@ -471,12 +472,12 @@ export function DashboardStats({ showOnboarding }: DashboardStatsProps) {
                 />
               </Box>
             </CardContent>
-          </Card>
+          </GlassCard>
         </Grid>
 
         {/* Player Statistics Card */}
         <Grid size={{ xs: 12, md: 6, lg: 3 }}>
-          <Card sx={{ height: '100%' }}>
+          <GlassCard sx={{ height: '100%' }}>
             <CardContent>
               <Box display="flex" alignItems="center" gap={1} mb={2}>
                 <PeopleIcon color="primary" />
@@ -510,13 +511,13 @@ export function DashboardStats({ showOnboarding }: DashboardStatsProps) {
                 </Box>
               </Box>
             </CardContent>
-          </Card>
+          </GlassCard>
         </Grid>
 
         {/* Row 2: Distribution pie charts */}
         {matchStatusData.length > 0 && (
           <Grid size={{ xs: 12, md: 6, lg: 6 }}>
-            <Card sx={{ height: '100%' }}>
+            <GlassCard sx={{ height: '100%' }}>
               <CardContent>
                 <Typography variant="h6" fontWeight={600} mb={2}>
                   Match Status Distribution
@@ -539,14 +540,14 @@ export function DashboardStats({ showOnboarding }: DashboardStatsProps) {
                   />
                 </Box>
               </CardContent>
-            </Card>
+            </GlassCard>
           </Grid>
         )}
 
         {/* Server Status Pie Chart */}
         {serverStatusData.length > 0 && (
           <Grid size={{ xs: 12, md: 6, lg: 6 }}>
-            <Card sx={{ height: '100%' }}>
+            <GlassCard sx={{ height: '100%' }}>
               <CardContent>
                 <Typography variant="h6" fontWeight={600} mb={2}>
                   {t('dashboard.stats.serverStatus.distributionTitle')}
@@ -569,14 +570,14 @@ export function DashboardStats({ showOnboarding }: DashboardStatsProps) {
                   />
                 </Box>
               </CardContent>
-            </Card>
+            </GlassCard>
           </Grid>
         )}
 
         {/* Row 3: Player Distribution + Top Players (two cards, 50% width each) */}
         {playerDistributionData.length > 0 && (
           <Grid size={{ xs: 12, md: 6, lg: 6 }}>
-            <Card sx={{ height: '100%' }}>
+            <GlassCard sx={{ height: '100%' }}>
               <CardContent>
                 <Typography variant="h6" fontWeight={600} mb={2}>
                   {t('dashboard.stats.playerDistribution.title')}
@@ -601,13 +602,13 @@ export function DashboardStats({ showOnboarding }: DashboardStatsProps) {
                   />
                 </Box>
               </CardContent>
-            </Card>
+            </GlassCard>
           </Grid>
         )}
 
         {topPlayers.length > 0 && (
           <Grid size={{ xs: 12, md: 6, lg: 6 }}>
-            <Card sx={{ height: '100%' }}>
+            <GlassCard sx={{ height: '100%' }}>
               <CardContent>
                 <Typography variant="h6" fontWeight={600} mb={1}>
                   {t('dashboard.stats.topPlayers.title')}
@@ -648,14 +649,14 @@ export function DashboardStats({ showOnboarding }: DashboardStatsProps) {
                   ))}
                 </Stack>
               </CardContent>
-            </Card>
+            </GlassCard>
           </Grid>
         )}
 
         {/* Row 4: ELO distribution, match status over time + recent matches */}
         {eloBuckets && eloBuckets.length > 0 && (
           <Grid size={{ xs: 12, md: 12 }}>
-              <Card sx={{ height: '100%' }}>
+              <GlassCard sx={{ height: '100%' }}>
                 <CardContent>
                 <Typography variant="h6" fontWeight={600} mb={1}>
                   {t('dashboard.stats.eloDistribution.title')}
@@ -694,7 +695,7 @@ export function DashboardStats({ showOnboarding }: DashboardStatsProps) {
                     />
                   </Box>
                 </CardContent>
-              </Card>
+              </GlassCard>
             </Grid>
         )}
 
@@ -702,7 +703,7 @@ export function DashboardStats({ showOnboarding }: DashboardStatsProps) {
         {recentMatches.length > 0 && (
           <>
             <Grid size={{ xs: 12, md: 6 }}>
-              <Card sx={{ height: '100%' }}>
+              <GlassCard sx={{ height: '100%' }}>
                 <CardContent>
                 <Typography variant="h6" fontWeight={600} mb={1}>
                   {t('dashboard.stats.recentMatches.title')}
@@ -734,7 +735,7 @@ export function DashboardStats({ showOnboarding }: DashboardStatsProps) {
                     )}
                   </Stack>
                 </CardContent>
-              </Card>
+              </GlassCard>
             </Grid>
           </>
         )}

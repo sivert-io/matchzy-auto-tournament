@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
-import { Box, Button, Card, CardContent, Container, Typography } from '@mui/material';
+import { Box, Button, CardContent, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { GlassCard, PageShell, pageWidth, publicPageShellSx } from '../shared/ui';
 
 export default function NotFound() {
   const navigate = useNavigate();
@@ -12,9 +13,9 @@ export default function NotFound() {
   }, [t]);
 
   return (
-    <Box minHeight="100vh" bgcolor="background.default" py={6}>
-      <Container maxWidth="sm">
-        <Card>
+    <Box minHeight="100vh" bgcolor="background.default">
+      <PageShell maxWidth={pageWidth.narrow} sx={publicPageShellSx}>
+        <GlassCard sx={{ p: 0 }}>
           <CardContent sx={{ textAlign: 'center', py: 6 }}>
             <Typography variant="h2" fontWeight={700} gutterBottom>
               404
@@ -42,8 +43,8 @@ export default function NotFound() {
               </Button>
             </Box>
           </CardContent>
-        </Card>
-      </Container>
+        </GlassCard>
+      </PageShell>
     </Box>
   );
 }

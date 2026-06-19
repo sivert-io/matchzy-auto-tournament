@@ -1,6 +1,7 @@
 import React from 'react';
-import { Card, CardContent, Stepper, Step, StepLabel } from '@mui/material';
+import { CardContent, Stepper, Step, StepLabel } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { GlassCard } from '../../shared/ui';
 
 interface TournamentStepperProps {
   currentStep: number;
@@ -10,7 +11,7 @@ export const TournamentStepper: React.FC<TournamentStepperProps> = ({ currentSte
   const { t } = useTranslation();
 
   return (
-    <Card sx={{ mb: 3 }}>
+    <GlassCard sx={{ mb: 3 }}>
       <CardContent>
         <Stepper activeStep={currentStep} alternativeLabel>
           <Step>
@@ -24,6 +25,6 @@ export const TournamentStepper: React.FC<TournamentStepperProps> = ({ currentSte
           </Step>
         </Stepper>
       </CardContent>
-    </Card>
+    </GlassCard>
   );
 };

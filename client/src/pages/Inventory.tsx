@@ -4,7 +4,7 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { useAuth } from '../contexts/AuthContext';
 import { EquippedSkinsGallery, INVENTORY_URL } from '../components/player/EquippedSkinsGallery';
-import { PageShell, SectionHeader } from '../shared/ui';
+import { PageShell, SectionHeader, pageWidth } from '../shared/ui';
 
 export default function Inventory() {
   const { playerSteamId } = useAuth();
@@ -13,7 +13,7 @@ export default function Inventory() {
   useEffect(() => { document.title = 'Fragbase: Skins'; }, []);
 
   return (
-    <PageShell maxWidth={1200} sx={{ px: { xs: 1, sm: 2 } }}>
+    <PageShell maxWidth={pageWidth.default} sx={{ px: { xs: 1, sm: 2 } }}>
       <SectionHeader
         title="Skins equipadas"
         titleVariant="h4"

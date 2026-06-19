@@ -37,7 +37,7 @@ import type { Map, MapPool } from '../types/api.types';
 import { useSnackbar } from '../contexts/SnackbarContext';
 import ConfirmDialog from '../components/modals/ConfirmDialog';
 import { useTranslation } from 'react-i18next';
-import { GlassCard } from '../shared/ui';
+import { GlassCard, PageShell, pageWidth } from '../shared/ui';
 
 const TOURNAMENT_TYPE_LABELS: Record<string, string> = {
   single_elimination: 'Single Elimination',
@@ -311,7 +311,7 @@ export default function Templates() {
 
   if (loading) {
     return (
-      <Box sx={{ width: '100%', height: '100%' }}>
+      <Box >
         <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
           <CircularProgress />
         </Box>
@@ -320,7 +320,7 @@ export default function Templates() {
   }
 
   return (
-    <Box sx={{ width: '100%', height: '100%' }}>
+    <PageShell maxWidth={pageWidth.default} >
       {templates.length === 0 ? (
         <GlassCard>
           <Typography variant="body1" color="text.secondary" align="center" py={4}>
@@ -604,6 +604,6 @@ export default function Templates() {
       </Dialog>
 
       {/* Error/success feedback for this page is handled via the global SnackbarContext */}
-    </Box>
+    </PageShell>
   );
 }

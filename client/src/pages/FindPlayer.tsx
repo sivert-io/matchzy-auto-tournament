@@ -5,7 +5,6 @@ import {
   Typography,
   TextField,
   Button,
-  Container,
   CircularProgress,
   InputAdornment,
   Autocomplete,
@@ -20,7 +19,7 @@ import { useSnackbar } from '../contexts/SnackbarContext';
 import { PlayerAvatar } from '../components/player/PlayerAvatar';
 import { PlayerName } from '../components/player/PlayerName';
 import { TopNavBar } from '../components/layout/TopNavBar';
-import { GlassCard } from '../shared/ui';
+import { GlassCard, PageShell, pageWidth, publicPageShellSx } from '../shared/ui';
 
 interface PlayerOption {
   id: string;
@@ -136,7 +135,7 @@ export default function FindPlayer() {
   return (
     <Box minHeight="100vh" bgcolor="background.default" data-testid="find-player-page">
       <TopNavBar />
-      <Container maxWidth="sm" sx={{ py: 6 }}>
+      <PageShell maxWidth={pageWidth.narrow} sx={publicPageShellSx}>
         <GlassCard data-testid="find-player-form" sx={{ p: { xs: 3, sm: 4 } }}>
             <Box textAlign="center" mb={4}>
               <PersonIcon sx={{ fontSize: 64, color: 'primary.main', mb: 2 }} />
@@ -258,7 +257,7 @@ export default function FindPlayer() {
               </Button>
             </Stack>
         </GlassCard>
-      </Container>
+      </PageShell>
 
       <PlayerSearchResultsModal
         open={showResultsModal}
