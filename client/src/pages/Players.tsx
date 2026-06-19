@@ -4,8 +4,6 @@ import { useSnackbar } from '../contexts/SnackbarContext';
 import {
   Box,
   Button,
-  Card,
-  CardContent,
   Typography,
   Grid,
   Chip,
@@ -23,7 +21,7 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { api } from '../utils/api';
 import PlayerModal from '../components/modals/PlayerModal';
 import { PlayerImportModal } from '../components/modals/PlayerImportModal';
-import { EmptyState } from '../components/shared/EmptyState';
+import { EmptyState, GlassCard } from '../shared/ui';
 import ConfirmDialog from '../components/modals/ConfirmDialog';
 import type { PlayerDetail, PlayersResponse } from '../types/api.types';
 import { getPlayerPageUrl } from '../utils/playerLinks';
@@ -277,7 +275,6 @@ export default function Players() {
       {players.length === 0 ? (
           <Box>
             <EmptyState
-              data-testid="players-empty-state"
               icon={PersonIcon}
               title={t('playersPage.empty.title')}
               description={t('playersPage.empty.description')}
@@ -299,21 +296,14 @@ export default function Players() {
           <Grid container spacing={2} data-testid="players-list">
             {filteredPlayers.map((player) => (
               <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4 }} key={player.id}>
-                <Card
+                <GlassCard
                   data-testid={`player-card-${player.id}`}
+                  interactive
                   sx={{
-                    cursor: 'pointer',
-                    transition: 'transform 0.2s, box-shadow 0.2s, border-color 0.2s',
-                    border: selectedPlayerIds.has(player.id) ? 2 : 0,
-                    borderRadius: 2,
-                    borderStyle: 'solid',
-                    borderColor: selectedPlayerIds.has(player.id)
-                      ? 'primary.main'
-                      : 'transparent',
-                    '&:hover': {
-                      transform: 'translateY(-4px)',
-                      boxShadow: 6,
-                    },
+                    height: '100%',
+                    border: selectedPlayerIds.has(player.id) ? '2px solid' : undefined,
+                    borderColor: selectedPlayerIds.has(player.id) ? 'primary.main' : undefined,
+                    '&:hover': { transform: 'translateY(-4px)' },
                   }}
                   onClick={() => {
                     if (selectionMode) {
@@ -323,7 +313,6 @@ export default function Players() {
                     }
                   }}
                 >
-                  <CardContent>
                     <Box display="flex" alignItems="center" gap={2} mb={2}>
                       <PlayerAvatar
                         id={player.id}
@@ -381,8 +370,7 @@ export default function Players() {
                         />
                       )}
                     </Box>
-                  </CardContent>
-                </Card>
+                </GlassCard>
               </Grid>
             ))}
           </Grid>

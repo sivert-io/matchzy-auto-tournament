@@ -140,11 +140,9 @@ export default function Lobbies() {
           icon={SportsEsportsIcon}
           title="No active lobbies"
           description="Create a match to get started. Friends can join from this page."
-          action={
-            <Button variant="contained" startIcon={<AddIcon />} onClick={handleCreate} disabled={creating}>
-              Create Match
-            </Button>
-          }
+          actionLabel="Create Match"
+          actionIcon={AddIcon}
+          onAction={handleCreate}
         />
       ) : (
         <Stack spacing={2}>

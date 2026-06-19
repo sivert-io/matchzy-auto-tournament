@@ -7,7 +7,8 @@ export { GlassCard } from './GlassCard';
 export type { GlassCardProps } from './GlassCard';
 export { StatTile } from './StatTile';
 export type { StatTileProps } from './StatTile';
-export { EmptyState } from './EmptyState';
-export type { EmptyStateProps } from './EmptyState';
+// Canonical EmptyState already lives in components/shared (used across pages
+// with test-id logic); re-exported here so screens import it from the barrel.
+export { EmptyState } from '../../components/shared/EmptyState';
 export { DataTable } from './DataTable';
 export type { Column, DataTableProps } from './DataTable';

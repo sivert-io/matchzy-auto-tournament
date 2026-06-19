@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { usePageHeader } from '../contexts/PageHeaderContext';
 import { useSnackbar } from '../contexts/SnackbarContext';
-import { Box, Button, Card, CardContent, Typography, Grid, Chip, CircularProgress } from '@mui/material';
+import { Box, Button, Typography, Grid, Chip, CircularProgress } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import GroupsIcon from '@mui/icons-material/Groups';
 import { api } from '../utils/api';
 import TeamModal from '../components/modals/TeamModal';
 import { TeamImportModal } from '../components/modals/TeamImportModal';
 import { TeamLinkActions } from '../components/teams/TeamLinkActions';
-import { EmptyState } from '../components/shared/EmptyState';
+import { EmptyState, GlassCard } from '../shared/ui';
 import ConfirmDialog from '../components/modals/ConfirmDialog';
 import type { Team, TeamsResponse } from '../types';
 import { useTranslation } from 'react-i18next';
@@ -249,19 +249,14 @@ export default function Teams() {
             const teamNameSlug = team.name.toLowerCase().replace(/\s+/g, '-');
             return (
             <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4 }} key={team.id}>
-              <Card
+              <GlassCard
                 data-testid={`team-card-${teamNameSlug}`}
+                interactive
                 sx={{
-                  cursor: 'pointer',
-                  transition: 'transform 0.2s, box-shadow 0.2s, border-color 0.2s',
-                  border: selectedTeamIds.has(team.id) ? 2 : 0,
-                  borderRadius: 2,
-                  borderStyle: 'solid',
-                  borderColor: selectedTeamIds.has(team.id) ? 'primary.main' : 'transparent',
-                  '&:hover': {
-                    transform: 'translateY(-4px)',
-                    boxShadow: 6,
-                  },
+                  height: '100%',
+                  border: selectedTeamIds.has(team.id) ? '2px solid' : undefined,
+                  borderColor: selectedTeamIds.has(team.id) ? 'primary.main' : undefined,
+                  '&:hover': { transform: 'translateY(-4px)' },
                 }}
                 onClick={() => {
                   if (selectionMode) {
@@ -271,7 +266,6 @@ export default function Teams() {
                   }
                 }}
               >
-                <CardContent>
                   <Box display="flex" justifyContent="space-between" alignItems="start" mb={2}>
                     <Box>
                       <Typography variant="h6" fontWeight={600} gutterBottom>
@@ -297,8 +291,7 @@ export default function Teams() {
                       })()}
                     </Typography>
                   </Box>
-                </CardContent>
-              </Card>
+              </GlassCard>
             </Grid>
             );
           })}
