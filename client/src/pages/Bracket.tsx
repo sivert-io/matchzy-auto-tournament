@@ -10,7 +10,6 @@ import {
   ToggleButtonGroup,
   IconButton,
   Chip,
-  Card,
   Tooltip,
 } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -25,6 +24,7 @@ import BracketsViewerVisualization from '../components/visualizations/BracketsVi
 import SwissView from '../components/visualizations/SwissView';
 import MatchDetailsModal from '../components/modals/MatchDetailsModal';
 import { EmptyState } from '../components/shared/EmptyState';
+import { GlassCard } from '../shared/ui';
 import { MatchListCard } from '../components/shared/MatchListCard';
 import { RoundStatusCard } from '../components/tournament/RoundStatusCard';
 import { getRoundLabel } from '../utils/matchUtils';
@@ -347,7 +347,7 @@ export default function Bracket() {
   if (tournament.type === 'shuffle' && !matches.length) {
     return (
       <Box sx={{ width: '100%', height: '100%' }}>
-        <Card data-testid="bracket-empty-state" sx={{ textAlign: 'center', py: 8, px: 3 }}>
+        <GlassCard data-testid="bracket-empty-state" sx={{ textAlign: 'center', py: 8, px: 3 }}>
           <EmojiEventsIcon sx={{ fontSize: 80, color: 'text.secondary', mb: 2 }} />
           <Typography variant="h6" color="text.secondary" gutterBottom>
             No bracket for shuffle tournaments
@@ -386,7 +386,7 @@ export default function Bracket() {
               View Leaderboard
             </Button>
           </Stack>
-        </Card>
+        </GlassCard>
       </Box>
     );
   }
@@ -425,7 +425,7 @@ export default function Bracket() {
   if (!matches.length) {
     return (
       <Box sx={{ width: '100%', height: '100%' }}>
-        <Card data-testid="bracket-empty-state" sx={{ textAlign: 'center', py: 8 }}>
+        <GlassCard data-testid="bracket-empty-state" sx={{ textAlign: 'center', py: 8 }}>
           <EmojiEventsIcon sx={{ fontSize: 80, color: 'text.secondary', mb: 2 }} />
           <Typography variant="h6" color="text.secondary" gutterBottom>
             Bracket not generated yet
@@ -436,7 +436,7 @@ export default function Bracket() {
           <Button variant="contained" onClick={() => navigate('/tournament')}>
             Go to Tournament Settings
           </Button>
-        </Card>
+        </GlassCard>
       </Box>
     );
   }

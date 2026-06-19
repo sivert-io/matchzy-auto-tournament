@@ -1,6 +1,7 @@
 import React from 'react';
-import { Box, Card, CardContent, Typography, Chip, Stack, Tooltip } from '@mui/material';
+import { Box, Typography, Chip, Stack, Tooltip } from '@mui/material';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
+import { GlassCard } from '../../shared/ui';
 import { getStatusColor, getStatusLabel, getRoundLabel } from '../../utils/matchUtils';
 import { isManualMatch, isShuffleMatch, isVetoDisabledForMatch } from '../../utils/matchFlags';
 import type { Match } from '../../types';
@@ -174,26 +175,20 @@ export const MatchCard: React.FC<MatchCardProps> = ({
   };
 
   return (
-    <Card
+    <GlassCard
+      interactive={Boolean(onClick)}
+      onClick={onClick}
       sx={{
+        p: 2,
         cursor: onClick ? 'pointer' : 'default',
-        transition: 'transform 0.2s, box-shadow 0.2s',
         borderLeft: 4,
         borderLeftColor: getBorderColor(),
         border: selected ? 2 : 0,
-        borderRadius: 2,
         borderStyle: 'solid',
         borderColor: selected ? 'primary.main' : getBorderColor(),
-        '&:hover': onClick
-          ? {
-              transform: 'translateY(-4px)',
-              boxShadow: 6,
-            }
-          : {},
+        '&:hover': onClick ? { transform: 'translateY(-4px)' } : {},
       }}
-      onClick={onClick}
     >
-      <CardContent>
         {/* Header */}
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
           <Box display="flex" alignItems="center" gap={1}>
@@ -448,7 +443,6 @@ export const MatchCard: React.FC<MatchCardProps> = ({
             </Box>
           )}
         </Stack>
-      </CardContent>
-    </Card>
+    </GlassCard>
   );
 };

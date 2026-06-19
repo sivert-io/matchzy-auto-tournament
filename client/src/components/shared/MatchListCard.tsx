@@ -1,6 +1,7 @@
 import React from 'react';
-import { Card, CardContent, Box, Typography, Chip, Tooltip } from '@mui/material';
+import { Box, Typography, Chip, Tooltip } from '@mui/material';
 import { getStatusColor, getStatusLabel } from '../../utils/matchUtils';
+import { GlassCard } from '../../shared/ui';
 import {
   isManualMatch,
   isShuffleMatch,
@@ -176,23 +177,18 @@ export const MatchListCard: React.FC<MatchListCardProps> = ({
   };
 
   return (
-    <Card
+    <GlassCard
+      interactive={Boolean(onClick)}
+      onClick={onClick}
       sx={{
+        p: 2,
         cursor: onClick ? 'pointer' : 'default',
-        transition: 'transform 0.15s, box-shadow 0.15s',
         borderLeftWidth: 4,
         borderLeftStyle: 'solid',
         borderLeftColor: getBorderColor(),
-        '&:hover': onClick
-          ? {
-              transform: 'translateY(-2px)',
-              boxShadow: 4,
-            }
-          : {},
+        '&:hover': onClick ? { transform: 'translateY(-2px)' } : {},
       }}
-      onClick={onClick}
     >
-      <CardContent>
         <Box
           position="relative"
           display="flex"
@@ -322,7 +318,6 @@ export const MatchListCard: React.FC<MatchListCardProps> = ({
             />
           </Box>
         </Box>
-      </CardContent>
-    </Card>
+    </GlassCard>
   );
 };
