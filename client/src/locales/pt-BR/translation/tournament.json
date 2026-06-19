@@ -1,0 +1,123 @@
+{
+  "tournament": {
+    "steps": {
+      "create": "Criar torneio",
+      "review": "Rever e confirmar",
+      "live": "Torneio em direto"
+    },
+    "welcome": {
+      "heading": "Criar torneio",
+      "chooseMethod": "Escolha como gostaria de criar o seu torneio",
+      "createNewTitle": "Criar novo torneio",
+      "createNewDescription": "Comece do zero e configure manualmente todas as definições do torneio"
+    },
+    "typeSelector": {
+      "categories": {
+        "professional": {
+          "label": "Série profissional"
+        },
+        "party": {
+          "label": "Festa e diversão"
+        }
+      },
+      "types": {
+        "single_elimination": {
+          "label": "Eliminação simples",
+          "description": "Uma derrota e está fora. Formato clássico de bracket usado em torneios profissionais."
+        },
+        "double_elimination": {
+          "label": "Eliminação dupla",
+          "description": "Duas derrotas para ser eliminado. As equipas têm uma segunda oportunidade na lower bracket."
+        },
+        "round_robin": {
+          "label": "Todos contra todos",
+          "description": "Todos jogam contra todos. Perfeito para competições em estilo liga."
+        },
+        "swiss": {
+          "label": "Sistema suíço",
+          "description": "Registos semelhantes enfrentam-se. Jogos equilibrados ao longo do torneio."
+        },
+        "shuffle": {
+          "label": "Torneio shuffle",
+          "description": "Os jogadores são baralhados dinamicamente em equipas equilibradas a cada ronda. Competição individual com balanceamento de equipas baseado em ELO."
+        }
+      },
+      "selectedChip": "Selecionado"
+    },
+    "review": {
+      "summary": {
+        "info": "Reveja as definições do torneio e clique em \"Criar torneio\" quando estiver pronto.",
+        "nameLabel": "Nome do torneio",
+        "typeLabel": "Tipo de torneio",
+        "formatLabel": "Formato do jogo",
+        "notSet": "Não definido",
+        "estimatedVolume": "Aproximadamente {{matches}} jogo{{matches, plural, one {} other {s}}} em {{rounds}} ronda{{rounds, plural, one {} other {s}}} (best of {{mapsPerMatch}}, até {{totalMaps}} mapa{{totalMaps, plural, one {} other {s}}} no total)."
+      }
+    },
+    "formSteps": {
+      "steps": {
+        "name": "Nome",
+        "type": "Tipo",
+        "format": "Formato",
+        "maps": "Mapas",
+        "teams": "Equipas",
+        "review": "Rever"
+      },
+      "backToWelcome": "Voltar ao início",
+      "back": "Voltar",
+      "next": "Seguinte"
+    },
+    "emptyBracket": {
+      "title": "Sem bracket para mostrar",
+      "description": "Crie um torneio e gere a bracket para começar"
+    },
+    "common": {
+      "createTournament": "Criar torneio"
+    },
+    "nameLabel": "Nome do torneio",
+    "namePlaceholder": "MAT 2025 — torneio de primavera"
+  },
+  "bracket": {
+    "empty": {
+      "noBracketTitle": "Sem bracket para mostrar",
+      "noBracketDescription": "Crie um torneio e gere a bracket para começar"
+    },
+    "shuffleEmpty": {
+      "title": "Sem bracket para torneios shuffle",
+      "description": "Torneios shuffle não usam uma bracket fixa. As equipas são remisturadas a cada ronda com base no ELO dos jogadores.",
+      "hintBeforeMatches": "Use a página",
+      "matchesLink": "Jogos",
+      "hintBetween": "para acompanhar jogos ao vivo e futuros, e a",
+      "leaderboardLink": "Classificação",
+      "hintAfter": "para acompanhar o ranking dos jogadores.",
+      "goToMatches": "Ir para Jogos",
+      "viewLeaderboard": "Ver classificação"
+    },
+    "notGenerated": {
+      "title": "Bracket ainda não gerada",
+      "description": "Gere a bracket para criar jogos para {{name}}",
+      "cta": "Ir para definições do torneio"
+    },
+    "viewMode": {
+      "visual": "Visual",
+      "list": "Lista",
+      "shuffleVisualDisabled": "Torneios shuffle não têm bracket visual; use a vista de lista."
+    },
+    "refresh": "Atualizar",
+    "fullscreenEnter": "Entrar em ecrã inteiro",
+    "fullscreenExit": "Sair de ecrã inteiro",
+    "roundN": "Ronda {{round}}",
+    "shuffleVisual": {
+      "title": "Sem bracket visual para torneios shuffle",
+      "description": "Os jogos são gerados dinamicamente a cada ronda com base no ELO dos jogadores e no balanceamento das equipas.",
+      "hintPrefix": "Use a",
+      "hintList": "vista de lista",
+      "hintMid1": ", a página",
+      "hintMatches": "Jogos",
+      "hintMid2": " e a",
+      "hintStandings": "Classificação",
+      "hintSuffix": "para acompanhar o progresso do torneio shuffle.",
+      "docsHint": "Para um guia completo sobre shuffle, consulte o guia Shuffle Tournaments na documentação."
+    }
+  }
+}

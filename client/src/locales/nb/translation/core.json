@@ -59,10 +59,15 @@
   "language": {
     "label": "Språk",
     "en": "Engelsk",
-    "zhCN": "Kinesisk (forenklet)"
+    "zhCN": "Kinesisk (forenklet)",
+    "ptBR": "Portuguese (Brazil)"
   },
   "common": {
     "delete": "Slett",
     "cancel": "Avbryt"
+  },
+  "a11y": {
+    "mainNav": "Main navigation",
+    "skipToContent": "Skip to main content"
   }
 }

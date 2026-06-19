@@ -63,6 +63,11 @@
   "language": {
     "label": "Taal",
     "en": "Engels",
-    "zhCN": "Chinees (vereenvoudigd)"
+    "zhCN": "Chinees (vereenvoudigd)",
+    "ptBR": "Portuguese (Brazil)"
+  },
+  "a11y": {
+    "mainNav": "Main navigation",
+    "skipToContent": "Skip to main content"
   }
 }

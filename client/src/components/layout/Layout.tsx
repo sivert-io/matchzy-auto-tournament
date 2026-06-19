@@ -17,10 +17,11 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Button from '@mui/material/Button';
+import Link from '@mui/material/Link';
 import Tooltip from '@mui/material/Tooltip';
 import ListSubheader from '@mui/material/ListSubheader';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { Outlet, useNavigate, useLocation, Link } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation, Link as RouterLink } from 'react-router-dom';
 import {
   Home as HomeIcon,
   Dashboard as DashboardIcon,
@@ -450,7 +451,7 @@ export default function Layout({ portal }: LayoutProps) {
             <ListItemButton
               selected={isActive(item.path)}
               onClick={() => handleNavClick(item.path)}
-              component={Link}
+              component={RouterLink}
               to={item.path}
               sx={[
                 {
@@ -521,6 +522,25 @@ export default function Layout({ portal }: LayoutProps) {
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+      <Link
+        href="#main-content"
+        sx={{
+          position: 'fixed',
+          left: 8,
+          top: 8,
+          zIndex: 9999,
+          bgcolor: 'background.paper',
+          color: 'text.primary',
+          px: 2,
+          py: 1,
+          borderRadius: 1,
+          textDecoration: 'none',
+          transform: 'translateY(-200%)',
+          '&:focus': { transform: 'translateY(0)' },
+        }}
+      >
+        {t('a11y.skipToContent')}
+      </Link>
       <CssBaseline />
       {/* Mobile Drawer (temporary) */}
       <MuiDrawer
@@ -567,7 +587,7 @@ export default function Layout({ portal }: LayoutProps) {
               <ListItemButton
                 selected={location.pathname === homePath}
                 onClick={() => handleNavClick(homePath)}
-                component={Link}
+                component={RouterLink}
                 to={homePath}
                 sx={[
                   {
@@ -696,7 +716,7 @@ export default function Layout({ portal }: LayoutProps) {
               <ListItemButton
                 selected={location.pathname === homePath}
                 onClick={() => handleNavClick(homePath)}
-                component={Link}
+                component={RouterLink}
                 to={homePath}
                 sx={[
                   {
@@ -850,7 +870,6 @@ export default function Layout({ portal }: LayoutProps) {
       </Drawer>
 
       <Box
-        component="main"
         sx={{
           flexGrow: 1,
           display: 'flex',
@@ -860,7 +879,7 @@ export default function Layout({ portal }: LayoutProps) {
           overflow: 'hidden',
         }}
       >
-        <AppBar position="fixed" open={open} color="inherit" sx={{ displayPrint: 'none' }}>
+        <AppBar position="fixed" open={open} color="inherit" sx={{ displayPrint: 'none' }} aria-label={t('a11y.mainNav')}>
           <Toolbar>
             <IconButton
               color="inherit"

@@ -68,13 +68,13 @@ export default function ConnectSteam() {
                 <PlayerAvatar id={null} name={displayName} avatarUrl={avatarUrl} size={56} />
                 <Box>
                   <Typography variant="overline" color="text.secondary" display="block">
-                    Signed in as
+                    {t('connectSteam.signedInAs')}
                   </Typography>
                   <Typography variant="subtitle1" fontWeight={600}>
                     {displayName}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    via {providerLabel}
+                    {t('connectSteam.signedInVia', { provider: providerLabel })}
                   </Typography>
                 </Box>
               </Stack>

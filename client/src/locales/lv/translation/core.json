@@ -59,10 +59,15 @@
   "language": {
     "label": "Valoda",
     "en": "Angļu",
-    "zhCN": "Ķīniešu (vienkāršotā)"
+    "zhCN": "Ķīniešu (vienkāršotā)",
+    "ptBR": "Portuguese (Brazil)"
   },
   "common": {
     "delete": "Dzēst",
     "cancel": "Atcelt"
+  },
+  "a11y": {
+    "mainNav": "Main navigation",
+    "skipToContent": "Skip to main content"
   }
 }

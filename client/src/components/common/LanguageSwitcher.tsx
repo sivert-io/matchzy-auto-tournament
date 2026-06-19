@@ -8,6 +8,7 @@ const LANGUAGES: {
   flagCode: string;
   label: string;
 }[] = [
+  { code: 'pt-BR', flagCode: 'BR', label: 'Português (Brasil)' },
   { code: 'en', flagCode: 'GB', label: 'English' },
   { code: 'lv', flagCode: 'LV', label: 'Latviešu' },
 ];
@@ -43,17 +44,18 @@ function FlagIcon({ code }: { code: string }) {
 }
 
 function normalizeLanguageCode(raw: string): string {
-  const lng = raw || 'en';
+  const lng = raw || 'pt-BR';
+  if (lng.startsWith('pt')) return 'pt-BR';
   if (lng.startsWith('lv')) return 'lv';
   if (lng.startsWith('en')) return 'en';
-  return 'en';
+  return 'pt-BR';
 }
 
 export const LanguageSwitcher: React.FC = () => {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-  const raw = i18n.language || i18n.resolvedLanguage || 'en';
+  const raw = i18n.language || i18n.resolvedLanguage || 'pt-BR';
   const current = normalizeLanguageCode(raw);
   const currentLang = LANGUAGES.find((l) => l.code === current) ?? LANGUAGES[0];
 
@@ -78,7 +80,7 @@ export const LanguageSwitcher: React.FC = () => {
         <IconButton
           onClick={handleOpen}
           size="small"
-          aria-label={`Language: ${currentLang.label}`}
+          aria-label={t('language.label')}
           sx={{ p: 0.75 }}
         >
           <FlagIcon code={currentLang.flagCode} />

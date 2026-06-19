@@ -13,6 +13,8 @@ export interface PageShellProps extends BoxProps {
 export function PageShell({ maxWidth = pageWidth.default, sx, children, ...rest }: PageShellProps) {
   return (
     <Box
+      component="main"
+      id="main-content"
       {...rest}
       sx={[
         pageShellBaseSx,

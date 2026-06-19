@@ -39,7 +39,16 @@ Build de produção: `yarn build` (server + os dois apps) ou `yarn client:build:
   - **`layoutTokens.ts`**: tiers `pageWidth.*` + `publicPageShellSx`; cap do `Layout` em `pageWidth.full`
   - **Zero** `Container maxWidth` nas pages — largura só via `PageShell`
   - Build player + org: **EXIT 0** (`yarn client:build:apps`)
-- [ ] **Fase 3 — Polish/perf/a11y/i18n** e QA visual com backend.
+- [x] **Fase 3 — Polish/i18n/a11y** (jun/2026):
+  - Locale **`pt-BR`** completo (`client/src/locales/pt-BR/`), registrado em `i18n.ts` com fallback `pt` → `pt-BR`
+  - **LanguageSwitcher**: pt-BR (default), en, lv
+  - **PlayerHome**, **ConnectSteam**, **Bracket**, **TournamentLeaderboard** — strings em i18n
+  - **a11y**: `PageShell` como `<main id="main-content">`, skip link (Layout + PublicTopBar), `aria-label` na navegação
+  - `yarn lint` → 0 errors; `yarn client:build:apps` → OK
+- [ ] **Fase 4 — Produto + QA** (manual / backend):
+  - QA visual com backend (`yarn db` + `dev:player` / `dev:org`)
+  - Inscrições player, UI Mercado Pago, multi-org (schema + API — ver `docs/architecture/portals.md`)
+  - Remount opcional **DashboardStats** → `StatTile`
 
 ## Cobertura Fase 2
 
@@ -78,11 +87,10 @@ Dashboard (`DashboardStats`, charts, onboarding), Tournament (form, stepper, liv
 - `scripts/convert-cards-to-glass.mjs` — migração mecânica `Card` → `GlassCard`
 - `scripts/standardize-page-widths.mjs` — números mágicos → `pageWidth.*`
 
-### Opcional (Fase 3, não bloqueia merge)
+### Opcional (Fase 4)
 
 - Remount fino do **DashboardStats** com `StatTile` (hoje glass via tema; funcional)
-- i18n restante (ex.: copy hardcoded em **PlayerHome**)
-- QA visual Fase 1 + Fase 2 com backend (`yarn db` + `dev:player` / `dev:org`)
+- QA visual com backend (`yarn db` + `dev:player` / `dev:org`)
 
 ## Design system (Fase 2, base)
 
@@ -114,6 +122,6 @@ Primitivas em `client/src/shared/ui/`: `PageShell`, `SectionHeader`, `GlassCard`
 
 ## Próximos passos
 
-1. **QA visual** (Fase 1 + Fase 2): `yarn db` + `yarn dev:player` / `yarn dev:org` — landing, login, gate `/`, larguras, glass
+1. **QA visual** com backend: `yarn db` + `yarn dev:player` / `yarn dev:org`
 2. Merge `feat/split-player-org-apps` → `main`
-3. **Fase 3**: locale pt-BR, i18n restante (PlayerHome), a11y, produto (inscrições, pagamentos, multi-org)
+3. **Fase 4 (produto)**: inscrições player, Mercado Pago UI, multi-org no backend

@@ -59,7 +59,12 @@
   "language": {
     "label": "Language",
     "en": "English",
+    "ptBR": "Portuguese (Brazil)",
     "zhCN": "Chinese (Simplified)"
+  },
+  "a11y": {
+    "mainNav": "Main navigation",
+    "skipToContent": "Skip to main content"
   },
   "common": {
     "delete": "Delete",

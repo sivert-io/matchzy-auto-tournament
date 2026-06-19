@@ -9,6 +9,7 @@ import de from './locales/de/translation';
 import es from './locales/es/translation';
 import it from './locales/it/translation';
 import pt from './locales/pt-PT/translation';
+import ptBR from './locales/pt-BR/translation';
 import pl from './locales/pl/translation';
 import nl from './locales/nl/translation';
 import nb from './locales/nb/translation';
@@ -20,6 +21,7 @@ import bracketsViewerDe from './locales/brackets-viewer/de.json';
 import bracketsViewerEs from './locales/brackets-viewer/es.json';
 import bracketsViewerIt from './locales/brackets-viewer/it.json';
 import bracketsViewerPt from './locales/brackets-viewer/pt-PT.json';
+import bracketsViewerPtBR from './locales/brackets-viewer/pt-BR.json';
 import bracketsViewerPl from './locales/brackets-viewer/pl.json';
 import bracketsViewerNl from './locales/brackets-viewer/nl.json';
 
@@ -54,6 +56,10 @@ export const resources = {
     translation: pt,
     bracketsViewer: bracketsViewerPt,
   },
+  'pt-BR': {
+    translation: ptBR,
+    bracketsViewer: bracketsViewerPtBR,
+  },
   pl: {
     translation: pl,
     bracketsViewer: bracketsViewerPl,
@@ -79,8 +85,11 @@ void i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: 'en',
-    supportedLngs: ['en', 'fr', 'de', 'es', 'it', 'pt-PT', 'pl', 'nl', 'zh-CN', 'nb', 'lv'],
+    fallbackLng: {
+      pt: ['pt-BR', 'pt-PT', 'en'],
+      default: ['en'],
+    },
+    supportedLngs: ['en', 'fr', 'de', 'es', 'it', 'pt-PT', 'pt-BR', 'pl', 'nl', 'zh-CN', 'nb', 'lv'],
     ns: ['translation', 'bracketsViewer'],
     defaultNS,
     interpolation: {

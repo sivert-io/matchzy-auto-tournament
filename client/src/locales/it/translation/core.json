@@ -63,6 +63,11 @@
   "language": {
     "label": "Lingua",
     "en": "Inglese",
-    "zhCN": "Cinese (semplificato)"
+    "zhCN": "Cinese (semplificato)",
+    "ptBR": "Portuguese (Brazil)"
+  },
+  "a11y": {
+    "mainNav": "Main navigation",
+    "skipToContent": "Skip to main content"
   }
 }

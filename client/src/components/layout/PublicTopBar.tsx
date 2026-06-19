@@ -1,4 +1,4 @@
-import { AppBar, Box, Button, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, Button, Link, Toolbar, Typography } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '../common/LanguageSwitcher';
@@ -22,7 +22,27 @@ export function PublicTopBar({ showLoginCta = true, loginLabel }: PublicTopBarPr
   const { t } = useTranslation();
 
   return (
-    <AppBar position="static" color="default" elevation={1}>
+    <>
+      <Link
+        href="#main-content"
+        sx={{
+          position: 'fixed',
+          left: 8,
+          top: 8,
+          zIndex: 9999,
+          bgcolor: 'background.paper',
+          color: 'text.primary',
+          px: 2,
+          py: 1,
+          borderRadius: 1,
+          textDecoration: 'none',
+          transform: 'translateY(-200%)',
+          '&:focus': { transform: 'translateY(0)' },
+        }}
+      >
+        {t('a11y.skipToContent')}
+      </Link>
+      <AppBar position="static" color="default" elevation={1} component="nav" aria-label={t('a11y.mainNav')}>
       <Toolbar sx={{ gap: 2 }}>
         <Box
           component={RouterLink}
@@ -68,6 +88,7 @@ export function PublicTopBar({ showLoginCta = true, loginLabel }: PublicTopBarPr
         )}
       </Toolbar>
     </AppBar>
+    </>
   );
 }
 
