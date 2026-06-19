@@ -6,8 +6,10 @@ import Inventory2Icon from '@mui/icons-material/Inventory2';
 import SearchIcon from '@mui/icons-material/Search';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import { Link as RouterLink } from 'react-router-dom';
+import { useState } from 'react';
 import { portalPaths } from '../config/portals';
 import { useAuth } from '../contexts/AuthContext';
+import { EquippedSkinsGallery } from '../components/player/EquippedSkinsGallery';
 
 const modules = [
   {
@@ -33,6 +35,7 @@ const modules = [
 export default function PlayerHome() {
   const { playerSteamId, hasPlayerRecord } = useAuth();
   const profilePath = playerSteamId ? `/player/${playerSteamId}` : portalPaths.player.players;
+  const [skinCount, setSkinCount] = useState(0);
 
   return (
     <Box sx={{ maxWidth: 1100, mx: 'auto', pb: 5 }}>
@@ -103,6 +106,25 @@ export default function PlayerHome() {
             </Stack>
           </CardContent>
         </Card>
+      </Box>
+
+      {/* Equipped-skins preview for the signed-in player. Stays hidden when there
+          are no skins, Steam isn't connected, or cstrike.app is unreachable. */}
+      <Box sx={{ mt: skinCount > 0 ? 4 : 0 }}>
+        {skinCount > 0 && (
+          <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
+            <Typography variant="h6" fontWeight={800}>Seu loadout</Typography>
+            <Button component={RouterLink} to={portalPaths.player.inventory} size="small">
+              Ver todas
+            </Button>
+          </Stack>
+        )}
+        <EquippedSkinsGallery
+          variant="self"
+          hideWhenEmpty
+          grouped={false}
+          onLoaded={setSkinCount}
+        />
       </Box>
     </Box>
   );
