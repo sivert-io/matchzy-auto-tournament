@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Box, Stack, Alert } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import { OnboardingChecklist } from '../components/dashboard/OnboardingChecklist';
 import { useOnboardingStatus } from '../hooks/useOnboardingStatus';
 import { DashboardStats } from '../components/dashboard/DashboardStats';
 import { useTranslation } from 'react-i18next';
+import { PageShell } from '../shared/ui';
 
 export default function Dashboard() {
   const { t } = useTranslation();
@@ -52,40 +53,18 @@ export default function Dashboard() {
         overflow: 'auto',
       })}
     >
-      <Stack
-        spacing={2}
-        sx={{
-          alignItems: 'center',
-          mx: 3,
-          pb: 5,
-          mt: { xs: 8, md: 0 },
-        }}
-      >
-        {/* Onboarding checklist */}
-        {showOnboarding && (
-          <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
-            <OnboardingChecklist />
-          </Box>
-        )}
+      <PageShell maxWidth={1700} sx={{ px: 3, mt: { xs: 8, md: 0 } }}>
+        <Stack spacing={2}>
+          {/* Onboarding checklist */}
+          {showOnboarding && <OnboardingChecklist />}
 
-        {/* Main dashboard stats (handles its own loading/error) */}
-        <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
+          {/* Main dashboard stats (handles its own loading/error) */}
           <DashboardStats showOnboarding={showOnboarding} />
-        </Box>
 
-        {/* Message if tournament not started and onboarding is complete */}
-        {showDashboardMessage && (
-          <Alert
-            severity="info" 
-            sx={{ 
-              width: '100%', 
-              maxWidth: { sm: '100%', md: '1700px' } 
-            }}
-          >
-            {t('dashboard.notReady')}
-          </Alert>
-        )}
-      </Stack>
+          {/* Message if tournament not started and onboarding is complete */}
+          {showDashboardMessage && <Alert severity="info">{t('dashboard.notReady')}</Alert>}
+        </Stack>
+      </PageShell>
     </Box>
   );
 }
