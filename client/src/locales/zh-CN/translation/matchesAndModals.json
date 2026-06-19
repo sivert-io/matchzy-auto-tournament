@@ -193,7 +193,11 @@
       "message": "确定要删除 “{{name}}” 吗？该操作无法撤销。"
     },
     "replacePlayerAria": "替换选手 {{name}}",
-    "replacePlayerTooltip": "替换此选手"
+    "replacePlayerTooltip": "替换此选手",
+    "applyChampionshipRoster": "Apply championship roles (5 starters, 1 coach, 2 reserves)",
+    "roleStarter": "Starter",
+    "roleCoach": "Coach",
+    "roleReserve": "Reserve"
   },
   "playerModal": {
     "titleCreate": "创建选手",

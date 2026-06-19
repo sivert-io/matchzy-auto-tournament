@@ -42,6 +42,9 @@ export interface TournamentSettings {
   maxRounds?: number;
   overtimeMode?: 'enabled' | 'disabled';
   overtimeSegments?: number;
+  registrationFeeCents?: number;
+  registrationCurrency?: string;
+  allowTeamSelfRegistration?: boolean;
 }
 
 export interface BracketData {

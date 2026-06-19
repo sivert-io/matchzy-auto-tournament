@@ -193,7 +193,11 @@
       "message": "Voulez-vous vraiment supprimer \"{{name}}\" ? Cette action est irréversible."
     },
     "replacePlayerAria": "Remplacer le joueur {{name}}",
-    "replacePlayerTooltip": "Remplacer ce joueur"
+    "replacePlayerTooltip": "Remplacer ce joueur",
+    "applyChampionshipRoster": "Apply championship roles (5 starters, 1 coach, 2 reserves)",
+    "roleStarter": "Starter",
+    "roleCoach": "Coach",
+    "roleReserve": "Reserve"
   },
   "playerModal": {
     "titleCreate": "Créer un joueur",

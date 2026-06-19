@@ -88,7 +88,11 @@
       "message": "Er du sikker på at du vil slette \"{{name}}\"? Dette kan ikke angres."
     },
     "replacePlayerAria": "Erstatt spiller {{name}}",
-    "replacePlayerTooltip": "Erstatt denne spilleren"
+    "replacePlayerTooltip": "Erstatt denne spilleren",
+    "applyChampionshipRoster": "Apply championship roles (5 starters, 1 coach, 2 reserves)",
+    "roleStarter": "Starter",
+    "roleCoach": "Coach",
+    "roleReserve": "Reserve"
   },
   "playerModal": {
     "titleCreate": "Opprett spiller",

@@ -73,7 +73,24 @@
     "versus": "vs",
     "goToPlayerPage": "Veto, connect & details → Your player page",
     "pageTitle": "Team Page",
-    "manualMatch": "Manual match"
+    "manualMatch": "Manual match",
+    "registration": {
+      "title": "Tournament registration",
+      "description": "Captains register the full roster (5 starters, 1 coach, 2 reserves). Paid events use Mercado Pago checkout with PIX and card.",
+      "registerCta": "Register team",
+      "payAndRegister": "Pay and register",
+      "registering": "Processing…",
+      "registerSuccess": "Team registered for the tournament.",
+      "registerError": "Could not register the team.",
+      "alreadyRegistered": "Team is already registered.",
+      "registeredChip": "Registered",
+      "free": "Free registration",
+      "feeLabel": "{{amount}} {{currency}}",
+      "captainOnly": "Only the team captain (first starter) can register.",
+      "paymentSuccess": "Payment received — registration confirmed.",
+      "paymentFailure": "Payment failed. Try again or contact the organizer.",
+      "paymentPending": "Payment pending — we will confirm when Mercado Pago approves it."
+    }
   },
   "rounds": {
     "round1": "Round 1",

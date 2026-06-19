@@ -5,6 +5,7 @@ import {
   exchangeMercadoPagoCode,
   getMercadoPagoConnectionStatus,
 } from '../services/mercadoPagoOAuthService';
+import { handleMercadoPagoWebhook } from '../services/registrationService';
 import { log } from '../utils/logger';
 
 const router = Router();
@@ -43,6 +44,20 @@ router.get('/mercadopago/callback', async (req: Request, res: Response) => {
   } catch (error) {
     log.warn('Mercado Pago OAuth callback failed', error as Error);
     return res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+router.get('/mercadopago/webhook', async (req: Request, res: Response) => {
+  try {
+    const topic = String(req.query.topic ?? req.query.type ?? '');
+    const id = String(req.query.id ?? req.query['data.id'] ?? '');
+    if (topic && id) {
+      await handleMercadoPagoWebhook(topic, id);
+    }
+    return res.status(200).send('OK');
+  } catch (error) {
+    log.warn('Mercado Pago webhook handling failed', error as Error);
+    return res.status(200).send('OK');
   }
 });
 

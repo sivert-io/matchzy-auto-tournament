@@ -193,7 +193,11 @@
       "message": "Vai tiešām vēlaties dzēst \"{{name}}\"? Šo darbību nevar atsaukt."
     },
     "replacePlayerAria": "Aizvietot spēlētāju {{name}}",
-    "replacePlayerTooltip": "Aizvietot šo spēlētāju"
+    "replacePlayerTooltip": "Aizvietot šo spēlētāju",
+    "applyChampionshipRoster": "Apply championship roles (5 starters, 1 coach, 2 reserves)",
+    "roleStarter": "Starter",
+    "roleCoach": "Coach",
+    "roleReserve": "Reserve"
   },
   "playerModal": {
     "titleCreate": "Izveidot spēlētāju",

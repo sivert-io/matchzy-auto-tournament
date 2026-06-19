@@ -23,6 +23,9 @@ export const DEFAULT_SETTINGS: TournamentSettings = {
   checkInRequired: false,
   seedingMethod: 'random',
   grandFinalMode: 'simple',
+  allowTeamSelfRegistration: true,
+  registrationFeeCents: 0,
+  registrationCurrency: 'BRL',
 };
 
 class TournamentService {

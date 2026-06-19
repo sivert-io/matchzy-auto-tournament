@@ -193,7 +193,11 @@
       "message": "Sind Sie sicher, dass Sie \"{{name}}\" löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
     },
     "replacePlayerAria": "Spieler {{name}} ersetzen",
-    "replacePlayerTooltip": "Diesen Spieler ersetzen"
+    "replacePlayerTooltip": "Diesen Spieler ersetzen",
+    "applyChampionshipRoster": "Apply championship roles (5 starters, 1 coach, 2 reserves)",
+    "roleStarter": "Starter",
+    "roleCoach": "Coach",
+    "roleReserve": "Reserve"
   },
   "playerModal": {
     "titleCreate": "Spieler erstellen",

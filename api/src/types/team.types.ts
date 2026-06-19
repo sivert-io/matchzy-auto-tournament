@@ -7,6 +7,8 @@ export interface Player {
   name: string;
   avatar?: string;
   elo?: number; // Optional ELO rating (defaults to 3000 if not specified)
+  /** Championship roster slot: starter (5), coach (1), reserve (2). */
+  role?: 'starter' | 'coach' | 'reserve';
 }
 
 export interface Team {

@@ -10,6 +10,7 @@ import {
   Button,
 } from '@mui/material';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import { TeamRegistrationCard } from '../components/team/TeamRegistrationCard';
 import { TeamHeader } from '../components/team/TeamHeader';
 import { CurrentMatchDisplayCard } from '../components/team/CurrentMatchDisplayCard';
 import { TeamStatsCard } from '../components/team/TeamStatsCard';
@@ -103,6 +104,8 @@ export default function TeamMatch() {
         <PageShell maxWidth={pageWidth.content} sx={publicPageShellSx}>
           <Stack spacing={3}>
             <TeamHeader team={team} hideSoundControls />
+
+            {teamId && <TeamRegistrationCard teamId={teamId} />}
 
             {playerSteamId && (
               <GlassCard sx={{ p: 0 }}>
@@ -201,6 +204,8 @@ export default function TeamMatch() {
             )}
 
             <TeamHeader team={team} hideSoundControls />
+
+            {teamId && <TeamRegistrationCard teamId={teamId} />}
 
             <TournamentRulesAccordion
               format={rulesFormat}

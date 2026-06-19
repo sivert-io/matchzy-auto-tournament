@@ -193,7 +193,11 @@
       "message": "Weet je zeker dat je \"{{name}}\" wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt."
     },
     "replacePlayerAria": "Speler {{name}} vervangen",
-    "replacePlayerTooltip": "Deze speler vervangen"
+    "replacePlayerTooltip": "Deze speler vervangen",
+    "applyChampionshipRoster": "Apply championship roles (5 starters, 1 coach, 2 reserves)",
+    "roleStarter": "Starter",
+    "roleCoach": "Coach",
+    "roleReserve": "Reserve"
   },
   "playerModal": {
     "titleCreate": "Speler maken",

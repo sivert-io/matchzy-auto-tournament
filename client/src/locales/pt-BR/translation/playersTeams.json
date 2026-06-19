@@ -73,7 +73,24 @@
     "versus": "vs",
     "goToPlayerPage": "Veto, ligação e detalhes → A tua página de jogador",
     "pageTitle": "Página da equipa",
-    "manualMatch": "Jogo manual"
+    "manualMatch": "Jogo manual",
+    "registration": {
+      "title": "Inscrição no campeonato",
+      "description": "O capitão inscreve o elenco completo (5 titulares, 1 coach, 2 reservas). Eventos pagos usam Mercado Pago com PIX e cartão.",
+      "registerCta": "Inscrever time",
+      "payAndRegister": "Pagar e inscrever",
+      "registering": "Processando…",
+      "registerSuccess": "Time inscrito no campeonato.",
+      "registerError": "Não foi possível inscrever o time.",
+      "alreadyRegistered": "Time já está inscrito.",
+      "registeredChip": "Inscrito",
+      "free": "Inscrição gratuita",
+      "feeLabel": "{{amount}} {{currency}}",
+      "captainOnly": "Só o capitão (primeiro titular) pode inscrever o time.",
+      "paymentSuccess": "Pagamento confirmado — inscrição liberada.",
+      "paymentFailure": "Pagamento falhou. Tente novamente ou fale com a org.",
+      "paymentPending": "Pagamento pendente — confirmamos quando o Mercado Pago aprovar."
+    }
   },
   "rounds": {
     "round1": "Ronda 1",

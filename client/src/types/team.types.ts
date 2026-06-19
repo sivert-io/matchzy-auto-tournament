@@ -9,6 +9,7 @@ export interface Player {
   name: string;
   avatar?: string;
   elo?: number; // Optional ELO rating (defaults to 1500 Skill Rating if not specified)
+  role?: 'starter' | 'coach' | 'reserve';
 }
 
 export interface Team {

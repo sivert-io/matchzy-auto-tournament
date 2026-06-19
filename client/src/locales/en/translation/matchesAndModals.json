@@ -193,7 +193,11 @@
       "message": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone."
     },
     "replacePlayerAria": "Replace player {{name}}",
-    "replacePlayerTooltip": "Replace this player"
+    "replacePlayerTooltip": "Replace this player",
+    "applyChampionshipRoster": "Apply championship roles (5 starters, 1 coach, 2 reserves)",
+    "roleStarter": "Starter",
+    "roleCoach": "Coach",
+    "roleReserve": "Reserve"
   },
   "playerModal": {
     "titleCreate": "Create Player",

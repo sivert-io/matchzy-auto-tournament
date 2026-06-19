@@ -193,7 +193,11 @@
       "message": "¿Seguro que quieres eliminar \"{{name}}\"? Esta acción no se puede deshacer."
     },
     "replacePlayerAria": "Reemplazar jugador {{name}}",
-    "replacePlayerTooltip": "Reemplazar este jugador"
+    "replacePlayerTooltip": "Reemplazar este jugador",
+    "applyChampionshipRoster": "Apply championship roles (5 starters, 1 coach, 2 reserves)",
+    "roleStarter": "Starter",
+    "roleCoach": "Coach",
+    "roleReserve": "Reserve"
   },
   "playerModal": {
     "titleCreate": "Crear jugador",

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Box, CircularProgress } from '@mui/material';
+import { Box, CircularProgress, Typography, TextField, Switch, FormControlLabel, Button, Stack } from '@mui/material';
+import { GlassCard } from '../shared/ui';
 import { useSnackbar } from '../contexts/SnackbarContext';
 import { TournamentStepper } from '../components/tournament/TournamentStepper';
 import { TournamentFormSteps } from '../components/tournament/TournamentFormSteps';
@@ -67,6 +68,8 @@ const Tournament: React.FC = () => {
   const [overtimeSegments, setOvertimeSegments] = useState<number | null>(null);
   // Grand final behaviour for double elimination tournaments.
   const [grandFinalMode, setGrandFinalMode] = useState<'none' | 'simple' | 'double'>('simple');
+  const [registrationFeeInput, setRegistrationFeeInput] = useState('0');
+  const [allowTeamSelfRegistration, setAllowTeamSelfRegistration] = useState(true);
 
   // Auto-set format to bo1 when shuffle is selected
   useEffect(() => {
@@ -410,6 +413,12 @@ const Tournament: React.FC = () => {
       } else {
         setGrandFinalMode('none');
       }
+      const settings = tournament.settings as {
+        registrationFeeCents?: number;
+        allowTeamSelfRegistration?: boolean;
+      };
+      setRegistrationFeeInput(String((settings?.registrationFeeCents ?? 0) / 100));
+      setAllowTeamSelfRegistration(settings?.allowTeamSelfRegistration ?? true);
       setIsEditing(false);
       setShowWelcome(false);
       setShowForm(false);
@@ -685,6 +694,12 @@ const Tournament: React.FC = () => {
       const settings = {
         ...baseSettings,
         grandFinalMode: type === 'double_elimination' ? grandFinalMode : 'none',
+        registrationFeeCents: Math.max(
+          0,
+          Math.round(Number(registrationFeeInput.replace(',', '.')) * 100) || 0
+        ),
+        allowTeamSelfRegistration,
+        registrationCurrency: 'BRL',
       };
 
       const payload = {
@@ -1013,6 +1028,44 @@ const Tournament: React.FC = () => {
               />
               <ShuffleMapsCard maps={tournament.maps || []} />
             </Box>
+          )}
+          {tournament.type !== 'shuffle' && (
+            <GlassCard sx={{ mb: 3, p: 3 }}>
+              <Typography variant="h6" fontWeight={700} gutterBottom>
+                Team registration
+              </Typography>
+              <Typography variant="body2" color="text.secondary" mb={2}>
+                Captains register from the public team page. Mercado Pago checkout supports PIX and
+                card when a fee is set.
+              </Typography>
+              <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap" useFlexGap>
+                <TextField
+                  label="Registration fee (BRL)"
+                  type="number"
+                  size="small"
+                  value={registrationFeeInput}
+                  onChange={(e) => setRegistrationFeeInput(e.target.value)}
+                  inputProps={{ min: 0, step: '0.01' }}
+                />
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={allowTeamSelfRegistration}
+                      onChange={(e) => setAllowTeamSelfRegistration(e.target.checked)}
+                    />
+                  }
+                  label="Allow team self-registration"
+                />
+                <Button
+                  variant="outlined"
+                  size="small"
+                  disabled={saving}
+                  onClick={() => void saveChanges()}
+                >
+                  Save registration settings
+                </Button>
+              </Stack>
+            </GlassCard>
           )}
           <Box sx={{ mt: tournament.type === 'shuffle' ? 3 : 0 }}>
             <TournamentReview

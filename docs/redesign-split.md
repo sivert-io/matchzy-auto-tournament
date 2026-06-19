@@ -47,12 +47,14 @@ Build de produção: `yarn build` (server + os dois apps) ou `yarn client:build:
   - `yarn lint` → 0 errors; `yarn client:build:apps` → OK
 - [ ] **Fase 4 — Produto + QA** (manual / backend):
   - [x] **Self-register (player)**: `/api/auth/me` expõe `allowSelfRegister`; `AuthContext.selfRegister()`; CTAs em **PlayerHome** e **PlayerProfile** quando auto-cadastro está ativo
-  - [x] **Shuffle inscrição (player)**: `POST/DELETE /api/tournament/1/register-self`, toggle `allow_shuffle_self_register`, UI no **TournamentLeaderboard**
-  - [x] **Mercado Pago (org)**: seção em **Settings** — status OAuth, botão conectar, snackbar em `?mp=connected` (checkout/inscrição ainda não)
-  - [x] **Multi-org (schema)**: tabelas `organizations`, `organization_memberships`, `registrations`, `audit_log`, etc. (API ainda não)
+  - [x] **Shuffle inscrição (player)**: individual shuffle registration on public leaderboard
+  - [x] **Inscrição por time**: captain registers on team page; Mercado Pago Checkout Pro (PIX + card) when fee > 0
+  - [x] **Elenco campeonato**: roles `starter` / `coach` / `reserve` (5+1+2) + validation
+  - [x] **Mercado Pago (org)**: OAuth connect + checkout preference + webhook
+  - [x] **Multi-org (schema + seed)**: tables + default org; API `GET /api/organizations/current`
+  - [x] **Deploy topologies doc**: `docs/architecture/deployment-topologies.md`
   - [ ] QA visual com backend (`yarn db` + `dev:player` / `dev:org`)
-  - [ ] Checkout Mercado Pago + inscrições com pagamento
-  - [ ] Multi-org API + scoping por `organization_id`
+  - [ ] Multi-org API scoping (queries filtered by `organization_id`)
   - [ ] Remount opcional **DashboardStats** → `StatTile`
 
 ## Cobertura Fase 2

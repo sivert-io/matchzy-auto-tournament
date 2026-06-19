@@ -46,6 +46,8 @@ import authRoutes from './routes/auth';
 import matchzyRoutes from './routes/matchzy';
 import acAiRoutes from './routes/acAi';
 import paymentRoutes from './routes/payments';
+import registrationRoutes from './routes/registrations';
+import organizationRoutes from './routes/organizations';
 import lobbyRoutes from './routes/lobbies';
 import inventoryRoutes from './routes/inventory';
 import { initMatchZyVersionService } from './services/matchzyVersionService';
@@ -389,6 +391,8 @@ app.use('/api/auth', authRoutes); // Authentication (Steam, Keycloak, Discord)
 app.use('/api/matchzy', matchzyRoutes); // MatchZy Enhanced version info
 app.use('/api/ac-ai', acAiRoutes); // Fragbase AC/AI signal ingestion and scores
 app.use('/api/payments', paymentRoutes); // Payment provider connections
+app.use('/api/registrations', registrationRoutes);
+app.use('/api/organizations', organizationRoutes);
 app.use('/api/lobbies', lobbyRoutes); // FaceIT-style match lobbies
 app.use('/api/inventory', inventoryRoutes); // Read-only cstrike.app equipped skins
 
@@ -431,6 +435,9 @@ cleanupOldLogs(30);
     // Initialize database first (including schema)
     await db.init();
     log.success('Database initialized successfully');
+
+    const { ensureDefaultOrganization } = await import('./services/organizationService');
+    await ensureDefaultOrganization();
 
     // Now start the server after database is ready
     // Bind to all interfaces (IPv4 & IPv6) so both 127.0.0.1 and ::1 work with dev proxies.

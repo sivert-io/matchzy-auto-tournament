@@ -477,6 +477,27 @@ export default function TeamModal({ open, team, onClose, onSave }: TeamModalProp
               >
                 {t('teamModal.selectPlayers')}
               </Button>
+              <Button
+                variant="text"
+                size="small"
+                onClick={() => {
+                  setPlayers((current) =>
+                    current.map((player, index) => ({
+                      ...player,
+                      role:
+                        index < 5
+                          ? 'starter'
+                          : index === 5
+                            ? 'coach'
+                            : index < 8
+                              ? 'reserve'
+                              : player.role,
+                    }))
+                  );
+                }}
+              >
+                {t('teamModal.applyChampionshipRoster')}
+              </Button>
             </Box>
 
             {players.length > 0 ? (
@@ -521,7 +542,20 @@ export default function TeamModal({ open, team, onClose, onSave }: TeamModalProp
                       />
                     </ListItemAvatar>
                     <ListItemText
-                      primary={player.name}
+                      primary={
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <span>{player.name}</span>
+                          {player.role && (
+                            <Typography variant="caption" color="text.secondary">
+                              {player.role === 'starter'
+                                ? t('teamModal.roleStarter')
+                                : player.role === 'coach'
+                                  ? t('teamModal.roleCoach')
+                                  : t('teamModal.roleReserve')}
+                            </Typography>
+                          )}
+                        </Box>
+                      }
                       secondary={
                         <>
                           <Typography

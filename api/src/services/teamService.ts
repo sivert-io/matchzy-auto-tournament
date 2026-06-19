@@ -3,6 +3,7 @@ import { Team, CreateTeamInput, UpdateTeamInput, TeamResponse, Player } from '..
 import { log } from '../utils/logger';
 import { steamService } from './steamService';
 import { playerService } from './playerService';
+import { validateChampionshipRoster } from '../utils/teamRoster';
 
 class TeamService {
   /**
@@ -132,6 +133,12 @@ class TeamService {
     // Validate no duplicate Steam IDs
     this.validateNoDuplicatePlayers(input.players);
 
+    // When all players have roster roles, enforce championship 5+1+2 layout.
+    const hasRoles = input.players.some((p) => p.role);
+    if (hasRoles) {
+      validateChampionshipRoster(input.players);
+    }
+
     // Enrich players with avatars from Steam API.
     // For dev/test teams created via the Development tools (IDs prefixed with
     // "test-team-"), we skip Steam avatar lookups entirely and rely on the
@@ -194,6 +201,10 @@ class TeamService {
     // Validate players if provided
     if (input.players && input.players.length > 0) {
       this.validateNoDuplicatePlayers(input.players);
+      const hasRoles = input.players.some((p) => p.role);
+      if (hasRoles) {
+        validateChampionshipRoster(input.players);
+      }
     }
 
     const updateData: Record<string, unknown> = {

@@ -193,7 +193,11 @@
       "message": "Czy na pewno chcesz usunąć \"{{name}}\"? Tej akcji nie można cofnąć."
     },
     "replacePlayerAria": "Zamień gracza {{name}}",
-    "replacePlayerTooltip": "Zamień tego gracza"
+    "replacePlayerTooltip": "Zamień tego gracza",
+    "applyChampionshipRoster": "Apply championship roles (5 starters, 1 coach, 2 reserves)",
+    "roleStarter": "Starter",
+    "roleCoach": "Coach",
+    "roleReserve": "Reserve"
   },
   "playerModal": {
     "titleCreate": "Utwórz gracza",

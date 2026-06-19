@@ -45,6 +45,11 @@ export interface TournamentSettings {
   maxRounds?: number;
   overtimeMode?: 'enabled' | 'disabled';
   overtimeSegments?: number;
+  /** Team registration fee in cents (0 = free). PIX + card via Mercado Pago when > 0. */
+  registrationFeeCents?: number;
+  registrationCurrency?: string;
+  /** Allow team captains to self-register from the player portal. */
+  allowTeamSelfRegistration?: boolean;
 }
 
 export interface Tournament {

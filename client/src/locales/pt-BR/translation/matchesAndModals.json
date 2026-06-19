@@ -193,7 +193,11 @@
       "message": "Tem a certeza de que pretende eliminar \"{{name}}\"? Esta ação não pode ser anulada."
     },
     "replacePlayerAria": "Substituir jogador {{name}}",
-    "replacePlayerTooltip": "Substituir este jogador"
+    "replacePlayerTooltip": "Substituir este jogador",
+    "applyChampionshipRoster": "Apply championship roles (5 starters, 1 coach, 2 reserves)",
+    "roleStarter": "Starter",
+    "roleCoach": "Coach",
+    "roleReserve": "Reserve"
   },
   "playerModal": {
     "titleCreate": "Criar jogador",
