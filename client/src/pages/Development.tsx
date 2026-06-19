@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  Card,
   CardContent,
   Typography,
   Button,
@@ -33,6 +32,7 @@ import { useSnackbar } from '../contexts/SnackbarContext';
 import { generateTeamName } from '../generation/teamName';
 import { generatePlayerProfile } from '../generation/playerProfile';
 import { useTranslation } from 'react-i18next';
+import { GlassCard } from '../shared/ui';
 
 const Development: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -412,7 +412,7 @@ const Development: React.FC = () => {
 
         {/* Test Teams */}
         <Grid size={{ xs: 12, md: 4 }}>
-          <Card>
+          <GlassCard sx={{ p: 0 }}>
             <CardContent>
               <Box display="flex" alignItems="center" gap={1} mb={2}>
                 <GroupIcon color="primary" />
@@ -501,12 +501,12 @@ const Development: React.FC = () => {
                 </Box>
               </Box>
             </CardContent>
-          </Card>
+          </GlassCard>
         </Grid>
 
         {/* Test Players */}
         <Grid size={{ xs: 12, md: 4 }}>
-          <Card>
+          <GlassCard sx={{ p: 0 }}>
             <CardContent>
               <Box display="flex" alignItems="center" gap={1} mb={2}>
                 <PersonIcon color="primary" />
@@ -597,12 +597,12 @@ const Development: React.FC = () => {
                 </Box>
               </Box>
             </CardContent>
-          </Card>
+          </GlassCard>
         </Grid>
 
         {/* Test Servers */}
         <Grid size={{ xs: 12, md: 4 }}>
-          <Card>
+          <GlassCard sx={{ p: 0 }}>
             <CardContent>
               <Box display="flex" alignItems="center" gap={1} mb={2}>
                 <StorageIcon color="primary" />
@@ -693,12 +693,12 @@ const Development: React.FC = () => {
                 </Box>
               </Box>
             </CardContent>
-          </Card>
+          </GlassCard>
         </Grid>
 
         {/* Danger Zone */}
         <Grid size={{ xs: 12 }}>
-          <Card sx={{ borderColor: 'error.main', borderWidth: 2, borderStyle: 'solid' }}>
+          <GlassCard sx={{ p: 0, borderColor: 'error.main', borderWidth: 2, borderStyle: 'solid' }}>
             <CardContent>
               <Box display="flex" alignItems="center" gap={1} mb={2}>
                 <WarningIcon color="error" />
@@ -1049,7 +1049,7 @@ const Development: React.FC = () => {
                 </AccordionDetails>
               </Accordion>
             </CardContent>
-          </Card>
+          </GlassCard>
         </Grid>
       </Grid>
 

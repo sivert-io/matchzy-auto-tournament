@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { usePageHeader } from '../contexts/PageHeaderContext';
-import { Box, Button, Card, CardContent, Typography, Grid, Chip, CircularProgress, IconButton, Tooltip, Link } from '@mui/material';
+import { Box, Button, CardContent, Typography, Grid, Chip, CircularProgress, IconButton, Tooltip, Link } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import StorageIcon from '@mui/icons-material/Storage';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -17,6 +17,7 @@ import ServerModal from '../components/modals/ServerModal';
 import BatchServerModal from '../components/modals/BatchServerModal';
 import MatchDetailsModal from '../components/modals/MatchDetailsModal';
 import { EmptyState } from '../components/shared/EmptyState';
+import { GlassCard } from '../shared/ui';
 import ConfirmDialog from '../components/modals/ConfirmDialog';
 import type { Match, Server, ServersResponse, ServerStatusResponse, MatchesResponse } from '../types';
 import { useSnackbar } from '../contexts/SnackbarContext';
@@ -870,7 +871,7 @@ export default function Servers() {
           <>
             {/* Server Statistics Summary */}
             <Box mb={2}>
-              <Card variant="outlined">
+              <GlassCard variant="outlined" sx={{ p: 0 }}>
                 <CardContent>
                   <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                     <Typography variant="subtitle2" fontWeight={600}>
@@ -1042,12 +1043,12 @@ export default function Servers() {
                     </Box>
                   )}
                 </CardContent>
-              </Card>
+              </GlassCard>
             </Box>
 
             {/* Match Allocation Status */}
             <Box mb={2}>
-              <Card variant="outlined">
+              <GlassCard variant="outlined" sx={{ p: 0 }}>
                 <CardContent>
                   <Typography variant="subtitle2" fontWeight={600} gutterBottom>
                     {t('serversPage.allocation.title')}
@@ -1078,7 +1079,7 @@ export default function Servers() {
                     </>
                   )}
                 </CardContent>
-              </Card>
+              </GlassCard>
             </Box>
 
             <Grid container spacing={2}>
@@ -1097,9 +1098,9 @@ export default function Servers() {
 
                 return (
                 <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4 }} key={server.id}>
-                <Card
+                <GlassCard
                   data-testid={`server-card-${server.name.replace(/\s+/g, '-').toLowerCase()}`}
-                  sx={(theme) => {
+                  sx={[{ p: 0 }, (theme) => {
                     const selected = selectedServerIds.has(server.id);
                     const ring = `0 0 0 2px ${theme.palette.primary.main}`;
                     const hoverShadow = selected
@@ -1129,7 +1130,7 @@ export default function Servers() {
                         }),
                       },
                     };
-                  }}
+                  }]}
                   onClick={() => {
                     if (selectionMode) {
                       toggleServerSelected(server.id);
@@ -1784,7 +1785,7 @@ export default function Servers() {
                       {t('serversPage.labels.id')} {server.id}
                     </Typography>
                   </CardContent>
-                </Card>
+                </GlassCard>
               </Grid>
                 );
               })}
