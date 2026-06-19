@@ -1,6 +1,7 @@
 import React from 'react';
-import { Card, CardContent, Typography, Box, Chip } from '@mui/material';
+import { Typography, Box, Chip } from '@mui/material';
 import type { MapPool, Map as MapType } from '../../types/api.types';
+import { GlassCard } from '../../shared/ui';
 
 interface MapPoolCardProps {
   pool: MapPool;
@@ -17,34 +18,19 @@ export function MapPoolCard({ pool, maps, onClick }: MapPoolCardProps) {
   const mapIds = pool.mapIds ?? [];
 
   return (
-    <Card
+    <GlassCard
+      interactive
       onClick={() => onClick(pool)}
-      elevation={1}
       sx={{
         width: '100%',
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        cursor: 'pointer',
-        transition: 'transform 0.2s, box-shadow 0.2s',
         opacity: pool.enabled ? 1 : 0.7,
-        '&:hover': {
-          transform: 'translateY(-4px)',
-          boxShadow: 4,
-        },
+        '&:hover': { transform: 'translateY(-4px)' },
       }}
     >
-      <CardContent
-        sx={{
-          flexGrow: 1,
-          pt: 2,
-          px: 2,
-          pb: 1.5,
-          '&:last-child': {
-            pb: 1.5,
-          },
-        }}
-      >
+      <Box sx={{ flexGrow: 1 }}>
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
           <Typography variant="h6" component="div">
             {pool.name}
@@ -65,7 +51,7 @@ export function MapPoolCard({ pool, maps, onClick }: MapPoolCardProps) {
             <Chip label={`+${mapIds.length - 5} more`} size="small" variant="outlined" />
           )}
         </Box>
-      </CardContent>
-    </Card>
+      </Box>
+    </GlassCard>
   );
 }

@@ -4,8 +4,6 @@ import { useSnackbar } from '../contexts/SnackbarContext';
 import {
   Box,
   Typography,
-  Card,
-  CardContent,
   Button,
   Grid,
   IconButton,
@@ -22,7 +20,7 @@ import {
   Info as InfoIcon,
 } from '@mui/icons-material';
 import { api } from '../utils/api';
-import { EmptyState } from '../components/shared/EmptyState';
+import { EmptyState, GlassCard } from '../shared/ui';
 import EloTemplateEditorModal from '../components/modals/EloTemplateEditorModal';
 import ConfirmDialog from '../components/modals/ConfirmDialog';
 import { EloTemplateImportModal } from '../components/modals/EloTemplateImportModal';
@@ -196,19 +194,14 @@ export default function ELOTemplates() {
         <Grid container spacing={2}>
           {templates.map((template) => (
             <Grid size={{ xs: 12, sm: 6, md: 6 }} key={template.id}>
-              <Card
+              <GlassCard
                 sx={{
                   height: '100%',
                   display: 'flex',
                   flexDirection: 'column',
-                  transition: 'transform 0.2s, box-shadow 0.2s',
-                  '&:hover': {
-                    transform: 'translateY(-4px)',
-                    boxShadow: 6,
-                  },
+                  '&:hover': { transform: 'translateY(-4px)' },
                 }}
               >
-                <CardContent sx={{ flexGrow: 1 }}>
                     <Box display="flex" justifyContent="space-between" alignItems="start" mb={2}>
                     <Box>
                       <Typography variant="h6" fontWeight={600} gutterBottom>
@@ -328,8 +321,7 @@ export default function ELOTemplates() {
                       </Box>
                     )}
                   </Stack>
-                </CardContent>
-              </Card>
+              </GlassCard>
             </Grid>
           ))}
         </Grid>

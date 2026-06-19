@@ -1,8 +1,9 @@
 import React from 'react';
-import { Card, CardContent, Typography, Box } from '@mui/material';
+import { Typography, Box } from '@mui/material';
 import MapIcon from '@mui/icons-material/Map';
 import type { Map } from '../../types/api.types';
 import { FadeInImage } from '../common/FadeInImage';
+import { GlassCard } from '../../shared/ui';
 
 interface MapCardProps {
   map: Map;
@@ -26,21 +27,18 @@ export function MapCard({ map, onClick }: MapCardProps) {
   const showPlaceholder = !preferredImageUrl;
 
   return (
-    <Card
+    <GlassCard
       data-testid={`map-card-${map.id}`}
+      interactive
       onClick={() => onClick(map)}
-      elevation={1}
       sx={{
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
-        transition: 'transform 0.2s, box-shadow 0.2s',
-        cursor: 'pointer',
-        '&:hover': {
-          transform: 'translateY(-4px)',
-          boxShadow: 4,
-        },
+        p: 0,
+        overflow: 'hidden',
+        '&:hover': { transform: 'translateY(-4px)' },
       }}
     >
       <Box
@@ -77,7 +75,7 @@ export function MapCard({ map, onClick }: MapCardProps) {
           </Box>
         )}
       </Box>
-      <CardContent
+      <Box
         sx={{
           flexGrow: 1,
           display: 'flex',
@@ -85,9 +83,6 @@ export function MapCard({ map, onClick }: MapCardProps) {
           pt: 2,
           px: 2,
           pb: 1.5,
-          '&:last-child': {
-            pb: 1.5,
-          },
         }}
       >
         <Typography variant="h6" component="div" gutterBottom>
@@ -96,7 +91,7 @@ export function MapCard({ map, onClick }: MapCardProps) {
         <Typography variant="body2" color="text.secondary">
           {map.id}
         </Typography>
-      </CardContent>
-    </Card>
+      </Box>
+    </GlassCard>
   );
 }
