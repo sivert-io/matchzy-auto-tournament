@@ -307,6 +307,8 @@ export default [
       '*.mjs',
       'vite.config.ts',
       'client/vite.config.ts',
+      'client/vite.player.config.ts',
+      'client/vite.org.config.ts',
       'eslint.config.mjs',
       'client/src/brackets-viewer/**', // Vendored code - ignore linting errors
       '.pnp.cjs', // Yarn PnP file

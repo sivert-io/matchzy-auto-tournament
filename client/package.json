@@ -4,13 +4,13 @@
   "description": "MatchZy Auto Tournament React client",
   "private": true,
   "scripts": {
-    "dev": "vite",
-    "dev:host": "vite --host",
+    "dev": "yarn dev:player",
+    "dev:host": "yarn dev:player:host",
     "dev:player": "vite --config vite.player.config.ts",
     "dev:player:host": "vite --host --config vite.player.config.ts",
     "dev:org": "vite --config vite.org.config.ts",
     "dev:org:host": "vite --host --config vite.org.config.ts",
-    "build": "vite build",
+    "build": "yarn build:apps",
     "build:player": "vite build --config vite.player.config.ts",
     "build:org": "vite build --config vite.org.config.ts",
     "build:apps": "yarn build:player && yarn build:org",
@@ -18,7 +18,8 @@
     "i18n:missing": "node scripts/check-missing-i18n-keys.mjs",
     "i18n:sync": "node scripts/sync-missing-i18n-keys.mjs",
     "i18n:fallback": "node scripts/check-english-fallback-strings.mjs",
-    "preview": "vite preview"
+    "preview:player": "vite preview --config vite.player.config.ts",
+    "preview:org": "vite preview --config vite.org.config.ts"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",
