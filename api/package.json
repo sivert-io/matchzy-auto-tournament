@@ -14,6 +14,7 @@
     "@dicebear/collection": "^9.2.4",
     "@dicebear/core": "^9.2.4",
     "@faker-js/faker": "^10.1.0",
+    "@ianlucas/cs2-lib": "^7.34.2",
     "brackets-manager": "^1.7.1",
     "brackets-memory-db": "^1.0.5",
     "brackets-model": "^1.5.1",

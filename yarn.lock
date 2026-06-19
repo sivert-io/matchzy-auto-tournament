@@ -1321,6 +1321,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ianlucas/cs2-lib@npm:^7.34.2":
+  version: 7.34.2
+  resolution: "@ianlucas/cs2-lib@npm:7.34.2"
+  checksum: 10c0/c9060132454a256ba53d4f55faceb6bfcf57d713055a567db5941ec5904e89c74d44101eb6cd63bc6da9e35327f8375a889afe7c6076a1cd32e784dd7792c106
+  languageName: node
+  linkType: hard
+
 "@isaacs/fs-minipass@npm:^4.0.0":
   version: 4.0.1
   resolution: "@isaacs/fs-minipass@npm:4.0.1"
@@ -1388,6 +1395,7 @@ __metadata:
     "@dicebear/collection": "npm:^9.2.4"
     "@dicebear/core": "npm:^9.2.4"
     "@faker-js/faker": "npm:^10.1.0"
+    "@ianlucas/cs2-lib": "npm:^7.34.2"
     brackets-manager: "npm:^1.7.1"
     brackets-memory-db: "npm:^1.0.5"
     brackets-model: "npm:^1.5.1"

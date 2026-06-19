@@ -47,6 +47,7 @@ import matchzyRoutes from './routes/matchzy';
 import acAiRoutes from './routes/acAi';
 import paymentRoutes from './routes/payments';
 import lobbyRoutes from './routes/lobbies';
+import inventoryRoutes from './routes/inventory';
 import { initMatchZyVersionService } from './services/matchzyVersionService';
 import { recoverActiveMatches } from './services/matchRecoveryService';
 import { matchAllocationService } from './services/matchAllocationService';
@@ -389,6 +390,7 @@ app.use('/api/matchzy', matchzyRoutes); // MatchZy Enhanced version info
 app.use('/api/ac-ai', acAiRoutes); // Fragbase AC/AI signal ingestion and scores
 app.use('/api/payments', paymentRoutes); // Payment provider connections
 app.use('/api/lobbies', lobbyRoutes); // FaceIT-style match lobbies
+app.use('/api/inventory', inventoryRoutes); // Read-only cstrike.app equipped skins
 
 // Serve frontend at /app (built client lives under api/public)
 const publicPath = path.join(__dirname, '..', 'public');
