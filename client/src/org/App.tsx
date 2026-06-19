@@ -5,8 +5,10 @@ import { RequireAccess } from '../components/auth/RequireAccess';
 import { legacyOrganizerRedirects, portalPaths } from '../config/portals';
 import { useIsDevelopment } from '../hooks/useIsDevelopment';
 import { AppProviders } from '../shared/AppProviders';
+import { useAuth } from '../contexts/AuthContext';
 
 const Login = lazy(() => import('../pages/Login'));
+const Landing = lazy(() => import('../pages/Landing'));
 const Dashboard = lazy(() => import('../pages/Dashboard'));
 const Teams = lazy(() => import('../pages/Teams'));
 const Players = lazy(() => import('../pages/Players'));
@@ -41,14 +43,23 @@ function LegacyRedirect({ to }: { to: string }) {
   return <Navigate to={`${to}${location.search}${location.hash}`} replace />;
 }
 
+function OrgRoot() {
+  const { isLoading, isAuthenticated } = useAuth();
+  if (isLoading) return <RouteFallback />;
+  if (isAuthenticated) {
+    return <Navigate to={portalPaths.organizer.home} replace />;
+  }
+  return <Landing portal="organizer" />;
+}
+
 function OrgRoutes() {
   const isDevelopment = useIsDevelopment();
 
   return (
     <Suspense fallback={<RouteFallback />}>
       <Routes>
-        <Route path="/" element={<Navigate to={portalPaths.organizer.home} replace />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<OrgRoot />} />
+        <Route path="/login" element={<Login portal="organizer" />} />
         <Route path="/connect-steam" element={<Access level="admin"><ConnectSteam /></Access>} />
 
         <Route

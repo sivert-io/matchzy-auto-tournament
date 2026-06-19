@@ -30,7 +30,7 @@ Build de produção: `yarn build` (server + os dois apps) ou `yarn client:build:
 
 - [x] **Fase 0 — Split** (commit `5c2fe63`): dois entries/configs/builds, scripts, Caddy por Host, Express ajustado. Builds e lint OK. Sem mudança visual.
 - [x] **Limpeza de legado**: removidos `client/index.html`, `client/src/main.tsx`, `client/src/App.tsx`, `client/vite.config.ts`; scripts repontados; eslint ignora os novos vite configs.
-- [ ] **Fase 1 — Entrada + shells**: landing + login próprios por portal; navegação/chrome por portal (player enxuto, org operacional) sobre o glass.
+- [x] **Fase 1 — Entrada + shells** (implementada, falta QA visual): `pages/Landing.tsx` (compartilhada, dirigida por `portal`) com hero + CTAs + destaques glass; `Login` agora é portal-aware (copy/marca por portal via `login.{portal}.*`, link "voltar"); `components/layout/PublicTopBar.tsx` (barra pública leve p/ landing+login, sem o polling do `SharedNavBar`); raiz `/` de cada app virou um gate (logado → home; senão → Landing); corrigido bug latente do `TopNavBar` que não passava `portal` ao `SharedNavBar`. i18n em `auth.json` (en + pt-PT): seções `landing.*` e `login.{player,organizer}.*`. Build dos dois apps e lint OK (só o erro pré-existente do `vite-env.d.ts`).
 - [ ] **Fase 2 — Reescrita das telas** (design system glass primeiro, depois tela a tela).
 - [ ] **Fase 3 — Polish/perf/a11y/i18n** e limpeza final.
 
@@ -56,7 +56,7 @@ Primitivas glass em `client/src/shared/ui/` consumidas pelos dois apps: `PageShe
 
 ## Próximos passos (próxima sessão)
 
-1. Subir `dev:player` e `dev:org`, confirmar visualmente que o split funciona (login, navegação, glass).
-2. Fechar a **Fase 1**: landing + login + shell por portal.
-3. Telas-piloto: **PlayerHome** e **Dashboard** como referência do redesign.
+1. **QA visual da Fase 1**: subir `dev:player` e `dev:org`, conferir landing (anônimo), login por portal, gate da raiz (logado → home) e o glass nas duas barras públicas.
+2. Definir copy/marca final de cada landing/login (hoje há defaults em `auth.json`); confirmar secondary CTA do org (hoje aponta p/ docs `docs.sivert.io`).
+3. **Fase 2** — telas-piloto: **PlayerHome** e **Dashboard** como referência do redesign.
 4. Definir o **design system** (`shared/ui/`) e atacar as telas restantes em lote.

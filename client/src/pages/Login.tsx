@@ -3,10 +3,13 @@ import { Box, Card, Button, Alert, Container, Link, Stack, Typography } from '@m
 import { SiDiscord, SiGithub, SiKeycloak } from 'react-icons/si';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
+import { Link as RouterLink } from 'react-router-dom';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { SteamIcon } from '../components/icons/SteamIcon';
-import { TopNavBar } from '../components/layout/TopNavBar';
+import { PublicTopBar } from '../components/layout/PublicTopBar';
+import { PortalId } from '../config/portals';
 
-export default function Login() {
+export default function Login({ portal = 'player' }: { portal?: PortalId }) {
   const { t } = useTranslation();
   const { loginWithSteam } = useAuth();
   const [providers, setProviders] = useState<
@@ -116,7 +119,7 @@ export default function Login() {
         background: 'transparent',
       }}
     >
-      <TopNavBar />
+      <PublicTopBar showLoginCta={false} />
       <Box
         sx={{
           flex: 1,
@@ -155,10 +158,10 @@ export default function Login() {
 
               <Stack spacing={0.5} alignItems="center" sx={{ textAlign: 'center', px: 2 }}>
                 <Typography variant="h5" fontWeight={600}>
-                  {t('login.welcome')}
+                  {t([`login.${portal}.welcome`, 'login.welcome'])}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" maxWidth={320}>
-                  {t('login.subtitle')}
+                  {t([`login.${portal}.subtitle`, 'login.subtitle'])}
                 </Typography>
               </Stack>
             </Stack>
@@ -288,6 +291,16 @@ export default function Login() {
             </Stack>
 
             <Stack spacing={1.5} alignItems="center" sx={{ width: '100%' }}>
+              <Button
+                component={RouterLink}
+                to="/"
+                size="small"
+                color="inherit"
+                startIcon={<ArrowBackIcon />}
+                sx={{ color: 'text.secondary' }}
+              >
+                {t('landing.back')}
+              </Button>
               <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
                 {t('login.version')} {appVersion || 'Unknown'}
               </Typography>

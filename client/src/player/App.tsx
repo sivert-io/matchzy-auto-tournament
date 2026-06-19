@@ -4,8 +4,10 @@ import { Routes, Route, Navigate, useLocation, useParams } from 'react-router-do
 import { RequireAccess } from '../components/auth/RequireAccess';
 import { legacyPlayerRedirects, portalPaths } from '../config/portals';
 import { AppProviders } from '../shared/AppProviders';
+import { useAuth } from '../contexts/AuthContext';
 
 const Login = lazy(() => import('../pages/Login'));
+const Landing = lazy(() => import('../pages/Landing'));
 const PlayerHome = lazy(() => import('../pages/PlayerHome'));
 const Lobbies = lazy(() => import('../pages/Lobbies'));
 const LobbyRoom = lazy(() => import('../pages/LobbyRoom'));
@@ -41,12 +43,21 @@ function LegacyLobbyRedirect() {
   return <Navigate to={`${destination}${location.search}${location.hash}`} replace />;
 }
 
+function PlayerRoot() {
+  const { isLoading, isAuthenticated, playerSteamId } = useAuth();
+  if (isLoading) return <RouteFallback />;
+  if (isAuthenticated || playerSteamId) {
+    return <Navigate to={portalPaths.player.home} replace />;
+  }
+  return <Landing portal="player" />;
+}
+
 function PlayerRoutes() {
   return (
     <Suspense fallback={<RouteFallback />}>
       <Routes>
-        <Route path="/" element={<Navigate to={portalPaths.player.home} replace />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<PlayerRoot />} />
+        <Route path="/login" element={<Login portal="player" />} />
 
         {/* Public viewing pages */}
         <Route path="/player" element={<FindPlayer />} />
