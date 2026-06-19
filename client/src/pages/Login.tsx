@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Card, Button, Alert, Container, Link, Stack, Typography } from '@mui/material';
+import { Box, Card, Button, Alert, Container, Stack, Typography } from '@mui/material';
 import { SiDiscord, SiGithub, SiKeycloak } from 'react-icons/si';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
@@ -170,17 +170,7 @@ export default function Login({ portal = 'player' }: { portal?: PortalId }) {
             <Stack spacing={2.5} sx={{ width: '100%' }}>
               {providersError && (
                 <Alert severity="error" sx={{ borderRadius: 2 }}>
-                  <Stack spacing={0.5}>
-                    <Typography variant="body2">{providersError}</Typography>
-                    <Link
-                      href="https://docs.sivert.io/docs/mat/developer/auth-providers"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      sx={{ fontSize: '0.8rem' }}
-                    >
-                      {t('login.documentation')}
-                    </Link>
-                  </Stack>
+                  <Typography variant="body2">{providersError}</Typography>
                 </Alert>
               )}
 

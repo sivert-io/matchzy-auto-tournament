@@ -12,17 +12,11 @@ import TuneIcon from '@mui/icons-material/Tune';
 import { PublicTopBar } from '../components/layout/PublicTopBar';
 import { PortalId, portalPaths } from '../config/portals';
 
-const DOCS_URL = 'https://docs.sivert.io/docs/mat';
-
-interface SecondaryCta {
-  to: string;
-  external?: boolean;
-}
-
 interface PortalContent {
   featureKeys: string[];
   featureIcons: SvgIconComponent[];
-  secondary: SecondaryCta;
+  // Optional secondary CTA, always an internal route (no external links).
+  secondary?: { to: string };
 }
 
 // Copy lives in i18n (auth.json → `landing`); this maps each portal to its
@@ -36,7 +30,6 @@ const PORTAL_CONTENT: Record<PortalId, PortalContent> = {
   organizer: {
     featureKeys: ['tournaments', 'automation', 'control'],
     featureIcons: [EmojiEventsIcon, BoltIcon, TuneIcon],
-    secondary: { to: DOCS_URL, external: true },
   },
 };
 
@@ -80,18 +73,7 @@ export default function Landing({ portal = 'player' }: { portal?: PortalId }) {
                 >
                   {t(`${base}.primaryCta`)}
                 </Button>
-                {content.secondary.external ? (
-                  <Button
-                    component="a"
-                    href={content.secondary.to}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    variant="outlined"
-                    size="large"
-                  >
-                    {t(`${base}.secondaryCta`)}
-                  </Button>
-                ) : (
+                {content.secondary && (
                   <Button
                     component={RouterLink}
                     to={content.secondary.to}

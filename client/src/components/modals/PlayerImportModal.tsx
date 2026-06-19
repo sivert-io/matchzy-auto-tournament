@@ -21,9 +21,7 @@ import {
   CheckCircle as CheckCircleIcon,
   ExpandMore as ExpandMoreIcon,
   ExpandLess as ExpandLessIcon,
-  OpenInNew as OpenInNewIcon,
 } from '@mui/icons-material';
-import Link from '@mui/material/Link';
 import { CircularProgress } from '@mui/material';
 import { useSnackbar } from '../../contexts/SnackbarContext';
 import { useTranslation } from 'react-i18next';
@@ -208,25 +206,8 @@ export const PlayerImportModal: React.FC<PlayerImportModalProps> = ({
       </DialogTitle>
       <DialogContent>
         <Alert severity="info" sx={{ mb: 2 }}>
-          <Typography variant="body2" gutterBottom>
+          <Typography variant="body2">
             {t('playerImportModal.info.description')}
-          </Typography>
-          <Typography variant="caption" component="div">
-            <Link
-              href="https://docs.sivert.io/docs/mat/user/shuffle-tournaments#importing-players"
-              target="_blank"
-              rel="noopener noreferrer"
-              sx={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 0.5,
-                textDecoration: 'none',
-                '&:hover': { textDecoration: 'underline' },
-              }}
-            >
-              {t('playerImportModal.info.link')}
-              <OpenInNewIcon sx={{ fontSize: '0.875rem' }} />
-            </Link>
           </Typography>
         </Alert>
 
