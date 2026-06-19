@@ -57,7 +57,8 @@
     "result": "Ergebnis",
     "baseline": "Basiswert",
     "matchHistory": "Matchverlauf",
-    "profileTitle": "Spielerprofil"
+    "profileTitle": "Spielerprofil",
+    "equippedSkins": "Equipped Skins"
   },
   "teamPage": {
     "wantYourStats": "Willst du deine eigenen Stats und Match-Historie sehen?",

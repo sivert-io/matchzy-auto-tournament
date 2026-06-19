@@ -57,7 +57,8 @@
     "rating": "Spillrating",
     "result": "Resultat",
     "baseline": "Basislinje",
-    "matchHistory": "Kamphistorikk"
+    "matchHistory": "Kamphistorikk",
+    "equippedSkins": "Equipped Skins"
   },
   "teamPage": {
     "wantYourStats": "Vil du se din egen statistikk og kamphistorikk?",

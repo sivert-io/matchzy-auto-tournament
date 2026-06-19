@@ -57,7 +57,8 @@
     "rating": "Rating",
     "result": "Result",
     "baseline": "Baseline",
-    "matchHistory": "Match History"
+    "matchHistory": "Match History",
+    "equippedSkins": "Equipped Skins"
   },
   "teamPage": {
     "wantYourStats": "Want to see your own stats and match history?",

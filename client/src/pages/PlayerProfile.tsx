@@ -39,6 +39,7 @@ import { TopNavBar } from '../components/layout/TopNavBar';
 import { TournamentRulesAccordion } from '../components/tournament/TournamentRulesAccordion';
 import { PlayerAvatar } from '../components/player/PlayerAvatar';
 import { PlayerName } from '../components/player/PlayerName';
+import { EquippedSkinsGallery } from '../components/player/EquippedSkinsGallery';
 import type { PlayerDetail } from '../types/api.types';
 import { useAuth } from '../contexts/AuthContext';
 import { useCurrentMatchStatus } from '../hooks/useCurrentMatchStatus';
@@ -1168,6 +1169,17 @@ export default function PlayerProfile() {
               </Card>
             </Grid>
           </Grid>
+
+          {/* Equipped skins showcase (read-only, synced from cstrike.app). Renders
+              nothing when the player has no equipped skins or cstrike.app is down. */}
+          {steamId && (
+            <EquippedSkinsGallery
+              variant="public"
+              steamId={steamId}
+              hideWhenEmpty
+              title={t('playerPage.equippedSkins')}
+            />
+          )}
 
           {/* Recent form and performance highlights */}
           {hasAnyMatches && (

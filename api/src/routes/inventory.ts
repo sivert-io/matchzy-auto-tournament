@@ -8,6 +8,7 @@ import { log } from '../utils/logger';
 const router = Router();
 const INVENTORY_BASE_URL = 'https://inventory.cstrike.app';
 const REQUEST_TIMEOUT_MS = 8_000;
+const STEAM_ID_RE = /^\d{17}$/;
 
 interface ExternalInventoryItem {
   equipped?: boolean;
@@ -25,17 +26,33 @@ interface ExternalInventoryResponse {
   version?: number;
 }
 
+export interface EquippedSkin {
+  uid: string;
+  id: number;
+  name: string;
+  imageUrl: string;
+  rarity?: string;
+  category?: string;
+  type: string;
+  nameTag?: string;
+  seed?: number;
+  statTrak?: number;
+  wear?: number;
+  teams: { ct: boolean; t: boolean };
+}
+
 if (CS2Economy.items.size === 0) {
   CS2Economy.use({ items: CS2_ITEMS, language: brazilian });
 }
 
-router.get('/equipped', async (req: Request, res: Response) => {
-  const steamId = getVerifiedPlayerSteamId(req.headers.cookie);
-
-  if (!steamId) {
-    return res.status(401).json({ error: 'Steam authentication required' });
-  }
-
+/**
+ * Fetch a player's public cstrike.app inventory and return only the equipped
+ * items, enriched with display metadata from cs2-lib. Throws on network/upstream
+ * failure so callers can decide how to surface it.
+ */
+async function loadEquippedSkins(
+  steamId: string
+): Promise<{ items: EquippedSkin[]; version: number | null }> {
   const controller = new globalThis.AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
@@ -51,7 +68,7 @@ router.get('/equipped', async (req: Request, res: Response) => {
     }
 
     const data = (await response.json()) as ExternalInventoryResponse;
-    const equippedItems = Object.entries(data.items ?? {}).flatMap(([uid, inventoryItem]) => {
+    const items = Object.entries(data.items ?? {}).flatMap(([uid, inventoryItem]) => {
       if (
         !inventoryItem.equipped &&
         !inventoryItem.equippedCT &&
@@ -91,19 +108,49 @@ router.get('/equipped', async (req: Request, res: Response) => {
       ];
     });
 
+    return { items, version: data.version ?? null };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+// Equipped skins for the signed-in player (resolved from the signed cookie).
+router.get('/equipped', async (req: Request, res: Response) => {
+  const steamId = getVerifiedPlayerSteamId(req.headers.cookie);
+
+  if (!steamId) {
+    return res.status(401).json({ error: 'Steam authentication required' });
+  }
+
+  try {
+    const { items, version } = await loadEquippedSkins(steamId);
     res.setHeader('Cache-Control', 'private, max-age=30');
-    return res.json({
-      steamId,
-      version: data.version ?? null,
-      items: equippedItems,
-      editorUrl: INVENTORY_BASE_URL,
-    });
+    return res.json({ steamId, version, items, editorUrl: INVENTORY_BASE_URL });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     log.warn('Failed to load equipped cstrike inventory', { steamId, error: message });
     return res.status(502).json({ error: 'Could not load skins from cstrike.app' });
-  } finally {
-    clearTimeout(timeout);
+  }
+});
+
+// Public equipped skins for any player by Steam ID (used on public profiles).
+// The cstrike.app inventory is already public; we validate the ID format to
+// avoid injecting arbitrary values into the upstream URL.
+router.get('/:steamId/equipped', async (req: Request, res: Response) => {
+  const steamId = req.params.steamId;
+
+  if (!STEAM_ID_RE.test(steamId)) {
+    return res.status(400).json({ error: 'Invalid Steam ID' });
+  }
+
+  try {
+    const { items, version } = await loadEquippedSkins(steamId);
+    res.setHeader('Cache-Control', 'public, max-age=60');
+    return res.json({ steamId, version, items, editorUrl: INVENTORY_BASE_URL });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    log.warn('Failed to load public cstrike inventory', { steamId, error: message });
+    return res.status(502).json({ error: 'Could not load skins from cstrike.app' });
   }
 });
 

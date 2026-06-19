@@ -57,7 +57,8 @@
     "rating": "评分",
     "result": "结果",
     "baseline": "基准",
-    "matchHistory": "比赛记录"
+    "matchHistory": "比赛记录",
+    "equippedSkins": "Equipped Skins"
   },
   "teamPage": {
     "wantYourStats": "想查看自己的数据和比赛记录？",
