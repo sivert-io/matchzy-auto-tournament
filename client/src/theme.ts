@@ -1,5 +1,17 @@
 import { createTheme } from '@mui/material/styles';
 
+// Shared frosted-glass surface. Applied to first-level surfaces (Paper, AppBar,
+// and everything Paper-based: Card, Menu, Popover, Dialog, Drawer). Kept as one
+// recipe so the whole app reads as a single material and we don't scatter
+// backdrop-filters (which are expensive) with inconsistent values.
+const glassSurface = {
+  backgroundColor: 'rgba(18, 18, 20, 0.55)',
+  backdropFilter: 'blur(18px) saturate(140%)',
+  WebkitBackdropFilter: 'blur(18px) saturate(140%)',
+  border: '1px solid rgba(255, 255, 255, 0.12)',
+  boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 8px 30px rgba(0, 0, 0, 0.35)',
+} as const;
+
 export const theme = createTheme({
  palette: {
     mode: 'dark',
@@ -40,8 +52,9 @@ export const theme = createTheme({
       contrastText: '#00261A',
     },
     background: {
-      default: '#000000',
-      paper: '#0B0B0C',
+      // Transparent base so the fixed map wallpaper (AppBackground) shows through.
+      default: 'transparent',
+      paper: 'rgba(18, 18, 20, 0.55)',
       surface0: '#0B0B0C',
       surface1: '#111113',
       surface2: '#171719',
@@ -86,29 +99,23 @@ typography: {
   components: {
     MuiCssBaseline: {
       styleOverrides: {
+        // Transparent body so the fixed wallpaper behind #root is visible; html
+        // keeps a black fallback (see index.css) to avoid any flash.
         body: {
-          backgroundColor: '#000000',
-          scrollbarColor: '#5F5F63 #0B0B0C',
+          backgroundColor: 'transparent',
+          scrollbarColor: '#5F5F63 transparent',
           '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
-            backgroundColor: '#0B0B0C',
+            backgroundColor: 'transparent',
           },
           '&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb': {
             borderRadius: 999,
-            backgroundColor: '#5F5F63',
+            backgroundColor: 'rgba(150, 150, 155, 0.55)',
             minHeight: 24,
-            border: '3px solid #0B0B0C',
-          },
-          '&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus': {
-            backgroundColor: '#959595',
-          },
-          '&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active': {
-            backgroundColor: '#959595',
+            border: '3px solid transparent',
+            backgroundClip: 'padding-box',
           },
           '&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover': {
-            backgroundColor: '#959595',
-          },
-          '&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner': {
-            backgroundColor: '#2b2b2b',
+            backgroundColor: 'rgba(180, 180, 185, 0.8)',
           },
         },
       },
@@ -171,7 +178,8 @@ typography: {
       styleOverrides: {
         root: {
           backgroundImage: 'none',
-          border: '1px solid rgba(255, 255, 255, 0.10)',
+          borderRadius: 18,
+          ...glassSurface,
         },
       },
     },
@@ -179,8 +187,16 @@ typography: {
       styleOverrides: {
         root: {
           '& .MuiOutlinedInput-root': {
-            borderRadius: 8,
+            borderRadius: 14,
           },
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          borderRadius: 14,
+          backgroundColor: 'rgba(255, 255, 255, 0.04)',
         },
       },
     },
@@ -188,6 +204,11 @@ typography: {
       styleOverrides: {
         root: {
           backgroundImage: 'none',
+          ...glassSurface,
+        },
+        // Keep flat/outlined Papers from doubling up borders+shadows.
+        outlined: {
+          boxShadow: 'none',
         },
       },
     },
@@ -216,6 +237,7 @@ typography: {
           fontWeight: 700,
           textTransform: 'uppercase',
           letterSpacing: 0,
+          backgroundColor: 'transparent',
         },
       },
     },
@@ -223,8 +245,12 @@ typography: {
       styleOverrides: {
         root: {
           backgroundImage: 'none',
-          backgroundColor: '#000000',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.10)',
+          ...glassSurface,
+          borderRadius: 0,
+          borderTop: 'none',
+          borderLeft: 'none',
+          borderRight: 'none',
+          boxShadow: '0 8px 30px rgba(0, 0, 0, 0.35)',
         },
       },
     },

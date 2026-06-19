@@ -5,9 +5,15 @@
   box-sizing: border-box;
 }
 
+html {
+  /* Black fallback behind the fixed map wallpaper (AppBackground) */
+  background-color: #000;
+}
+
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: transparent;
 }
 
 #root {

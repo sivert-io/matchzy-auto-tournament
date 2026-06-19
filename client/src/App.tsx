@@ -8,6 +8,9 @@ import { RequireAccess } from './components/auth/RequireAccess';
 import { legacyOrganizerRedirects, legacyPlayerRedirects, portalPaths } from './config/portals';
 import { useIsDevelopment } from './hooks/useIsDevelopment';
 import { theme } from './theme';
+import { BackgroundProvider } from './contexts/BackgroundContext';
+import { AppBackground } from './components/layout/AppBackground';
+import { BackgroundSwitcherFab } from './components/layout/BackgroundSwitcherFab';
 
 const Login = lazy(() => import('./pages/Login'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
@@ -151,7 +154,11 @@ export default function App() {
         <AuthProvider>
           <SnackbarProvider>
             <PageHeaderProvider>
-              <AppRoutes />
+              <BackgroundProvider>
+                <AppBackground />
+                <AppRoutes />
+                <BackgroundSwitcherFab />
+              </BackgroundProvider>
             </PageHeaderProvider>
           </SnackbarProvider>
         </AuthProvider>

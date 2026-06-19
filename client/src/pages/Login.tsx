@@ -113,7 +113,7 @@ export default function Login() {
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        background: '#000',
+        background: 'transparent',
       }}
     >
       <TopNavBar />
