@@ -3,8 +3,6 @@ import { usePageHeader } from '../contexts/PageHeaderContext';
 import {
   Typography,
   Box,
-  Card,
-  CardContent,
   Button,
   FormControl,
   InputLabel,
@@ -30,6 +28,7 @@ import { ServerEventsMonitor } from '../components/admin/ServerEventsMonitor';
 import { LogViewer } from '../components/admin/LogViewer';
 import { useSnackbar } from '../contexts/SnackbarContext';
 import { useTranslation } from 'react-i18next';
+import { GlassCard, SectionHeader } from '../shared/ui';
 
 interface Server {
   id: string;
@@ -194,8 +193,7 @@ const AdminTools: React.FC = () => {
     .filter((category) => category.commands.length > 0);
 
   const renderCommandCard = (command: AdminCommand) => (
-    <Card variant="outlined">
-      <CardContent>
+    <GlassCard sx={{ height: '100%' }}>
         <Typography variant="subtitle2" fontWeight={600} gutterBottom>
           {command.label}
         </Typography>
@@ -240,8 +238,7 @@ const AdminTools: React.FC = () => {
             </Typography>
           </Alert>
         )}
-      </CardContent>
-    </Card>
+    </GlassCard>
   );
 
   if (loadingServers) {
@@ -256,16 +253,14 @@ const AdminTools: React.FC = () => {
 
   return (
     <Box sx={{ width: '100%', height: '100%' }}>
-      <Typography variant="h5" fontWeight={600} mb={1.5}>
-        {t('adminToolsPage.title')}
-      </Typography>
-      <Typography variant="body2" color="text.secondary" mb={3}>
-        {t('adminToolsPage.description')}
-      </Typography>
+      <SectionHeader
+        title={t('adminToolsPage.title')}
+        subtitle={t('adminToolsPage.description')}
+        sx={{ mb: 3 }}
+      />
 
       {/* Server Selection */}
-      <Card sx={{ mb: 3 }}>
-        <CardContent>
+      <GlassCard sx={{ mb: 3 }}>
           <Grid container spacing={2} alignItems="center">
             <Grid size={{ xs: 12, md: 8 }}>
               <FormControl fullWidth>
@@ -316,13 +311,11 @@ const AdminTools: React.FC = () => {
               </Button>
             </Grid>
           </Grid>
-        </CardContent>
-      </Card>
+      </GlassCard>
 
       {/* Execution Results */}
       {results.length > 0 && (
-        <Card sx={{ mb: 3 }}>
-          <CardContent>
+        <GlassCard sx={{ mb: 3 }}>
             <Typography variant="h6" gutterBottom>
               {t('adminToolsPage.results.title')}
             </Typography>
@@ -382,8 +375,7 @@ const AdminTools: React.FC = () => {
                 </Grid>
               ))}
             </Grid>
-          </CardContent>
-        </Card>
+        </GlassCard>
       )}
 
       {/* Quick Actions */}
@@ -481,8 +473,7 @@ const AdminTools: React.FC = () => {
       <Typography variant="h5" fontWeight={600} mb={3}>
         Server Admin Management
       </Typography>
-      <Card sx={{ mb: 4 }}>
-        <CardContent>
+      <GlassCard sx={{ mb: 4 }}>
           <Typography variant="body2" color="text.secondary" mb={2}>
             Manage CounterStrikeSharp admins by editing admins.json directly. Changes are applied by running css_reloadadmins on all servers.
           </Typography>
@@ -552,8 +543,7 @@ const AdminTools: React.FC = () => {
               Remove Admin
             </Button>
           </Box>
-        </CardContent>
-      </Card>
+      </GlassCard>
 
       <Divider sx={{ my: 4 }} />
 
