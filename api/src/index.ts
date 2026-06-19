@@ -392,14 +392,22 @@ app.use('/api/payments', paymentRoutes); // Payment provider connections
 app.use('/api/lobbies', lobbyRoutes); // FaceIT-style match lobbies
 app.use('/api/inventory', inventoryRoutes); // Read-only cstrike.app equipped skins
 
-// Serve frontend at /app (built client lives under api/public)
+// Serve the built front-end apps (built client lives under api/public/{play,org}).
+// Primary production serving is Caddy by Host header; these routes are a
+// secondary, direct-access path to each app.
 const publicPath = path.join(__dirname, '..', 'public');
-app.use('/app', express.static(publicPath));
 
 // Serve map images statically
 app.use('/map-images', express.static(path.join(publicPath, 'map-images')));
+
+// Player app at /app, organizer app at /app-org
+app.use('/app', express.static(path.join(publicPath, 'play')));
+app.use('/app-org', express.static(path.join(publicPath, 'org')));
+app.get('/app-org/*', (_req: Request, res: Response) => {
+  res.sendFile(path.join(publicPath, 'org', 'index.html'));
+});
 app.get('/app/*', (_req: Request, res: Response) => {
-  res.sendFile(path.join(publicPath, 'index.html'));
+  res.sendFile(path.join(publicPath, 'play', 'index.html'));
 });
 
 // 404 handler
