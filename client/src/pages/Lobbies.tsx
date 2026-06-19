@@ -2,8 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Button,
-  Card,
-  CardContent,
   Chip,
   IconButton,
   Menu,
@@ -25,6 +23,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useSnackbar } from '../contexts/SnackbarContext';
 import type { Lobby } from '../types/lobby.types';
 import io from 'socket.io-client';
+import { SectionHeader, GlassCard, EmptyState } from '../shared/ui';
 
 const CHIP_SX = { height: 24, fontSize: '0.75rem', fontWeight: 600 };
 
@@ -126,34 +125,27 @@ export default function Lobbies() {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Box display="flex" alignItems="center" gap={1.5}>
-          <SportsEsportsIcon sx={{ fontSize: 28, color: 'primary.main', flexShrink: 0 }} />
-          <Typography variant="h5" fontWeight={700}>
-            Lobby
-          </Typography>
-        </Box>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={handleCreate} disabled={creating}>
-          {creating ? 'Creating...' : 'Create Match'}
-        </Button>
-      </Box>
-
+      <SectionHeader
+        title="Lobby"
+        sx={{ mb: 3 }}
+        actions={
+          <Button variant="contained" startIcon={<AddIcon />} onClick={handleCreate} disabled={creating}>
+            {creating ? 'Creating...' : 'Create Match'}
+          </Button>
+        }
+      />
 
       {lobbies.length === 0 ? (
-        <Card sx={{ textAlign: 'center', py: 8 }}>
-          <CardContent>
-            <SportsEsportsIcon sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
-            <Typography variant="h6" color="text.secondary" gutterBottom>
-              No active lobbies
-            </Typography>
-            <Typography color="text.secondary" sx={{ mb: 3 }}>
-              Create a match to get started. Friends can join from this page.
-            </Typography>
+        <EmptyState
+          icon={SportsEsportsIcon}
+          title="No active lobbies"
+          description="Create a match to get started. Friends can join from this page."
+          action={
             <Button variant="contained" startIcon={<AddIcon />} onClick={handleCreate} disabled={creating}>
               Create Match
             </Button>
-          </CardContent>
-        </Card>
+          }
+        />
       ) : (
         <Stack spacing={2}>
           {lobbies.map((lobby) => {
@@ -172,25 +164,18 @@ export default function Lobbies() {
               : '#8C95A3';
 
             return (
-              <Card
+              <GlassCard
                 key={lobby.id}
+                interactive
+                onClick={() => handleJoin(lobby.id)}
                 sx={{
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
+                  p: 2,
                   border: '2px solid',
                   borderColor: isInLobby ? 'primary.main' : 'transparent',
                   opacity: isFinished ? 0.45 : 1,
-                  bgcolor: isFinished ? 'action.disabledBackground' : 'background.paper',
-                  '&:hover': {
-                    borderColor: 'primary.main',
-                    transform: 'translateY(-2px)',
-                    boxShadow: 6,
-                    bgcolor: 'action.hover',
-                  },
+                  '&:hover': { borderColor: 'primary.main', transform: 'translateY(-2px)' },
                 }}
-                onClick={() => handleJoin(lobby.id)}
               >
-                <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
                   <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Box display="flex" alignItems="center" gap={2}>
                       <GroupsIcon sx={{ color: isFinished ? 'text.disabled' : 'primary.main', fontSize: 28 }} />
@@ -246,8 +231,7 @@ export default function Lobbies() {
                       )}
                     </Box>
                   </Box>
-                </CardContent>
-              </Card>
+              </GlassCard>
             );
           })}
         </Stack>

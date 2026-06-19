@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
-  Card,
-  CardContent,
   Typography,
   TextField,
   Button,
@@ -22,6 +20,7 @@ import { useSnackbar } from '../contexts/SnackbarContext';
 import { PlayerAvatar } from '../components/player/PlayerAvatar';
 import { PlayerName } from '../components/player/PlayerName';
 import { TopNavBar } from '../components/layout/TopNavBar';
+import { GlassCard } from '../shared/ui';
 
 interface PlayerOption {
   id: string;
@@ -138,8 +137,7 @@ export default function FindPlayer() {
     <Box minHeight="100vh" bgcolor="background.default" data-testid="find-player-page">
       <TopNavBar />
       <Container maxWidth="sm" sx={{ py: 6 }}>
-        <Card data-testid="find-player-form">
-          <CardContent>
+        <GlassCard data-testid="find-player-form" sx={{ p: { xs: 3, sm: 4 } }}>
             <Box textAlign="center" mb={4}>
               <PersonIcon sx={{ fontSize: 64, color: 'primary.main', mb: 2 }} />
               <Typography variant="h4" fontWeight={700} gutterBottom>
@@ -259,8 +257,7 @@ export default function FindPlayer() {
                 {loading ? t('findPlayer.searching') : t('findPlayer.searchButton')}
               </Button>
             </Stack>
-          </CardContent>
-        </Card>
+        </GlassCard>
       </Container>
 
       <PlayerSearchResultsModal
