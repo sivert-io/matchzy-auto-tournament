@@ -12,7 +12,7 @@ import { useState } from 'react';
 import { portalPaths } from '../config/portals';
 import { useAuth } from '../contexts/AuthContext';
 import { EquippedSkinsGallery } from '../components/player/EquippedSkinsGallery';
-import { PageShell, SectionHeader, GlassCard } from '../shared/ui';
+import { PageShell, SectionHeader, GlassCard, pageWidth } from '../shared/ui';
 
 const modules = [
   {
@@ -54,7 +54,7 @@ export default function PlayerHome() {
   const [skinCount, setSkinCount] = useState(0);
 
   return (
-    <PageShell>
+    <PageShell maxWidth={pageWidth.default}>
       <Stack spacing={4}>
         <SectionHeader
           eyebrow="Player hub"

@@ -31,12 +31,14 @@ Build de produção: `yarn build` (server + os dois apps) ou `yarn client:build:
 - [x] **Fase 0 — Split** (commit `5c2fe63`): dois entries/configs/builds, scripts, Caddy por Host, Express ajustado. Builds e lint OK. Sem mudança visual.
 - [x] **Limpeza de legado**: removidos `client/index.html`, `client/src/main.tsx`, `client/src/App.tsx`, `client/vite.config.ts`; scripts repontados; eslint ignora os novos vite configs.
 - [x] **Fase 1 — Entrada + shells**: landings, login por portal, `PublicTopBar`, gate na raiz, i18n `auth.json`.
-- [x] **Fase 2 — Design system em todo o client** (jun/2026):
+- [x] **Fase 2 — Design system em todo o client** (jun/2026, commit `9ef0137`):
   - **41 componentes** convertidos `Card` → `GlassCard` via `scripts/convert-cards-to-glass.mjs`
-  - **Todas as pages** com `GlassCard` e/ou `PageShell`
+  - **Todas as pages** com `GlassCard` e/ou `PageShell` (exceto **Bracket** — ver exceções)
   - **Zero** `<Card>` no JSX fora de `GlassCard.tsx` (único wrapper interno)
   - `EmptyState` usa `GlassCard`; import circular com barrel corrigido
-  - Build player + org: **EXIT 0**
+  - **`layoutTokens.ts`**: tiers `pageWidth.*` + `publicPageShellSx`; cap do `Layout` em `pageWidth.full`
+  - **Zero** `Container maxWidth` nas pages — largura só via `PageShell`
+  - Build player + org: **EXIT 0** (`yarn client:build:apps`)
 - [ ] **Fase 3 — Polish/perf/a11y/i18n** e QA visual com backend.
 
 ## Cobertura Fase 2
@@ -53,9 +55,34 @@ Dashboard (`DashboardStats`, charts, onboarding), Tournament (form, stepper, liv
 
 ### Exceções intencionais
 
-- **Bracket**: mantém `Box` com `ref` para fullscreen API (não dá pra substituir por `PageShell` no root).
+- **Bracket**: mantém `Box` com `ref` para fullscreen API — **sem `PageShell` no root**; usa `GlassCard` nos blocos internos.
+- **Login / Landing / ConnectSteam**: `PageShell` estreito/default, layout **centrado na viewport** — **não** usam `publicPageShellSx` (só páginas com `TopNavBar`).
 - **Settings / Tournament sub-forms**: usam `Paper`/`Accordion` — estrutura de formulário, não cards de superfície.
 - **GlassCard.tsx**: único lugar que importa MUI `Card` diretamente.
+
+### Mapa `pageWidth` por tela
+
+| Tier | Pages |
+|------|-------|
+| `narrow` (640) | Login, ConnectSteam, NotFound, FindPlayer |
+| `content` (960) | PlayerProfile, TeamMatch |
+| `default` (1200) | PlayerHome¹, Lobbies, Inventory, Landing, TournamentLeaderboard, Teams, Players, Maps, Settings, Templates, ELOTemplates, AdminTools, Development |
+| `wide` (1440) | Matches, Tournament, LobbyRoom |
+| `full` (1680) | Dashboard, Servers |
+| *(sem PageShell)* | Bracket |
+
+¹ `PlayerHome` usa `pageWidth.default` explicitamente.
+
+### Scripts de manutenção
+
+- `scripts/convert-cards-to-glass.mjs` — migração mecânica `Card` → `GlassCard`
+- `scripts/standardize-page-widths.mjs` — números mágicos → `pageWidth.*`
+
+### Opcional (Fase 3, não bloqueia merge)
+
+- Remount fino do **DashboardStats** com `StatTile` (hoje glass via tema; funcional)
+- i18n restante (ex.: copy hardcoded em **PlayerHome**)
+- QA visual Fase 1 + Fase 2 com backend (`yarn db` + `dev:player` / `dev:org`)
 
 ## Design system (Fase 2, base)
 
@@ -67,13 +94,13 @@ Primitivas em `client/src/shared/ui/`: `PageShell`, `SectionHeader`, `GlassCard`
 |-------|-----|-----|
 | `pageWidth.narrow` | 640 | Login, ConnectSteam, NotFound, FindPlayer |
 | `pageWidth.content` | 960 | PlayerProfile, TeamMatch |
-| `pageWidth.default` | 1200 | Hub org/player, leaderboard, landing |
+| `pageWidth.default` | 1200 | Hub org/player, leaderboard, landing, PlayerHome |
 | `pageWidth.wide` | 1440 | Matches, Tournament, LobbyRoom |
-| `pageWidth.full` | 1680 | Dashboard, Servers, bracket (conteúdo interno) |
+| `pageWidth.full` | 1680 | Dashboard, Servers |
 
 - **`Layout.tsx`**: cap externo em `pageWidth.full` (1680) — pages escolhem tier interno via `PageShell`.
-- **Páginas públicas** (TopNavBar / PublicTopBar): `PageShell` + `publicPageShellSx` (ritmo vertical abaixo da barra).
-- **Script**: `scripts/standardize-page-widths.mjs` — troca números mágicos por tokens.
+- **Páginas públicas com `TopNavBar`**: `PageShell` + `publicPageShellSx` (FindPlayer, PlayerProfile, TeamMatch, TournamentLeaderboard, NotFound).
+- **Login / Landing / ConnectSteam**: `PageShell` sem `publicPageShellSx` (centrado na viewport).
 
 ## Decisões/pendências (precisam do dono)
 
@@ -83,11 +110,10 @@ Primitivas em `client/src/shared/ui/`: `PageShell`, `SectionHeader`, `GlassCard`
 
 ## Known issues (pré-existentes)
 
-- `yarn lint` — 1 erro em `client/src/vite-env.d.ts` (Fase 3).
 - `tsc -p api` — erros pré-existentes; build usa esbuild.
 
-## Próximos passos (pós-merge Fase 2)
+## Próximos passos
 
-1. Merge `feat/split-player-org-apps` → `main`
-2. QA visual com `yarn db` + `dev:player` / `dev:org`
-3. Fase 3: pt-BR i18n, strings hardcoded, a11y, produto (inscrições, pagamentos, multi-org)
+1. **QA visual** (Fase 1 + Fase 2): `yarn db` + `yarn dev:player` / `yarn dev:org` — landing, login, gate `/`, larguras, glass
+2. Merge `feat/split-player-org-apps` → `main`
+3. **Fase 3**: locale pt-BR, i18n restante (PlayerHome), a11y, produto (inscrições, pagamentos, multi-org)

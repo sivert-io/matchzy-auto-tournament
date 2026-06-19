@@ -5,9 +5,26 @@
 Fragbase exposes two product portals over one API and one source of truth:
 
 - **Player Hub** (`/play`): player identity, team participation, lobbies, matches, rankings and skins.
-- **Organizer Console** (`/organizer`): tournament operations, teams, players, servers, maps, templates, settings and administration.
+- **Organizer Console** (`/org`): tournament operations, teams, players, servers, maps, templates, settings and administration.
 
 The portals are separate security and navigation boundaries. They are not separate backends. This avoids duplicating tournament state, authentication, integrations and business rules.
+
+## Frontend split (current)
+
+One Yarn workspace (`client`), **two Vite apps**:
+
+| App | Entry | Dev port | Production output |
+| --- | --- | --- | --- |
+| Player | `client/apps/player/index.html` → `client/src/player/` | 5173 (`yarn dev:player`) | `api/public/play` |
+| Org | `client/apps/org/index.html` → `client/src/org/` | 5174 (`yarn dev:org`) | `api/public/org` |
+
+Shared code lives under `client/src/shared/` (providers, theme, design system, API utils). Each app mounts only its portal routes.
+
+Build: `yarn client:build:apps` (both apps) or `yarn build` (API + both apps).
+
+Serving: Caddy routes by `Host` (`PLAYER_HOST` / `ORG_HOST`, defaults `play.localhost` / `admin.localhost`). Express also serves fallbacks at `/app` (player) and `/app-org` (org).
+
+Design-system layout: `client/src/shared/ui/layoutTokens.ts` (`pageWidth.*`, `PageShell`, `GlassCard`). See `docs/redesign-split.md` for the screen map.
 
 ## Route and access model
 
@@ -71,9 +88,9 @@ Prefer capabilities over scattered role comparisons:
 
 Roles grant capability sets. API handlers authorize the capability against the target organization or competition.
 
-## Extraction path
+## Future extraction (optional)
 
-Keep the current single Vite build while features are being separated. Extract physical workspaces only when independent deployment is useful:
+The physical split is already done at build/deploy level. Further monorepo extraction into separate packages is optional and mechanical when needed:
 
 ```text
 apps/player-web
@@ -84,7 +101,7 @@ packages/api-client
 packages/contracts
 ```
 
-Because canonical routes, access rules and portal shells are already isolated, this later extraction is mechanical rather than another product rewrite.
+Because canonical routes, access rules, portal shells and shared UI already exist, this is packaging work—not another product rewrite.
 
 ## Operational requirements
 

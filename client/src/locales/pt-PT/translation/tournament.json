@@ -81,6 +81,43 @@
     "empty": {
       "noBracketTitle": "Sem bracket para mostrar",
       "noBracketDescription": "Crie um torneio e gere a bracket para começar"
+    },
+    "shuffleEmpty": {
+      "title": "Sem bracket para torneios shuffle",
+      "description": "Torneios shuffle não usam uma bracket fixa. As equipas são remisturadas a cada ronda com base no ELO dos jogadores.",
+      "hintBeforeMatches": "Use a página",
+      "matchesLink": "Jogos",
+      "hintBetween": "para acompanhar jogos ao vivo e futuros, e a",
+      "leaderboardLink": "Classificação",
+      "hintAfter": "para acompanhar o ranking dos jogadores.",
+      "goToMatches": "Ir para Jogos",
+      "viewLeaderboard": "Ver classificação"
+    },
+    "notGenerated": {
+      "title": "Bracket ainda não gerada",
+      "description": "Gere a bracket para criar jogos para {{name}}",
+      "cta": "Ir para definições do torneio"
+    },
+    "viewMode": {
+      "visual": "Visual",
+      "list": "Lista",
+      "shuffleVisualDisabled": "Torneios shuffle não têm bracket visual; use a vista de lista."
+    },
+    "refresh": "Atualizar",
+    "fullscreenEnter": "Entrar em ecrã inteiro",
+    "fullscreenExit": "Sair de ecrã inteiro",
+    "roundN": "Ronda {{round}}",
+    "shuffleVisual": {
+      "title": "Sem bracket visual para torneios shuffle",
+      "description": "Os jogos são gerados dinamicamente a cada ronda com base no ELO dos jogadores e no balanceamento das equipas.",
+      "hintPrefix": "Use a",
+      "hintList": "vista de lista",
+      "hintMid1": ", a página",
+      "hintMatches": "Jogos",
+      "hintMid2": " e a",
+      "hintStandings": "Classificação",
+      "hintSuffix": "para acompanhar o progresso do torneio shuffle.",
+      "docsHint": "Para um guia completo sobre shuffle, consulte o guia Shuffle Tournaments na documentação."
     }
   }
 }

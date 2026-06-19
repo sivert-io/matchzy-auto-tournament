@@ -143,7 +143,9 @@
     "noPlayersRegistered": "No players registered yet",
     "searchNoMatch": "No players found matching \"{{query}}\"",
     "team": "Team",
-    "matches": "Matches"
+    "matches": "Matches",
+    "view": "View",
+    "profileHint": "Click on any player's name or the \"View\" link to see their detailed profile, match history, and Skill Rating progression."
   },
   "teamsPage": {
     "headerSelect": {

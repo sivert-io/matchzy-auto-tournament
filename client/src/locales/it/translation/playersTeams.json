@@ -143,7 +143,9 @@
     "noPlayersRegistered": "Nessun giocatore registrato ancora",
     "searchNoMatch": "Nessun giocatore trovato per \"{{query}}\"",
     "team": "Squadra",
-    "matches": "Match"
+    "matches": "Match",
+    "view": "View",
+    "profileHint": "Click on any player's name or the \"View\" link to see their detailed profile, match history, and Skill Rating progression."
   },
   "teamsPage": {
     "headerSelect": {

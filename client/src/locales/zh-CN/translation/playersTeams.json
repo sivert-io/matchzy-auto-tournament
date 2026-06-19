@@ -143,7 +143,9 @@
     "noPlayersRegistered": "尚无选手注册",
     "searchNoMatch": "未找到匹配 \"{{query}}\" 的选手",
     "team": "战队",
-    "matches": "场次"
+    "matches": "场次",
+    "view": "View",
+    "profileHint": "Click on any player's name or the \"View\" link to see their detailed profile, match history, and Skill Rating progression."
   },
   "teamsPage": {
     "headerSelect": {

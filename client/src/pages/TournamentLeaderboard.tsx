@@ -929,7 +929,7 @@ export default function TournamentLeaderboard() {
                                   cursor: 'pointer',
                                 }}
                               >
-                                View
+                                {t('leaderboardPage.view')}
                                 <OpenInNewIcon fontSize="small" />
                               </Link>
                             </TableCell>
@@ -955,8 +955,7 @@ export default function TournamentLeaderboard() {
                 </Typography>
               )}
               <Typography variant="body2" color="text.secondary">
-                Click on any player&apos;s name or the &quot;View&quot; link to see their detailed
-                profile, match history, and Skill Rating progression.
+                {t('leaderboardPage.profileHint')}
               </Typography>
             </CardContent>
           </GlassCard>

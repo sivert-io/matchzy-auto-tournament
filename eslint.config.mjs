@@ -114,6 +114,22 @@ export default [
     },
   },
 
+  // Root maintenance scripts (scripts/**/*.mjs)
+  {
+    files: ['scripts/**/*.mjs'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+      },
+    },
+    rules: {
+      'no-console': 'off',
+    },
+  },
+
   // Frontend tooling scripts (client/scripts/**/*.mjs)
   // These run in Node, but may use modern Web APIs available in Node (fetch, AbortController, etc).
   {

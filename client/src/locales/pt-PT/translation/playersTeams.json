@@ -143,7 +143,9 @@
     "noPlayersRegistered": "Ainda não há jogadores registados",
     "searchNoMatch": "Nenhum jogador encontrado para \"{{query}}\"",
     "team": "Equipa",
-    "matches": "Jogos"
+    "matches": "Jogos",
+    "view": "Ver",
+    "profileHint": "Clique no nome de um jogador ou na ligação \"Ver\" para ver o perfil detalhado, histórico de jogos e evolução da classificação."
   },
   "teamsPage": {
     "headerSelect": {

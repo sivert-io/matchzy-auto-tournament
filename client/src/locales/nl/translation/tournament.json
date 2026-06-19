@@ -81,6 +81,43 @@
     "empty": {
       "noBracketTitle": "Geen schema om te tonen",
       "noBracketDescription": "Maak een toernooi en genereer het schema om te beginnen"
+    },
+    "shuffleEmpty": {
+      "title": "No bracket for shuffle tournaments",
+      "description": "Shuffle tournaments don't use a fixed bracket view. Teams are reshuffled each round based on player ELO.",
+      "hintBeforeMatches": "Use the",
+      "matchesLink": "Matches",
+      "hintBetween": "page to monitor live and upcoming matches, and the",
+      "leaderboardLink": "Leaderboard",
+      "hintAfter": "page to track player rankings.",
+      "goToMatches": "Go to Matches",
+      "viewLeaderboard": "View Leaderboard"
+    },
+    "notGenerated": {
+      "title": "Bracket not generated yet",
+      "description": "Generate the bracket to create matches for {{name}}",
+      "cta": "Go to Tournament Settings"
+    },
+    "viewMode": {
+      "visual": "Visual",
+      "list": "List",
+      "shuffleVisualDisabled": "Shuffle tournaments do not have a visual bracket; use the list view instead."
+    },
+    "refresh": "Refresh",
+    "fullscreenEnter": "Enter Fullscreen",
+    "fullscreenExit": "Exit Fullscreen",
+    "roundN": "Round {{round}}",
+    "shuffleVisual": {
+      "title": "No visual bracket for shuffle tournaments",
+      "description": "Matches are generated dynamically each round based on player ELO and team balancing.",
+      "hintPrefix": "Use the",
+      "hintList": "List view",
+      "hintMid1": ", the",
+      "hintMatches": "Matches",
+      "hintMid2": " page, and",
+      "hintStandings": "Standings",
+      "hintSuffix": "to track shuffle tournament progress.",
+      "docsHint": "For a full walkthrough of how shuffle works, see the Shuffle Tournaments guide in the documentation."
     }
   }
 }

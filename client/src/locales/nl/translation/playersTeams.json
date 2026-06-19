@@ -143,7 +143,9 @@
     "noPlayersRegistered": "Nog geen spelers geregistreerd",
     "searchNoMatch": "Geen spelers gevonden voor \"{{query}}\"",
     "team": "Ploeg",
-    "matches": "Wedstrijden"
+    "matches": "Wedstrijden",
+    "view": "View",
+    "profileHint": "Click on any player's name or the \"View\" link to see their detailed profile, match history, and Skill Rating progression."
   },
   "teamsPage": {
     "headerSelect": {
