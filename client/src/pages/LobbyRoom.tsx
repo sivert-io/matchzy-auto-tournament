@@ -47,6 +47,7 @@ import BlockIcon from '@mui/icons-material/Block';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 // Accordion removed — match controls inline in sidebar
 import { useParams, useNavigate } from 'react-router-dom';
+import { portalPaths } from '../config/portals';
 import { api } from '../utils/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useSnackbar } from '../contexts/SnackbarContext';
@@ -108,7 +109,7 @@ export default function LobbyRoom() {
     } catch {
       showError('Failed to load lobby');
     }
-  }, [id]);
+  }, [id, showError]);
 
   useEffect(() => {
     loadLobby();
@@ -117,11 +118,11 @@ export default function LobbyRoom() {
     socket.on('lobby:deleted', (data: { id: string }) => {
       if (data.id === id) {
         showError('Lobby was cancelled');
-        setTimeout(() => navigate('/lobby'), 2000);
+        setTimeout(() => navigate(portalPaths.player.lobbies), 2000);
       }
     });
     return () => { socket.disconnect(); };
-  }, [id, navigate, loadLobby]);
+  }, [id, navigate, loadLobby, showError]);
 
   useEffect(() => {
     const load = async () => {
@@ -229,7 +230,7 @@ export default function LobbyRoom() {
     if (!confirmAction) return;
     if (confirmAction.type === 'leave') {
       await act('leave');
-      navigate('/lobby');
+      navigate(portalPaths.player.lobbies);
     } else if (confirmAction.type === 'end-match') {
       await rconCmd('css_restart', 'Match ended');
       if (lobby?.matchSlug) {
@@ -246,7 +247,7 @@ export default function LobbyRoom() {
         } catch { /* best effort */ }
       }
       await api.fetch(`/api/lobbies/${id}`, { method: 'DELETE' });
-      navigate('/lobby');
+      navigate(portalPaths.player.lobbies);
     }
     setConfirmAction(null);
   };
@@ -520,7 +521,7 @@ export default function LobbyRoom() {
 
   return (
     <Box>
-      <Button startIcon={<ArrowBackIcon />} onClick={() => navigate('/lobby')} sx={{ mb: 2 }}>
+      <Button startIcon={<ArrowBackIcon />} onClick={() => navigate(portalPaths.player.lobbies)} sx={{ mb: 2 }}>
         Back to Lobbies
       </Button>
 

@@ -37,11 +37,11 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import BuildIcon from '@mui/icons-material/Build';
 import MapIcon from '@mui/icons-material/Map';
 import DescriptionIcon from '@mui/icons-material/Description';
-import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import { usePageHeader } from '../../contexts/PageHeaderContext';
 import { useSnackbar } from '../../contexts/SnackbarContext';
 import { api } from '../../utils/api';
+import { PortalId, portalPaths } from '../../config/portals';
 import type { SettingsResponse } from '../../types/api.types';
 import { useIsDevelopment } from '../../hooks/useIsDevelopment';
 import { useTranslation } from 'react-i18next';
@@ -130,7 +130,11 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   ],
 }));
 
-export default function Layout() {
+interface LayoutProps {
+  portal: PortalId;
+}
+
+export default function Layout({ portal }: LayoutProps) {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -158,24 +162,30 @@ export default function Layout() {
   });
 
   const isDevelopment = useIsDevelopment();
-  const { isAuthenticated: isAdmin } = useAuth();
+  const { playerSteamId } = useAuth();
+  const isOrganizerPortal = portal === 'organizer';
+  const homePath = isOrganizerPortal ? portalPaths.organizer.home : portalPaths.player.home;
+  const homeLabel = isOrganizerPortal ? t('nav.dashboard') : 'Início';
 
   // Page header configuration - maps routes to their titles and icons
   const pageHeaders: Record<string, { title: string; icon: React.ComponentType; color?: string }> =
     {
-      '/': { title: t('layout.pageTitle.dashboard'), icon: DashboardIcon },
-      '/tournament': { title: t('layout.pageTitle.tournament'), icon: EmojiEventsIcon },
-      '/bracket': { title: t('layout.pageTitle.bracket'), icon: AccountTreeIcon },
-      '/matches': { title: t('layout.pageTitle.matches'), icon: SportsEsportsIcon },
-      '/teams': { title: t('layout.pageTitle.teams'), icon: GroupsIcon },
-      '/players': { title: t('layout.pageTitle.players'), icon: PersonIcon },
-      '/servers': { title: t('layout.pageTitle.servers'), icon: StorageIcon },
-      '/maps': { title: t('layout.pageTitle.maps'), icon: MapIcon },
-      '/templates': { title: t('layout.pageTitle.templates'), icon: DescriptionIcon },
-      '/elo-templates': { title: t('layout.pageTitle.eloTemplates'), icon: TrendingUpIcon },
-      '/admin': { title: t('layout.pageTitle.adminTools'), icon: CampaignIcon },
-      '/settings': { title: t('layout.pageTitle.settings'), icon: SettingsIcon },
-      '/dev': {
+      [portalPaths.player.home]: { title: 'Player Hub', icon: HomeIcon },
+      [portalPaths.player.lobbies]: { title: 'Lobbies', icon: SportsEsportsIcon },
+      [portalPaths.player.inventory]: { title: 'Skins', icon: SportsEsportsIcon },
+      [portalPaths.organizer.home]: { title: t('layout.pageTitle.dashboard'), icon: DashboardIcon },
+      [portalPaths.organizer.tournament]: { title: t('layout.pageTitle.tournament'), icon: EmojiEventsIcon },
+      [portalPaths.organizer.bracket]: { title: t('layout.pageTitle.bracket'), icon: AccountTreeIcon },
+      [portalPaths.organizer.matches]: { title: t('layout.pageTitle.matches'), icon: SportsEsportsIcon },
+      [portalPaths.organizer.teams]: { title: t('layout.pageTitle.teams'), icon: GroupsIcon },
+      [portalPaths.organizer.players]: { title: t('layout.pageTitle.players'), icon: PersonIcon },
+      [portalPaths.organizer.servers]: { title: t('layout.pageTitle.servers'), icon: StorageIcon },
+      [portalPaths.organizer.maps]: { title: t('layout.pageTitle.maps'), icon: MapIcon },
+      [portalPaths.organizer.templates]: { title: t('layout.pageTitle.templates'), icon: DescriptionIcon },
+      [portalPaths.organizer.eloTemplates]: { title: t('layout.pageTitle.eloTemplates'), icon: TrendingUpIcon },
+      [portalPaths.organizer.admin]: { title: t('layout.pageTitle.adminTools'), icon: CampaignIcon },
+      [portalPaths.organizer.settings]: { title: t('layout.pageTitle.settings'), icon: SettingsIcon },
+      [portalPaths.organizer.development]: {
         title: t('layout.pageTitle.devTools'),
         icon: BugReportIcon,
         color: 'warning.main',
@@ -186,34 +196,51 @@ export default function Layout() {
   const currentPageHeader = pageHeaders[location.pathname];
 
   // Group navigation items logically
-  const mainNavItems = [
-    { label: 'Lobby', path: '/lobby', icon: SportsEsportsIcon },
-    ...(isAdmin ? [
-      { label: t('nav.tournament'), path: '/tournament', icon: EmojiEventsIcon },
-      { label: t('nav.bracket'), path: '/bracket', icon: AccountTreeIcon },
-      { label: t('nav.matches'), path: '/matches', icon: SportsEsportsIcon },
-    ] : []),
-  ];
+  const mainNavItems = isOrganizerPortal
+    ? [
+        { label: t('nav.tournament'), path: portalPaths.organizer.tournament, icon: EmojiEventsIcon },
+        { label: t('nav.bracket'), path: portalPaths.organizer.bracket, icon: AccountTreeIcon },
+        { label: t('nav.matches'), path: portalPaths.organizer.matches, icon: SportsEsportsIcon },
+      ]
+    : [
+        { label: 'Lobbies', path: portalPaths.player.lobbies, icon: SportsEsportsIcon },
+        { label: 'Skins', path: portalPaths.player.inventory, icon: SportsEsportsIcon },
+        ...(playerSteamId
+          ? [{ label: 'Meu perfil', path: `/player/${playerSteamId}`, icon: PersonIcon }]
+          : []),
+      ];
 
-  const resourcesNavItems = isAdmin ? [
-    { label: t('nav.teams'), path: '/teams', icon: GroupsIcon },
-    { label: t('nav.players'), path: '/players', icon: PersonIcon },
-    { label: t('nav.servers'), path: '/servers', icon: StorageIcon },
-    { label: t('nav.maps'), path: '/maps', icon: MapIcon },
-  ] : [];
+  const resourcesNavItems = isOrganizerPortal
+    ? [
+        { label: t('nav.teams'), path: portalPaths.organizer.teams, icon: GroupsIcon },
+        { label: t('nav.players'), path: portalPaths.organizer.players, icon: PersonIcon },
+        { label: t('nav.servers'), path: portalPaths.organizer.servers, icon: StorageIcon },
+        { label: t('nav.maps'), path: portalPaths.organizer.maps, icon: MapIcon },
+      ]
+    : [{ label: 'Buscar jogadores', path: portalPaths.player.players, icon: PersonIcon }];
 
-  const configurationNavItems = isAdmin ? [
-    { label: t('nav.templates'), path: '/templates', icon: DescriptionIcon },
-    { label: t('nav.eloTemplates'), path: '/elo-templates', icon: TrendingUpIcon },
-    { label: t('nav.settings'), path: '/settings', icon: SettingsIcon },
-  ] : [];
+  const configurationNavItems = isOrganizerPortal
+    ? [
+        { label: t('nav.templates'), path: portalPaths.organizer.templates, icon: DescriptionIcon },
+        { label: t('nav.eloTemplates'), path: portalPaths.organizer.eloTemplates, icon: TrendingUpIcon },
+        { label: t('nav.settings'), path: portalPaths.organizer.settings, icon: SettingsIcon },
+      ]
+    : [];
 
-  const systemNavItems = isAdmin ? [
-    { label: t('nav.adminTools'), path: '/admin', icon: CampaignIcon },
-    ...(isDevelopment ? [{ label: t('nav.devTools'), path: '/dev', icon: BuildIcon }] : []),
-  ] : [];
+  const systemNavItems = isOrganizerPortal
+    ? [
+        { label: t('nav.adminTools'), path: portalPaths.organizer.admin, icon: CampaignIcon },
+        ...(isDevelopment
+          ? [{ label: t('nav.devTools'), path: portalPaths.organizer.development, icon: BuildIcon }]
+          : []),
+      ]
+    : [];
 
   React.useEffect(() => {
+    if (!isOrganizerPortal) {
+      setWebhookConfigured(null);
+      return;
+    }
     let isMounted = true;
 
     const loadSettings = async () => {
@@ -242,10 +269,11 @@ export default function Layout() {
       isMounted = false;
       window.removeEventListener('matchzy:settingsUpdated', handleSettingsUpdated);
     };
-  }, []);
+  }, [isOrganizerPortal]);
 
   // Global admin warning: keep a persistent snackbar while any server reports plugin DB down.
   React.useEffect(() => {
+    if (!isOrganizerPortal) return;
     let cancelled = false;
 
     const checkDbHealth = async () => {
@@ -284,10 +312,11 @@ export default function Layout() {
       cancelled = true;
       window.clearInterval(interval);
     };
-  }, [dbHealthSnackbarKey, showPersistentError, closeSnackbar]);
+  }, [dbHealthSnackbarKey, showPersistentError, closeSnackbar, isOrganizerPortal]);
 
   // Global admin warning: keep a persistent snackbar while Steam integration is unhealthy.
   React.useEffect(() => {
+    if (!isOrganizerPortal) return;
     let cancelled = false;
 
     const checkSteamHealth = async () => {
@@ -332,14 +361,15 @@ export default function Layout() {
       cancelled = true;
       window.clearInterval(interval);
     };
-  }, [steamHealthSnackbarKey, showPersistentError, closeSnackbar]);
+  }, [steamHealthSnackbarKey, showPersistentError, closeSnackbar, isOrganizerPortal]);
 
   // Show a single global snackbar when webhook is not configured
   const handleOpenSettingsFromSnackbar = React.useCallback(() => {
-    navigate('/settings');
+    navigate(portalPaths.organizer.settings);
   }, [navigate]);
 
   React.useEffect(() => {
+    if (!isOrganizerPortal) return;
     if (webhookConfigured === false && !hasShownWebhookWarningRef.current) {
       hasShownWebhookWarningRef.current = true;
       showError(
@@ -362,13 +392,13 @@ export default function Layout() {
     if (webhookConfigured === true) {
       hasShownWebhookWarningRef.current = false;
     }
-  }, [webhookConfigured, showError, handleOpenSettingsFromSnackbar, t]);
+  }, [webhookConfigured, showError, handleOpenSettingsFromSnackbar, t, isOrganizerPortal]);
 
   // Fallback page title handling for critical routes (e.g. Matches)
   React.useEffect(() => {
     // Let individual pages manage their own titles where possible, but ensure that
     // the Matches page always exposes a stable, human‑readable title for tests.
-    if (location.pathname.startsWith('/matches')) {
+    if (location.pathname.startsWith(portalPaths.organizer.matches)) {
       document.title = `Fragbase: ${t('layout.pageTitle.matches')}`;
     }
   }, [location.pathname, t]);
@@ -531,13 +561,13 @@ export default function Layout() {
         </DrawerHeader>
         <Divider />
         <List>
-          <Tooltip title={!open ? t('nav.dashboard') : ''} placement="right">
+          <Tooltip title={!open ? homeLabel : ''} placement="right">
             <ListItem disablePadding sx={{ display: 'block' }}>
               <ListItemButton
-                selected={location.pathname === '/'}
-                onClick={() => handleNavClick('/')}
+                selected={location.pathname === homePath}
+                onClick={() => handleNavClick(homePath)}
                 component={Link}
-                to="/"
+                to={homePath}
                 sx={[
                   {
                     minHeight: 48,
@@ -563,12 +593,12 @@ export default function Layout() {
                     minWidth: 0,
                     justifyContent: 'center',
                     mr: 3,
-                    color: location.pathname === '/' ? 'primary.contrastText' : 'inherit',
+                    color: location.pathname === homePath ? 'primary.contrastText' : 'inherit',
                   }}
                 >
                   <HomeIcon />
                 </ListItemIcon>
-                <ListItemText primary={t('nav.dashboard')} />
+                <ListItemText primary={homeLabel} />
               </ListItemButton>
             </ListItem>
           </Tooltip>
@@ -660,13 +690,13 @@ export default function Layout() {
         </DrawerHeader>
         <Divider />
         <List>
-          <Tooltip title={!open ? t('nav.dashboard') : ''} placement="right">
+          <Tooltip title={!open ? homeLabel : ''} placement="right">
             <ListItem disablePadding sx={{ display: 'block' }}>
               <ListItemButton
-                selected={location.pathname === '/'}
-                onClick={() => handleNavClick('/')}
+                selected={location.pathname === homePath}
+                onClick={() => handleNavClick(homePath)}
                 component={Link}
-                to="/"
+                to={homePath}
                 sx={[
                   {
                     minHeight: 48,
@@ -699,7 +729,7 @@ export default function Layout() {
                       minWidth: 0,
                       justifyContent: 'center',
                       color:
-                        location.pathname === '/'
+                        location.pathname === homePath
                           ? open
                             ? 'primary.contrastText'
                             : 'primary.main'
@@ -717,7 +747,7 @@ export default function Layout() {
                   <HomeIcon />
                 </ListItemIcon>
                 <ListItemText
-                  primary={t('nav.dashboard')}
+                  primary={homeLabel}
                   sx={[
                     open
                       ? {
@@ -845,7 +875,7 @@ export default function Layout() {
             >
               <MenuIcon />
             </IconButton>
-            <SharedNavBar />
+            <SharedNavBar portal={portal} />
           </Toolbar>
         </AppBar>
         <DrawerHeader />

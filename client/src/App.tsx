@@ -1,118 +1,70 @@
-import React from 'react';
-import { ThemeProvider, CssBaseline, Box } from '@mui/material';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { lazy, ReactNode, Suspense } from 'react';
+import { Box, CircularProgress, ThemeProvider, CssBaseline } from '@mui/material';
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { PageHeaderProvider } from './contexts/PageHeaderContext';
 import { SnackbarProvider } from './contexts/SnackbarContext';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import Teams from './pages/Teams';
-import Players from './pages/Players';
-import Servers from './pages/Servers';
-import Tournament from './pages/Tournament';
-import Bracket from './pages/Bracket';
-import Matches from './pages/Matches';
-import AdminTools from './pages/AdminTools';
-import Settings from './pages/Settings';
-import Development from './pages/Development';
+import { RequireAccess } from './components/auth/RequireAccess';
+import { legacyOrganizerRedirects, legacyPlayerRedirects, portalPaths } from './config/portals';
 import { useIsDevelopment } from './hooks/useIsDevelopment';
-import TeamMatch from './pages/TeamMatch';
-import FindPlayer from './pages/FindPlayer';
-import PlayerProfile from './pages/PlayerProfile';
-import TournamentLeaderboard from './pages/TournamentLeaderboard';
-import ConnectSteam from './pages/ConnectSteam';
-import Maps from './pages/Maps';
-import Templates from './pages/Templates';
-import ELOTemplates from './pages/ELOTemplates';
-import Layout from './components/layout/Layout';
-import NotFound from './pages/NotFound';
-import Lobbies from './pages/Lobbies';
-import LobbyRoom from './pages/LobbyRoom';
-import Inventory from './pages/Inventory';
 import { theme } from './theme';
 
-interface ProtectedRouteProps {
-  children: React.ReactNode;
-  /**
-   * When true (default), only authenticated admins can access the route.
-   * Non-admin players are redirected away (to their player page or login).
-   *
-   * When false, any authenticated identity (admin or player) may access the
-   * route; anonymous visitors are still redirected to login.
-   */
-  adminOnly?: boolean;
+const Login = lazy(() => import('./pages/Login'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const PlayerHome = lazy(() => import('./pages/PlayerHome'));
+const Teams = lazy(() => import('./pages/Teams'));
+const Players = lazy(() => import('./pages/Players'));
+const Servers = lazy(() => import('./pages/Servers'));
+const Tournament = lazy(() => import('./pages/Tournament'));
+const Bracket = lazy(() => import('./pages/Bracket'));
+const Matches = lazy(() => import('./pages/Matches'));
+const AdminTools = lazy(() => import('./pages/AdminTools'));
+const Settings = lazy(() => import('./pages/Settings'));
+const Development = lazy(() => import('./pages/Development'));
+const TeamMatch = lazy(() => import('./pages/TeamMatch'));
+const FindPlayer = lazy(() => import('./pages/FindPlayer'));
+const PlayerProfile = lazy(() => import('./pages/PlayerProfile'));
+const TournamentLeaderboard = lazy(() => import('./pages/TournamentLeaderboard'));
+const ConnectSteam = lazy(() => import('./pages/ConnectSteam'));
+const Maps = lazy(() => import('./pages/Maps'));
+const Templates = lazy(() => import('./pages/Templates'));
+const ELOTemplates = lazy(() => import('./pages/ELOTemplates'));
+const Layout = lazy(() => import('./components/layout/Layout'));
+const NotFound = lazy(() => import('./pages/NotFound'));
+const Lobbies = lazy(() => import('./pages/Lobbies'));
+const LobbyRoom = lazy(() => import('./pages/LobbyRoom'));
+const Inventory = lazy(() => import('./pages/Inventory'));
+
+function RouteFallback() {
+  return (
+    <Box sx={{ minHeight: '100vh', display: 'grid', placeItems: 'center' }}>
+      <CircularProgress aria-label="Carregando página" />
+    </Box>
+  );
 }
 
-function ProtectedRoute({ children, adminOnly = true }: ProtectedRouteProps) {
-  const { isAuthenticated, isLoading, playerSteamId, needsSteamLink } = useAuth();
+function Access({ level, children }: { level: 'public' | 'identity' | 'admin'; children: ReactNode }) {
+  return <RequireAccess access={level}>{children}</RequireAccess>;
+}
+
+function HomeRedirect() {
+  const { isAuthenticated, isLoading, playerSteamId } = useAuth();
+  if (isLoading) return <Access level="public"><></></Access>;
+  if (isAuthenticated) return <Navigate to={portalPaths.organizer.home} replace />;
+  if (playerSteamId) return <Navigate to={portalPaths.player.home} replace />;
+  return <Navigate to="/login" replace />;
+}
+
+function LegacyRedirect({ to }: { to: string }) {
   const location = useLocation();
+  return <Navigate to={`${to}${location.search}${location.hash}`} replace />;
+}
 
-  if (isLoading) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '100vh',
-          backgroundColor: 'background.default',
-        }}
-      >
-        <Box textAlign="center">
-          <Box
-            component="img"
-            src="/fragbase-logo.png"
-            alt="Logo"
-            sx={{
-              width: 80,
-              height: 80,
-              mb: 2,
-              animation: 'pulse 2s ease-in-out infinite',
-              '@keyframes pulse': {
-                '0%, 100%': { opacity: 1 },
-                '50%': { opacity: 0.5 },
-              },
-            }}
-          />
-        </Box>
-      </Box>
-    );
-  }
-
-  if (adminOnly) {
-    // Admin-only routes (default): require an authenticated admin session with a linked Steam ID.
-    if (isAuthenticated) {
-      // Admin session active – require Steam to be linked before allowing access
-      // to the main dashboard and other protected admin routes.
-      if (needsSteamLink && location.pathname !== '/connect-steam') {
-        return <Navigate to="/connect-steam" replace />;
-      }
-
-      return <>{children}</>;
-    }
-
-    // If the user has a Steam identity but no admin session, send them to
-    // their player page (registered or not – we show "not registered" there).
-    if (playerSteamId) {
-      return <Navigate to={`/player/${playerSteamId}`} replace />;
-    }
-
-    // No admin session and no player Steam ID – go to login.
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }
-
-  // Non-admin-only "public" routes:
-  //
-  // These pages (e.g. /player, /team/:teamId, /tournament/:id/leaderboard) are
-  // intentionally viewable by anyone – including:
-  // - anonymous visitors
-  // - signed-in players
-  // - admins (even before linking a Steam account)
-  //
-  // The underlying components still *optionally* use auth context when present
-  // (e.g. to show "this is you" badges or quick links), but access itself
-  // should never be blocked or redirected here.
-  return <>{children}</>;
+function LegacyLobbyRedirect() {
+  const { id } = useParams();
+  const location = useLocation();
+  const destination = id ? `${portalPaths.player.lobbies}/${id}` : portalPaths.player.lobbies;
+  return <Navigate to={`${destination}${location.search}${location.hash}`} replace />;
 }
 
 function AppRoutes() {
@@ -120,100 +72,47 @@ function AppRoutes() {
   const isDevelopment = useIsDevelopment();
 
   if (isLoading) {
-    return null; // Loading state is handled by ProtectedRoute
+    return <Access level="public"><></></Access>;
   }
 
   return (
-    <Routes>
+    <Suspense fallback={<RouteFallback />}>
+      <Routes>
+      <Route path="/" element={<HomeRedirect />} />
       <Route
         path="/login"
         element={
           isAuthenticated ? (
-            // Admins leaving login should land on the dashboard
-            <Navigate to="/" replace />
+            <Navigate to={portalPaths.organizer.home} replace />
           ) : playerSteamId ? (
-            // Signed-in but not admin → their player page (shows "not registered" if needed)
-            <Navigate to={`/player/${playerSteamId}`} replace />
+            <Navigate to={portalPaths.player.home} replace />
           ) : (
             <Login />
           )
         }
       />
 
-      {/* Admin Steam linking flow */}
-      <Route
-        path="/connect-steam"
-        element={
-          <ProtectedRoute>
-            <ConnectSteam />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/connect-steam" element={<Access level="admin"><ConnectSteam /></Access>} />
 
-      {/* Viewer & player-facing pages – require a signed-in identity (admin or player) */}
-      <Route
-        path="/team/:teamId"
-        element={
-          <ProtectedRoute adminOnly={false}>
-            <TeamMatch />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/tournament/:id/leaderboard"
-        element={
-          <ProtectedRoute adminOnly={false}>
-            <TournamentLeaderboard />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/player"
-        element={
-          <ProtectedRoute adminOnly={false}>
-            <FindPlayer />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/player/:steamId"
-        element={
-          <ProtectedRoute adminOnly={false}>
-            <PlayerProfile />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/team/:teamId" element={<TeamMatch />} />
+      <Route path="/tournament/:id/leaderboard" element={<TournamentLeaderboard />} />
+      <Route path="/player" element={<FindPlayer />} />
+      <Route path="/player/:steamId" element={<PlayerProfile />} />
 
-      {/* Player-facing routes — accessible by any signed-in user */}
       <Route
-        path="/lobby"
-        element={
-          <ProtectedRoute adminOnly={false}>
-            <Layout />
-          </ProtectedRoute>
-        }
+        path={portalPaths.player.home}
+        element={<Access level="identity"><Layout portal="player" /></Access>}
       >
-        <Route index element={<Lobbies />} />
-        <Route path=":id" element={<LobbyRoom />} />
-      </Route>
-      <Route
-        path="/inventory"
-        element={
-          <ProtectedRoute adminOnly={false}>
-            <Layout />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<Inventory />} />
+        <Route index element={<PlayerHome />} />
+        <Route path="lobbies" element={<Lobbies />} />
+        <Route path="lobbies/:id" element={<LobbyRoom />} />
+        <Route path="skins" element={<Inventory />} />
+        <Route path="*" element={<NotFound />} />
       </Route>
 
       <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <Layout />
-          </ProtectedRoute>
-        }
+        path={portalPaths.organizer.home}
+        element={<Access level="admin"><Layout portal="organizer" /></Access>}
       >
         <Route index element={<Dashboard />} />
         <Route path="teams" element={<Teams />} />
@@ -228,11 +127,19 @@ function AppRoutes() {
         <Route path="templates" element={<Templates />} />
         <Route path="elo-templates" element={<ELOTemplates />} />
         {isDevelopment && <Route path="dev" element={<Development />} />}
-        {/* Nested catch-all so removed/unknown child routes (e.g. /public) show a proper 404 within the app shell */}
         <Route path="*" element={<NotFound />} />
       </Route>
+
+      {Object.entries(legacyOrganizerRedirects).map(([from, to]) => (
+        <Route key={from} path={from} element={<LegacyRedirect to={to} />} />
+      ))}
+      {Object.entries(legacyPlayerRedirects).map(([from, to]) => (
+        <Route key={from} path={from} element={<LegacyRedirect to={to} />} />
+      ))}
+      <Route path="/lobby/:id" element={<LegacyLobbyRedirect />} />
       <Route path="*" element={<NotFound />} />
-    </Routes>
+      </Routes>
+    </Suspense>
   );
 }
 

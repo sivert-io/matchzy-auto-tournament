@@ -15,16 +15,17 @@ import MenuIcon from '@mui/icons-material/Menu';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
 import { useSnackbar } from '../../contexts/SnackbarContext';
 import { useCurrentMatchStatus } from '../../hooks/useCurrentMatchStatus';
 import { LanguageSwitcher } from '../common/LanguageSwitcher';
-import { useIsDevelopment } from '../../hooks/useIsDevelopment';
 import { PlayerAvatar } from '../player/PlayerAvatar';
 import { generateAvatarDataUrl } from '../../generation/avatar';
 import { api } from '../../utils/api';
+import { PortalId, portalPaths } from '../../config/portals';
 
 const PLAYER_AVATAR_CACHE_KEY_PREFIX = 'mat.playerAvatarUrl:';
 
@@ -50,11 +51,13 @@ interface SharedNavBarProps {
    */
   showMenuButton?: boolean;
   onMenuClick?: () => void;
+  portal: PortalId;
 }
 
 export const SharedNavBar: React.FC<SharedNavBarProps> = ({
   showMenuButton,
   onMenuClick,
+  portal,
 }) => {
   const {
     playerSteamId,
@@ -74,7 +77,6 @@ export const SharedNavBar: React.FC<SharedNavBarProps> = ({
     useCurrentMatchStatus(playerSteamId ?? null);
   const { showSnackbar } = useSnackbar();
 
-  const isDev = useIsDevelopment();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const prevMatchRef = React.useRef<{ status: string; label: string | null } | null>(null);
   const [playerAvatarUrl, setPlayerAvatarUrl] = React.useState<string | undefined>(undefined);
@@ -222,7 +224,7 @@ export const SharedNavBar: React.FC<SharedNavBarProps> = ({
       >
         <Box
           component={RouterLink}
-          to="/"
+          to={portal === 'organizer' ? portalPaths.organizer.home : portalPaths.player.home}
           sx={{
             display: 'flex',
             alignItems: 'center',
@@ -262,37 +264,33 @@ export const SharedNavBar: React.FC<SharedNavBarProps> = ({
             flexShrink: 0,
           }}
         >
-          <Button color="inherit" component={RouterLink} to="/player" size="small">
-            {t('nav.players')}
-          </Button>
-          <Button
-            color="inherit"
-            component={RouterLink}
-            to="/tournament/1/leaderboard"
-            size="small"
-          >
-            {t('nav.leaderboard')}
-          </Button>
-          <Button
-            color="primary"
-            component={RouterLink}
-            to="/lobby"
-            size="small"
-            startIcon={<SportsEsportsIcon />}
-            sx={{ fontWeight: 700 }}
-          >
-            Lobby
-          </Button>
-          <Button
-            color="primary"
-            component={RouterLink}
-            to="/inventory"
-            size="small"
-            startIcon={<Inventory2Icon />}
-            sx={{ fontWeight: 700 }}
-          >
-            Skins
-          </Button>
+          {portal === 'player' && (
+            <>
+              <Button color="inherit" component={RouterLink} to={portalPaths.player.players} size="small">
+                {t('nav.players')}
+              </Button>
+              <Button
+                color="primary"
+                component={RouterLink}
+                to={portalPaths.player.lobbies}
+                size="small"
+                startIcon={<SportsEsportsIcon />}
+                sx={{ fontWeight: 700 }}
+              >
+                Lobby
+              </Button>
+              <Button
+                color="primary"
+                component={RouterLink}
+                to={portalPaths.player.inventory}
+                size="small"
+                startIcon={<Inventory2Icon />}
+                sx={{ fontWeight: 700 }}
+              >
+                Skins
+              </Button>
+            </>
+          )}
         </Box>
       </Box>
 
@@ -301,7 +299,7 @@ export const SharedNavBar: React.FC<SharedNavBarProps> = ({
           {activeLobby ? (
             <Button
               component={RouterLink}
-              to={`/lobby/${activeLobby.id}`}
+              to={`${portalPaths.player.lobbies}/${activeLobby.id}`}
               size="small"
               startIcon={<ArrowBackIcon />}
               sx={{
@@ -344,6 +342,20 @@ export const SharedNavBar: React.FC<SharedNavBarProps> = ({
             onDelete={() => setViewAsUser(false)}
             sx={{ cursor: 'pointer', fontWeight: 700 }}
           />
+        )}
+        {isRealAdmin && (
+          <Tooltip title={portal === 'organizer' ? 'Abrir área dos jogadores' : 'Abrir painel do organizador'}>
+            <Button
+              component={RouterLink}
+              to={portal === 'organizer' ? portalPaths.player.home : portalPaths.organizer.home}
+              size="small"
+              variant="outlined"
+              startIcon={<AdminPanelSettingsIcon />}
+              sx={{ display: { xs: 'none', md: 'inline-flex' } }}
+            >
+              {portal === 'organizer' ? 'Player Hub' : 'Organizador'}
+            </Button>
+          </Tooltip>
         )}
         <LanguageSwitcher />
 
@@ -396,7 +408,7 @@ export const SharedNavBar: React.FC<SharedNavBarProps> = ({
                 <MenuItem
                   onClick={() => {
                     handleAvatarMenuClose();
-                    navigate('/');
+                    navigate(portalPaths.organizer.home);
                   }}
                 >
                   {t('nav.dashboard')}

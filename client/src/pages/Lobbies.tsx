@@ -19,6 +19,7 @@ import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from 'react-router-dom';
+import { portalPaths } from '../config/portals';
 import { api } from '../utils/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useSnackbar } from '../contexts/SnackbarContext';
@@ -107,7 +108,7 @@ export default function Lobbies() {
       if (!isInLobby) {
         await api.fetch(`/api/lobbies/${lobbyId}/join`, { method: 'POST' });
       }
-      navigate(`/lobby/${lobbyId}`);
+      navigate(`${portalPaths.player.lobbies}/${lobbyId}`);
     } catch (err) {
       showError(parseError(err, 'Failed to join'));
     }

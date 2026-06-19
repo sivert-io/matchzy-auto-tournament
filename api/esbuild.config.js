@@ -29,7 +29,7 @@ const strictModeDependencyPatches = {
     // `Error.captureStackTrace(this, arguments.callee)` which throws in strict mode.
     // This is known to occur in `openid@2.0.14` (Steam auth path) and can occur in
     // other legacy deps.
-    build.onLoad({ filter: /\/node_modules\/.*\.(js|cjs|mjs)$/ }, async (args) => {
+    build.onLoad({ filter: /[\\/]node_modules[\\/].*\.(js|cjs|mjs)$/ }, async (args) => {
       const contents = await fs.promises.readFile(args.path, 'utf8');
 
       if (!contents.includes('Error.captureStackTrace') || !contents.includes('arguments.callee')) {
