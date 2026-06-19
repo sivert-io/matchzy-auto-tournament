@@ -1,6 +1,10 @@
 import { db } from '../config/database';
 import { log } from '../utils/logger';
 import { getCurrentOrganizationId } from './organizationService';
+import {
+  scopedTournamentParams,
+  scopedTournamentWhere,
+} from '../utils/organizationScope';
 import { getBracketGenerator } from './bracketGenerators';
 import { validateTeamCount, calculateTotalRounds } from '../utils/tournamentHelpers';
 import { enrichMatch } from '../utils/matchEnrichment';
@@ -34,7 +38,10 @@ class TournamentService {
    * Get the current tournament (only one tournament exists at a time)
    */
   async getTournament(): Promise<TournamentResponse | null> {
-    const row = await db.queryOneAsync<TournamentRow>('SELECT * FROM tournament WHERE id = 1');
+    const row = await db.queryOneAsync<TournamentRow>(
+      `SELECT * FROM tournament WHERE ${scopedTournamentWhere()}`,
+      scopedTournamentParams()
+    );
     if (!row) return null;
 
     const tournament = this.rowToTournament(row);
@@ -107,8 +114,11 @@ class TournamentService {
 
     const now = Math.floor(Date.now() / 1000);
 
-    // Delete existing tournament (if any) - we only support one tournament at a time
-    await db.execAsync('DELETE FROM tournament WHERE id = 1');
+    // Delete existing tournament for this organization (single tournament per instance)
+    await db.execAsync(
+      `DELETE FROM tournament WHERE ${scopedTournamentWhere()}`,
+      scopedTournamentParams()
+    );
 
     // Insert new tournament
     await db.insertAsync('tournament', {
@@ -147,7 +157,10 @@ class TournamentService {
         log.error('Failed to auto-generate bracket', err);
 
         // Clean up: Delete the tournament since bracket generation failed
-        await db.execAsync('DELETE FROM tournament WHERE id = 1');
+        await db.execAsync(
+          `DELETE FROM tournament WHERE ${scopedTournamentWhere()}`,
+          scopedTournamentParams()
+        );
         log.warn('Tournament deleted due to bracket generation failure');
 
         // Re-throw to prevent returning tournament in broken state
@@ -207,7 +220,7 @@ class TournamentService {
       updates.overtime_segments = overtimeSegments;
     }
 
-    await db.updateAsync('tournament', updates, 'id = ?', [1]);
+    await db.updateAsync('tournament', updates, scopedTournamentWhere(), scopedTournamentParams());
 
     log.debug('Tournament updated');
 
@@ -222,9 +235,12 @@ class TournamentService {
         // Revert changes to teams if bracket generation fails
         if (teamIds) {
           const oldTeamId = existing.teamIds;
-          await db.updateAsync('tournament', { team_ids: JSON.stringify(oldTeamId) }, 'id = ?', [
-            1,
-          ]);
+          await db.updateAsync(
+            'tournament',
+            { team_ids: JSON.stringify(oldTeamId) },
+            scopedTournamentWhere(),
+            scopedTournamentParams()
+          );
         }
       }
     }
@@ -247,7 +263,10 @@ class TournamentService {
     log.debug('Cleared server references from matches');
 
     // Delete tournament (CASCADE will also delete matches and events)
-    await db.execAsync('DELETE FROM tournament WHERE id = 1');
+    await db.execAsync(
+      `DELETE FROM tournament WHERE ${scopedTournamentWhere()}`,
+      scopedTournamentParams()
+    );
     log.debug('Tournament deleted from database');
   }
 
@@ -373,9 +392,12 @@ class TournamentService {
       }
 
       // Keep tournament in 'setup' status - it will change to 'ready' when user starts it
-      await db.updateAsync('tournament', { updated_at: Math.floor(Date.now() / 1000) }, 'id = ?', [
-        1,
-      ]);
+      await db.updateAsync(
+        'tournament',
+        { updated_at: Math.floor(Date.now() / 1000) },
+        scopedTournamentWhere(),
+        scopedTournamentParams()
+      );
 
       log.debug(`Bracket generated: ${matches.length} matches created`);
 
@@ -451,8 +473,8 @@ class TournamentService {
           started_at: null,
           completed_at: null,
         },
-        'id = ?',
-        [1]
+        scopedTournamentWhere(),
+        scopedTournamentParams()
       );
 
       log.success(
@@ -475,8 +497,8 @@ class TournamentService {
         started_at: null,
         completed_at: null,
       },
-      'id = ?',
-      [1]
+      scopedTournamentWhere(),
+      scopedTournamentParams()
     );
 
     log.success(

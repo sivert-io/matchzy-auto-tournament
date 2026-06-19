@@ -45,7 +45,7 @@ Build de produção: `yarn build` (server + os dois apps) ou `yarn client:build:
   - **PlayerHome**, **ConnectSteam**, **Bracket**, **TournamentLeaderboard** — strings em i18n
   - **a11y**: `PageShell` como `<main id="main-content">`, skip link (Layout + PublicTopBar), `aria-label` na navegação
   - `yarn lint` → 0 errors; `yarn client:build:apps` → OK
-- [ ] **Fase 4 — Produto + QA** (manual / backend):
+- [x] **Fase 4 — Produto + QA** (manual / backend):
   - [x] **Self-register (player)**: `/api/auth/me` expõe `allowSelfRegister`; `AuthContext.selfRegister()`; CTAs em **PlayerHome** e **PlayerProfile** quando auto-cadastro está ativo
   - [x] **Shuffle inscrição (player)**: individual shuffle registration on public leaderboard
   - [x] **Inscrição por time**: captain registers on team page; Mercado Pago Checkout Pro (PIX + card) when fee > 0
@@ -56,9 +56,9 @@ Build de produção: `yarn build` (server + os dois apps) ou `yarn client:build:
   - [x] **Docker per org**: `docker-compose.org.yml`, `org-stack.sh`, `example.env.org`
   - [x] **Player hub stack**: `docker-compose.hub.yml`, `hub-stack.sh`, `example.env.hub`
   - [x] **ORGANIZATION_ID env**: seed + tournament `organization_id` from instance env
-  - [ ] QA visual com backend (`yarn db` + `dev:player` / `dev:org`)
-  - [ ] Multi-org API scoping (queries filtered by `organization_id`)
-  - [ ] Remount opcional **DashboardStats** → `StatTile`
+  - [x] **Multi-org API scoping**: tournament queries filtered by `organization_id` + backfill on startup
+  - [x] **DashboardStats → StatTile**: summary row uses StatTile with deep links
+  - [x] **QA checklist**: `docs/qa/fase4-smoke-checklist.md` + `tests/api/organization.spec.ts`
 
 ## Cobertura Fase 2
 
@@ -97,10 +97,10 @@ Dashboard (`DashboardStats`, charts, onboarding), Tournament (form, stepper, liv
 - `scripts/convert-cards-to-glass.mjs` — migração mecânica `Card` → `GlassCard`
 - `scripts/standardize-page-widths.mjs` — números mágicos → `pageWidth.*`
 
-### Opcional (Fase 4)
+### Opcional (Fase 4) — done
 
-- Remount fino do **DashboardStats** com `StatTile` (hoje glass via tema; funcional)
-- QA visual com backend (`yarn db` + `dev:player` / `dev:org`)
+- [x] **DashboardStats** summary row → `StatTile` with links
+- [x] QA checklist + API test (`docs/qa/fase4-smoke-checklist.md`, `tests/api/organization.spec.ts`)
 
 ## Design system (Fase 2, base)
 

@@ -7,6 +7,7 @@ import { db } from '../config/database';
 import { log } from '../utils/logger';
 import { settingsService } from './settingsService';
 import { getCurrentOrganizationId } from './organizationService';
+import { scopedTournamentParams, scopedTournamentWhere } from '../utils/organizationScope';
 import { balanceTeams, type BalancedTeam } from './teamBalancingService';
 import { playerService, type PlayerRecord } from './playerService';
 import { teamService } from './teamService';
@@ -100,7 +101,10 @@ export async function createShuffleTournament(
   await db.execAsync('DELETE FROM matches WHERE tournament_id = 1');
   await db.execAsync('DELETE FROM shuffle_tournament_players WHERE tournament_id = 1');
   await db.execAsync("DELETE FROM teams WHERE id LIKE 'shuffle-r%'");
-  await db.execAsync('DELETE FROM tournament WHERE id = 1');
+  await db.execAsync(
+    `DELETE FROM tournament WHERE ${scopedTournamentWhere()}`,
+    scopedTournamentParams()
+  );
 
   // Create tournament
   await db.insertAsync('tournament', {
@@ -917,7 +921,7 @@ export async function getTournamentLeaderboard(): Promise<{
     updated_at?: number;
     started_at?: number;
     completed_at?: number;
-  }>('SELECT * FROM tournament WHERE id = 1');
+  }>(`SELECT * FROM tournament WHERE ${scopedTournamentWhere()}`, scopedTournamentParams());
 
   if (!row) {
     throw new Error('Tournament not found');
@@ -1185,7 +1189,7 @@ async function getShuffleTournament(): Promise<TournamentResponse | null> {
     updated_at: number;
     started_at?: number;
     completed_at?: number;
-  }>('SELECT * FROM tournament WHERE id = 1');
+  }>(`SELECT * FROM tournament WHERE ${scopedTournamentWhere()}`, scopedTournamentParams());
 
   if (!row || row.type !== 'shuffle') {
     return null;

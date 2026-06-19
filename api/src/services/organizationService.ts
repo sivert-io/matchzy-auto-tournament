@@ -1,5 +1,6 @@
 import { db } from '../config/database';
 import { log } from '../utils/logger';
+import { backfillTournamentOrganizationIds } from '../utils/organizationScope';
 
 const FALLBACK_ORG_ID = 'fragbase';
 const FALLBACK_ORG_NAME = 'Fragbase';
@@ -30,6 +31,7 @@ export async function ensureCurrentOrganization(): Promise<void> {
     [id]
   );
   if (existing) {
+    await backfillTournamentOrganizationIds();
     return;
   }
 
@@ -42,6 +44,7 @@ export async function ensureCurrentOrganization(): Promise<void> {
     updated_at: now,
   });
   log.success('Seeded organization for this instance', { id, name, slug });
+  await backfillTournamentOrganizationIds();
 }
 
 export async function getCurrentOrganization(): Promise<{

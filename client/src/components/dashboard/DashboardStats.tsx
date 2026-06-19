@@ -12,7 +12,7 @@ import { LineChart, PieChart } from '@mui/x-charts';
 import { api } from '../../utils/api';
 import { getPlayerPageUrl } from '../../utils/playerLinks';
 import { useTranslation } from 'react-i18next';
-import { GlassCard } from '../../shared/ui';
+import { GlassCard, StatTile } from '../../shared/ui';
 import type {
   Tournament,
   Server,
@@ -314,204 +314,96 @@ export function DashboardStats({ showOnboarding }: DashboardStatsProps) {
         {t('dashboard.stats.heading')}
       </Typography>
       <Grid container spacing={3}>
-        {/* Row 1: Tournament + Summary stats */}
-        <Grid size={{ xs: 12, md: 6, lg: 3 }}>
-          <GlassCard
-            sx={{
-              height: '100%',
-            }}
-          >
-            <CardContent>
-              <Box display="flex" alignItems="center" gap={1} mb={2}>
-                <TournamentIcon color="primary" sx={{ fontSize: 32 }} />
-                <Typography variant="h6" fontWeight={600}>
-                  {t('dashboard.stats.tournamentStatus.title')}
-                </Typography>
-              </Box>
-              {tournament ? (
-                <>
-                  <Typography variant="h4" fontWeight={700} mb={1}>
-                    {tournament.name}
-                  </Typography>
-                  <Chip
-                    label={tournament.status.replace('_', ' ').toUpperCase()}
-                    color={
-                      tournament.status === 'in_progress'
-                        ? 'success'
-                        : tournament.status === 'completed'
-                        ? 'default'
-                        : 'warning'
-                    }
-                    sx={{ mb: 2, fontSize: '0.875rem', fontWeight: 600 }}
-                  />
-                  <Box display="flex" gap={2} flexWrap="wrap" mt={2}>
-                    <Box>
-                      <Typography variant="body2" color="text.secondary">
-                        {t('dashboard.stats.tournamentStatus.typeLabel')}
-                      </Typography>
-                      <Typography variant="body1" fontWeight={600}>
-                        {tournament.type?.replace('_', ' ').toUpperCase()}
-                      </Typography>
-                    </Box>
-                    <Box>
-                      <Typography variant="body2" color="text.secondary">
-                        {t('dashboard.stats.tournamentStatus.formatLabel')}
-                      </Typography>
-                      <Typography variant="body1" fontWeight={600}>
-                        {tournament.format?.toUpperCase()}
-                      </Typography>
-                    </Box>
-                    <Box>
-                      <Typography variant="body2" color="text.secondary">
-                        {t('dashboard.stats.tournamentStatus.matchesLabel')}
-                      </Typography>
-                      <Typography variant="body1" fontWeight={600}>
-                        {matches.length}
-                      </Typography>
-                    </Box>
-                  </Box>
-                </>
-              ) : (
-                <Typography variant="body2" color="text.secondary">
-                  {t('dashboard.stats.tournamentStatus.none')}
-                </Typography>
-              )}
-            </CardContent>
-          </GlassCard>
+        {/* Row 1: Summary stat tiles */}
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+          <StatTile
+            label={t('dashboard.stats.tournamentStatus.title')}
+            icon={TournamentIcon}
+            value={
+              tournament?.name ?? t('dashboard.stats.tournamentStatus.none')
+            }
+            hint={
+              tournament
+                ? (
+                  <Stack direction="row" spacing={0.75} alignItems="center" flexWrap="wrap" useFlexGap>
+                    <Chip
+                      label={tournament.status.replace('_', ' ').toUpperCase()}
+                      size="small"
+                      color={
+                        tournament.status === 'in_progress'
+                          ? 'success'
+                          : tournament.status === 'completed'
+                          ? 'default'
+                          : 'warning'
+                      }
+                      sx={{ fontWeight: 600 }}
+                    />
+                    <Typography variant="caption" color="text.secondary">
+                      {tournament.type?.replace('_', ' ').toUpperCase()} · {tournament.format?.toUpperCase()}
+                    </Typography>
+                  </Stack>
+                )
+                : undefined
+            }
+            to="/tournament"
+          />
         </Grid>
 
-        {/* Match Status Card */}
-        <Grid size={{ xs: 12, md: 6, lg: 3 }}>
-          <GlassCard sx={{ height: '100%' }}>
-            <CardContent>
-              <Box display="flex" alignItems="center" gap={1} mb={2}>
-                <MatchIcon color="primary" />
-                <Typography variant="h6" fontWeight={600}>
-                  {t('dashboard.stats.matchStatus.title')}
-                </Typography>
-              </Box>
-              <Typography variant="h3" fontWeight={700} mb={2}>
-                {matches.length}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" mb={2}>
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+          <StatTile
+            label={t('dashboard.stats.matchStatus.title')}
+            icon={MatchIcon}
+            value={matches.length}
+            hint={
+              <>
                 {t('dashboard.stats.matchStatus.total')}
-              </Typography>
-              <Box display="flex" flexDirection="column" gap={1.5}>
-                <Box display="flex" justifyContent="space-between" alignItems="center">
-                  <Typography variant="body2">
-                    {t('dashboard.stats.matchStatus.pending')}
-                  </Typography>
-                  <Chip label={matchStatusCount.pending} size="small" color="default" />
-                </Box>
-                <Box display="flex" justifyContent="space-between" alignItems="center">
-                  <Typography variant="body2">
-                    {t('dashboard.stats.matchStatus.ready')}
-                  </Typography>
-                  <Chip label={matchStatusCount.ready} size="small" color="info" />
-                </Box>
-                <Box display="flex" justifyContent="space-between" alignItems="center">
-                  <Typography variant="body2">
-                    {t('dashboard.stats.matchStatus.loaded')}
-                  </Typography>
-                  <Chip label={matchStatusCount.loaded} size="small" color="warning" />
-                </Box>
-                <Box display="flex" justifyContent="space-between" alignItems="center">
-                  <Typography variant="body2">
-                    {t('dashboard.stats.matchStatus.live')}
-                  </Typography>
-                  <Chip label={matchStatusCount.live} size="small" color="success" />
-                </Box>
-                <Box display="flex" justifyContent="space-between" alignItems="center">
-                  <Typography variant="body2">
-                    {t('dashboard.stats.matchStatus.completed')}
-                  </Typography>
-                  <Chip label={matchStatusCount.completed} size="small" />
-                </Box>
-              </Box>
-            </CardContent>
-          </GlassCard>
-        </Grid>
-
-        {/* Server Status Card */}
-        <Grid size={{ xs: 12, md: 6, lg: 3 }}>
-          <GlassCard sx={{ height: '100%' }}>
-            <CardContent>
-              <Box display="flex" alignItems="center" gap={1} mb={2}>
-                <ServerIcon color="primary" />
-                <Typography variant="h6" fontWeight={600}>
-                  {t('dashboard.stats.serverStatus.title')}
-                </Typography>
-                {serverStatusLoading && (
-                  <Box ml={1} display="inline-flex" alignItems="center">
-                    <CircularProgress size={16} />
-                  </Box>
+                {matchStatusCount.live > 0 && (
+                  <> · {t('dashboard.stats.matchStatus.live')}: {matchStatusCount.live}</>
                 )}
-              </Box>
-              <Typography variant="h3" fontWeight={700} mb={1}>
-                {serverStatusCount.online}/{serverStatusCount.total}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" mb={2}>
-                {t('dashboard.stats.serverStatus.onlineSummary')}
-              </Typography>
-              <Box display="flex" flexDirection="column" gap={1}>
-                <Chip
-                  label={t('dashboard.stats.serverStatus.online', {
-                    count: serverStatusCount.online,
-                  })}
-                  color="success"
-                  size="medium"
-                  sx={{ fontWeight: 600 }}
-                />
-                <Chip
-                  label={t('dashboard.stats.serverStatus.offline', {
-                    count: serverStatusCount.offline,
-                  })}
-                  color="error"
-                  size="medium"
-                  sx={{ fontWeight: 600 }}
-                />
-              </Box>
-            </CardContent>
-          </GlassCard>
+                {matchStatusCount.ready > 0 && (
+                  <> · {t('dashboard.stats.matchStatus.ready')}: {matchStatusCount.ready}</>
+                )}
+              </>
+            }
+            to="/matches"
+          />
         </Grid>
 
-        {/* Player Statistics Card */}
-        <Grid size={{ xs: 12, md: 6, lg: 3 }}>
-          <GlassCard sx={{ height: '100%' }}>
-            <CardContent>
-              <Box display="flex" alignItems="center" gap={1} mb={2}>
-                <PeopleIcon color="primary" />
-                <Typography variant="h6" fontWeight={600}>
-                  {t('dashboard.stats.players.title')}
-                </Typography>
-              </Box>
-              <Typography variant="h3" fontWeight={700} mb={1}>
-                {playerStats.total}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" mb={2}>
-                {t('dashboard.stats.players.total')}
-              </Typography>
-              <Box display="flex" flexDirection="column" gap={1.5}>
-                <Box display="flex" justifyContent="space-between" alignItems="center">
-                  <Typography variant="body2">
-                    {t('dashboard.stats.players.inMatches')}
-                  </Typography>
-                  <Chip
-                    label={playerStats.inMatches}
-                    color="success"
-                    size="small"
-                    sx={{ fontWeight: 600 }}
-                  />
-                </Box>
-                <Box display="flex" justifyContent="space-between" alignItems="center">
-                  <Typography variant="body2">
-                    {t('dashboard.stats.players.waiting')}
-                  </Typography>
-                  <Chip label={playerStats.waiting} size="small" sx={{ fontWeight: 600 }} />
-                </Box>
-              </Box>
-            </CardContent>
-          </GlassCard>
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+          <StatTile
+            label={t('dashboard.stats.serverStatus.title')}
+            icon={ServerIcon}
+            value={
+              serverStatusLoading
+                ? <CircularProgress size={22} />
+                : `${serverStatusCount.online}/${serverStatusCount.total}`
+            }
+            hint={
+              serverStatusLoading
+                ? undefined
+                : t('dashboard.stats.serverStatus.offline', {
+                    count: serverStatusCount.offline,
+                  })
+            }
+            iconColor="success.main"
+            to="/servers"
+          />
+        </Grid>
+
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+          <StatTile
+            label={t('dashboard.stats.players.title')}
+            icon={PeopleIcon}
+            value={playerStats.total}
+            hint={
+              <>
+                {t('dashboard.stats.players.inMatches')}: {playerStats.inMatches}
+                {' · '}
+                {t('dashboard.stats.players.waiting')}: {playerStats.waiting}
+              </>
+            }
+            to="/players"
+          />
         </Grid>
 
         {/* Row 2: Distribution pie charts */}
