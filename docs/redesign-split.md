@@ -42,7 +42,9 @@ Legenda: ✅ remontada · 🚧 parcial · ⬜ pendente.
 - **Org:** Landing ✅, Login ✅, Teams ✅, Players ✅, Maps ✅ (MapCard/MapPoolCard), ELOTemplates ✅, AdminTools ✅, Templates ✅, Bracket ✅ (empties + list cards via MatchListCard), Matches ✅ (via MatchCard), Dashboard ✅ (shell em PageShell; cards do `DashboardStats` já renderizam no tema glass — redesign p/ StatTile é opcional), Tournament ⬜ (1183), Servers ⬜ (1851), Settings ⬜ (2059), Development ⬜ (1107).
 - **Compartilhados remontados:** `components/shared/MatchCard`, `MatchListCard` → GlassCard (afetam Matches, Bracket e onde mais forem usados).
 
-> Pendentes restantes (todas grandes/densas, 1107–2059 linhas): **Tournament, Development, LobbyRoom, PlayerProfile, Servers, Settings.** Cada uma é um trabalho focado. Padrão já estabelecido: `PageShell`/`SectionHeader` no shell, `GlassCard` (com `interactive`/`onClick`/`to`) nos cards, `EmptyState` (de `shared/ui`, que re-exporta `components/shared`) nos vazios, `StatTile`/`DataTable` onde couber.
+> Pendentes restantes (1107–2059 linhas): **Tournament, Development, LobbyRoom, PlayerProfile, Servers, Settings.**
+>
+> **Análise (jun/2026):** a remontagem *mecânica* (Card→GlassCard) já não rende nessas — o `theme.ts` aplica `glassSurface` a TODO `MuiCard`, então os `Card` internos **já são glass**; trocá-los por `GlassCard` é praticamente no-op visual e só adiciona risco em arquivos enormes que não dá pra QA sem backend. Além disso **Tournament (0 Cards)** é orquestrador (delega a ~12 sub-componentes em `components/tournament/`) e **Settings (0 Cards)** é formulário (Paper/Accordion). O valor que resta é **redesign de hierarquia** (regroup, `SectionHeader`, `StatTile`, `DataTable`) — trabalho que **exige QA visual** (rodar o app). Recomendado: subir `dev:org`/`dev:player` com Postgres e fazer esses 6 com olho na tela, um a um. Padrão já estabelecido nas 16 telas feitas.
 
 ## Design system (Fase 2, base)
 
