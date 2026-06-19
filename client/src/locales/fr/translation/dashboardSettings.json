@@ -169,7 +169,9 @@
         "title": "Inscription des joueurs",
         "description": "Contrôlez si les nouvelles connexions Steam créent automatiquement des fiches joueur. Quand désactivé, seuls les joueurs créés ou importés par les admins apparaîtront dans les tournois privés et les pools shuffle.",
         "toggleLabel": "Autoriser tout le monde à s’inscrire via la connexion Steam",
-        "recommendation": "Recommandé : laissez ceci désactivé pour les tournois sur invitation/privés afin d’éviter que des connexions Steam aléatoires n’encombrent la liste des joueurs."
+        "recommendation": "Recommandé : laissez ceci désactivé pour les tournois sur invitation/privés afin d’éviter que des connexions Steam aléatoires n’encombrent la liste des joueurs.",
+        "shuffleToggleLabel": "Allow players to join shuffle tournaments from the public leaderboard",
+        "shuffleRecommendation": "When enabled, registered players can join shuffle events while the tournament is still in setup. Disable for admin-only registration lists."
       }
     },
     "developer": {

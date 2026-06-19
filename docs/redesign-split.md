@@ -47,10 +47,12 @@ Build de produção: `yarn build` (server + os dois apps) ou `yarn client:build:
   - `yarn lint` → 0 errors; `yarn client:build:apps` → OK
 - [ ] **Fase 4 — Produto + QA** (manual / backend):
   - [x] **Self-register (player)**: `/api/auth/me` expõe `allowSelfRegister`; `AuthContext.selfRegister()`; CTAs em **PlayerHome** e **PlayerProfile** quando auto-cadastro está ativo
+  - [x] **Shuffle inscrição (player)**: `POST/DELETE /api/tournament/1/register-self`, toggle `allow_shuffle_self_register`, UI no **TournamentLeaderboard**
   - [x] **Mercado Pago (org)**: seção em **Settings** — status OAuth, botão conectar, snackbar em `?mp=connected` (checkout/inscrição ainda não)
+  - [x] **Multi-org (schema)**: tabelas `organizations`, `organization_memberships`, `registrations`, `audit_log`, etc. (API ainda não)
   - [ ] QA visual com backend (`yarn db` + `dev:player` / `dev:org`)
-  - [ ] Inscrições em torneios (player), fluxo de pagamento completo
-  - [ ] Multi-org (schema + API — ver `docs/architecture/portals.md`)
+  - [ ] Checkout Mercado Pago + inscrições com pagamento
+  - [ ] Multi-org API + scoping por `organization_id`
   - [ ] Remount opcional **DashboardStats** → `StatTile`
 
 ## Cobertura Fase 2

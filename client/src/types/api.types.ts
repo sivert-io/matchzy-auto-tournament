@@ -324,6 +324,7 @@ export interface SettingsResponse extends ApiResponse {
     matchzyDebugChatEnabled?: boolean;
     ratingsEnabled?: boolean;
     allowSelfRegister?: boolean;
+    allowShuffleSelfRegister?: boolean;
     // MatchZy core defaults
     matchzyAutostartMode?: 0 | 1 | 2;
     matchzyMinimumReadyRequired?: number;

@@ -169,7 +169,9 @@
         "title": "Spelerregistratie",
         "description": "Bepaal of nieuwe Steam-logins automatisch spelersrecords aanmaken. Wanneer uitgeschakeld, verschijnen in private toernooien en shuffle-pools alleen spelers die door admins zijn aangemaakt of geïmporteerd.",
         "toggleLabel": "Sta iedereen toe om zich te registreren via Steam-login",
-        "recommendation": "Aanbevolen: laat dit uit voor invite-only of private toernooien, zodat willekeurige Steam-logins de spelerslijst niet vervuilen."
+        "recommendation": "Aanbevolen: laat dit uit voor invite-only of private toernooien, zodat willekeurige Steam-logins de spelerslijst niet vervuilen.",
+        "shuffleToggleLabel": "Allow players to join shuffle tournaments from the public leaderboard",
+        "shuffleRecommendation": "When enabled, registered players can join shuffle events while the tournament is still in setup. Disable for admin-only registration lists."
       }
     },
     "developer": {

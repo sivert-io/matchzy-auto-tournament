@@ -278,7 +278,9 @@
         "title": "Spēlētāju reģistrācija",
         "description": "Kontrolējiet, vai jaunas Steam pieteikšanās automātiski izveido spēlētāju ierakstus. Kad atspējots, tikai administratoru izveidotie vai importētie spēlētāji parādīsies privātos turnīros un jaukšanas grupās.",
         "toggleLabel": "Atļaut ikvienam reģistrēties caur Steam pieteikšanos",
-        "recommendation": "Ieteicams: turiet šo izslēgtu uzaicinājumu vai privātiem turnīriem, lai nejaušas Steam pieteikšanās nepiesārņotu spēlētāju sarakstu."
+        "recommendation": "Ieteicams: turiet šo izslēgtu uzaicinājumu vai privātiem turnīriem, lai nejaušas Steam pieteikšanās nepiesārņotu spēlētāju sarakstu.",
+        "shuffleToggleLabel": "Allow players to join shuffle tournaments from the public leaderboard",
+        "shuffleRecommendation": "When enabled, registered players can join shuffle events while the tournament is still in setup. Disable for admin-only registration lists."
       }
     },
     "developer": {

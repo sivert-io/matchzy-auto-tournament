@@ -11,6 +11,7 @@ export type AppSettingKey =
   | 'matchzy_debug_chat'
   | 'ratings_enabled'
   | 'allow_self_register'
+  | 'allow_shuffle_self_register'
   // MatchZy core defaults (persisted convars)
   | 'matchzy_autostart_mode'
   | 'matchzy_minimum_ready_required'
@@ -56,6 +57,7 @@ const ALLOWED_KEYS: AppSettingKey[] = [
   'matchzy_debug_chat',
   'ratings_enabled',
   'allow_self_register',
+  'allow_shuffle_self_register',
   // MatchZy core defaults (persisted convars)
   'matchzy_autostart_mode',
   'matchzy_minimum_ready_required',
@@ -194,7 +196,7 @@ class SettingsService {
         return;
       }
 
-      if (key === 'allow_self_register') {
+      if (key === 'allow_self_register' || key === 'allow_shuffle_self_register') {
         const normalized = trimmed.toLowerCase();
         const isEnabled =
           normalized === '1' ||
@@ -203,7 +205,11 @@ class SettingsService {
           normalized === 'on' ||
           normalized === 'enabled';
         await db.setAppSettingAsync(key, isEnabled ? '1' : '0');
-        log.success(`Player self‑registration ${isEnabled ? 'enabled' : 'disabled'}`);
+        const label =
+          key === 'allow_shuffle_self_register'
+            ? 'Shuffle tournament self‑registration'
+            : 'Player self‑registration';
+        log.success(`${label} ${isEnabled ? 'enabled' : 'disabled'}`);
         return;
       }
 
@@ -431,6 +437,20 @@ class SettingsService {
     if (!value) {
       // Default: self‑registration is disabled unless explicitly enabled.
       return false;
+    }
+
+    const normalized = value.toLowerCase();
+    return normalized === '1' || normalized === 'true' || normalized === 'yes';
+  }
+
+  /**
+   * When enabled (default), registered players can join shuffle tournaments from the
+   * public leaderboard while the event is still in setup.
+   */
+  async isShuffleSelfRegistrationAllowed(): Promise<boolean> {
+    const value = await this.getSetting('allow_shuffle_self_register');
+    if (!value) {
+      return true;
     }
 
     const normalized = value.toLowerCase();

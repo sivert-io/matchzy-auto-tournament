@@ -169,7 +169,9 @@
         "title": "Rejestracja graczy",
         "description": "Kontroluj, czy nowe logowania Steam automatycznie tworzą rekordy graczy. Gdy wyłączone, w prywatnych turniejach i pulach shuffle pojawią się tylko gracze utworzeni lub zaimportowani przez adminów.",
         "toggleLabel": "Pozwól każdemu rejestrować się przez logowanie Steam",
-        "recommendation": "Zalecane: pozostaw to wyłączone dla turniejów prywatnych lub na zaproszenie, aby przypadkowe logowania Steam nie zaśmiecały listy graczy."
+        "recommendation": "Zalecane: pozostaw to wyłączone dla turniejów prywatnych lub na zaproszenie, aby przypadkowe logowania Steam nie zaśmiecały listy graczy.",
+        "shuffleToggleLabel": "Allow players to join shuffle tournaments from the public leaderboard",
+        "shuffleRecommendation": "When enabled, registered players can join shuffle events while the tournament is still in setup. Disable for admin-only registration lists."
       }
     },
     "developer": {

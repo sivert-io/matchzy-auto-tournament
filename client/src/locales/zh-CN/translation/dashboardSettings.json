@@ -278,7 +278,9 @@
         "title": "玩家注册",
         "description": "控制新的 Steam 登录是否自动创建玩家记录。禁用后，只有管理员创建或导入的玩家才会出现在私有锦标赛和洗牌池中。",
         "toggleLabel": "允许任何人通过 Steam 登录注册",
-        "recommendation": "建议：邀请制或私有锦标赛请保持关闭，以免随机 Steam 登录污染玩家列表。"
+        "recommendation": "建议：邀请制或私有锦标赛请保持关闭，以免随机 Steam 登录污染玩家列表。",
+        "shuffleToggleLabel": "Allow players to join shuffle tournaments from the public leaderboard",
+        "shuffleRecommendation": "When enabled, registered players can join shuffle events while the tournament is still in setup. Disable for admin-only registration lists."
       }
     },
     "developer": {

@@ -145,7 +145,19 @@
     "team": "Equipa",
     "matches": "Jogos",
     "view": "Ver",
-    "profileHint": "Clique no nome de um jogador ou na ligação \"Ver\" para ver o perfil detalhado, histórico de jogos e evolução da classificação."
+    "profileHint": "Clique no nome de um jogador ou na ligação \"Ver\" para ver o perfil detalhado, histórico de jogos e evolução da classificação.",
+    "registration": {
+      "registerCta": "Join tournament",
+      "registering": "Joining…",
+      "registerSuccess": "You are registered for this shuffle tournament.",
+      "registerError": "Could not join the tournament.",
+      "alreadyRegistered": "You are already registered.",
+      "unregisterCta": "Leave tournament",
+      "unregisterSuccess": "You left the tournament registration list.",
+      "unregisterError": "Could not leave the tournament.",
+      "registeredChip": "You are registered",
+      "needPlayerRecord": "Register as a player first to join shuffle tournaments."
+    }
   },
   "teamsPage": {
     "headerSelect": {

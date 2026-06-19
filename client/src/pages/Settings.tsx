@@ -97,6 +97,8 @@ export default function Settings() {
   const [initialMatchzyDebugChatEnabled, setInitialMatchzyDebugChatEnabled] = useState(false);
   const [allowSelfRegister, setAllowSelfRegister] = useState(false);
   const [initialAllowSelfRegister, setInitialAllowSelfRegister] = useState(false);
+  const [allowShuffleSelfRegister, setAllowShuffleSelfRegister] = useState(true);
+  const [initialAllowShuffleSelfRegister, setInitialAllowShuffleSelfRegister] = useState(true);
   // MatchZy core defaults
   const [matchzyAutostartMode, setMatchzyAutostartMode] = useState<0 | 1 | 2>(1);
   const [initialMatchzyAutostartMode, setInitialMatchzyAutostartMode] = useState<0 | 1 | 2>(1);
@@ -236,6 +238,10 @@ export default function Settings() {
         response.settings.allowSelfRegister !== undefined
           ? response.settings.allowSelfRegister
           : false;
+      const allowShuffleSelfRegisterValue =
+        response.settings.allowShuffleSelfRegister !== undefined
+          ? response.settings.allowShuffleSelfRegister
+          : true;
       // MatchZy core defaults
       const autostartMode = response.settings.matchzyAutostartMode ?? 1;
       const minimumReadyRequired = response.settings.matchzyMinimumReadyRequired ?? 0;
@@ -285,6 +291,8 @@ export default function Settings() {
       setInitialMatchzyDebugChatEnabled(debugChatEnabled);
       setAllowSelfRegister(allowSelfRegisterValue);
       setInitialAllowSelfRegister(allowSelfRegisterValue);
+      setAllowShuffleSelfRegister(allowShuffleSelfRegisterValue);
+      setInitialAllowShuffleSelfRegister(allowShuffleSelfRegisterValue);
       setRatingsEnabled(ratingsEnabledValue);
       setInitialRatingsEnabled(ratingsEnabledValue);
       setMatchzyAutostartMode(autostartMode);
@@ -431,6 +439,7 @@ export default function Settings() {
           ratingsEnabled,
           matchzyDebugChatEnabled: overrides?.matchzyDebugChatEnabled ?? matchzyDebugChatEnabled,
           allowSelfRegister,
+          allowShuffleSelfRegister,
           // MatchZy core defaults
           matchzyAutostartMode,
           matchzyMinimumReadyRequired,
@@ -487,6 +496,10 @@ export default function Settings() {
           response.settings.allowSelfRegister !== undefined
             ? response.settings.allowSelfRegister
             : false;
+        const newAllowShuffleSelfRegister =
+          response.settings.allowShuffleSelfRegister !== undefined
+            ? response.settings.allowShuffleSelfRegister
+            : true;
         const newAutostartMode = response.settings.matchzyAutostartMode ?? 1;
         const newMinimumReadyRequired = response.settings.matchzyMinimumReadyRequired ?? 0;
         const newAllowForceReady = response.settings.matchzyAllowForceReady ?? true;
@@ -542,6 +555,8 @@ export default function Settings() {
         setInitialMatchzyDebugChatEnabled(newDebugChatEnabled);
         setAllowSelfRegister(newAllowSelfRegister);
         setInitialAllowSelfRegister(newAllowSelfRegister);
+        setAllowShuffleSelfRegister(newAllowShuffleSelfRegister);
+        setInitialAllowShuffleSelfRegister(newAllowShuffleSelfRegister);
         setMatchzyAutostartMode(newAutostartMode);
         setInitialMatchzyAutostartMode(newAutostartMode);
         setMatchzyMinimumReadyRequired(newMinimumReadyRequired);
@@ -641,6 +656,7 @@ export default function Settings() {
       simulateMatches,
       simulationTimescale,
       allowSelfRegister,
+      allowShuffleSelfRegister,
       matchzyAutostartMode,
       matchzyMinimumReadyRequired,
       matchzyAllowForceReady,
@@ -687,6 +703,7 @@ export default function Settings() {
       ratingsEnabled !== initialRatingsEnabled ||
       matchzyDebugChatEnabled !== initialMatchzyDebugChatEnabled ||
       allowSelfRegister !== initialAllowSelfRegister ||
+      allowShuffleSelfRegister !== initialAllowShuffleSelfRegister ||
       matchzyAutostartMode !== initialMatchzyAutostartMode ||
       matchzyMinimumReadyRequired !== initialMatchzyMinimumReadyRequired ||
       matchzyAllowForceReady !== initialMatchzyAllowForceReady ||
@@ -760,6 +777,7 @@ export default function Settings() {
       matchzyDebugChatEnabled === initialMatchzyDebugChatEnabled &&
       ratingsEnabled === initialRatingsEnabled &&
       allowSelfRegister === initialAllowSelfRegister &&
+      allowShuffleSelfRegister === initialAllowShuffleSelfRegister &&
       matchzyAutostartMode === initialMatchzyAutostartMode &&
       matchzyMinimumReadyRequired === initialMatchzyMinimumReadyRequired &&
       matchzyAllowForceReady === initialMatchzyAllowForceReady &&
@@ -815,6 +833,7 @@ export default function Settings() {
     matchzyDebugChatEnabled,
     ratingsEnabled,
     allowSelfRegister,
+    allowShuffleSelfRegister,
     matchzyAutostartMode,
     matchzyMinimumReadyRequired,
     matchzyAllowForceReady,
@@ -848,6 +867,7 @@ export default function Settings() {
     initialMatchzyDebugChatEnabled,
     initialRatingsEnabled,
     initialAllowSelfRegister,
+    initialAllowShuffleSelfRegister,
     initialMatchzyAutostartMode,
     initialMatchzyMinimumReadyRequired,
     initialMatchzyAllowForceReady,
@@ -1105,6 +1125,21 @@ export default function Settings() {
                   />
                   <Typography variant="caption" color="text.secondary" display="block">
                     {t('settingsPage.players.registration.recommendation')}
+                  </Typography>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={allowShuffleSelfRegister}
+                        onChange={(event) => setAllowShuffleSelfRegister(event.target.checked)}
+                        color="primary"
+                        size="small"
+                      />
+                    }
+                    label={t('settingsPage.players.registration.shuffleToggleLabel')}
+                    sx={{ mt: 2, display: 'block' }}
+                  />
+                  <Typography variant="caption" color="text.secondary" display="block">
+                    {t('settingsPage.players.registration.shuffleRecommendation')}
                   </Typography>
                 </Box>
 

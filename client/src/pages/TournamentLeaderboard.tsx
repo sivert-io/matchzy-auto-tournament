@@ -29,8 +29,12 @@ import PersonIcon from '@mui/icons-material/Person';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import SearchIcon from '@mui/icons-material/Search';
 import DownloadIcon from '@mui/icons-material/Download';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import { useTranslation } from 'react-i18next';
 import { api } from '../utils/api';
+import { useAuth } from '../contexts/AuthContext';
+import { useSnackbar } from '../contexts/SnackbarContext';
 import { getPlayerPageUrl } from '../utils/playerLinks';
 import { PlayerAvatar } from '../components/player/PlayerAvatar';
 import { PlayerName } from '../components/player/PlayerName';
@@ -78,10 +82,23 @@ interface TournamentLeaderboardData {
   };
 }
 
+interface TournamentRegistrationSelf {
+  registered: boolean;
+  canRegister: boolean;
+  canUnregister: boolean;
+  hasPlayerRecord?: boolean;
+  tournamentType?: string | null;
+  tournamentStatus?: string | null;
+}
+
 export default function TournamentLeaderboard() {
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
+  const { showSuccess, showError } = useSnackbar();
+  const { playerSteamId, hasPlayerRecord } = useAuth();
   const [data, setData] = useState<TournamentLeaderboardData | null>(null);
+  const [registrationSelf, setRegistrationSelf] = useState<TournamentRegistrationSelf | null>(null);
+  const [registrationLoading, setRegistrationLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -91,6 +108,28 @@ export default function TournamentLeaderboard() {
   useEffect(() => {
     document.title = `Fragbase: ${t('nav.leaderboard')}`;
   }, [t]);
+
+  const loadRegistrationSelf = async () => {
+    if (!id) return;
+
+    try {
+      const response = await api.get<TournamentRegistrationSelf & { success?: boolean }>(
+        `/api/tournament/${id}/registration-self`
+      );
+      if (response) {
+        setRegistrationSelf({
+          registered: Boolean(response.registered),
+          canRegister: Boolean(response.canRegister),
+          canUnregister: Boolean(response.canUnregister),
+          hasPlayerRecord: response.hasPlayerRecord,
+          tournamentType: response.tournamentType,
+          tournamentStatus: response.tournamentStatus,
+        });
+      }
+    } catch {
+      setRegistrationSelf(null);
+    }
+  };
 
   const loadStandings = async (showLoading = true) => {
     if (!id) return;
@@ -139,9 +178,11 @@ export default function TournamentLeaderboard() {
     if (!id) return;
 
     void loadStandings(true);
+    void loadRegistrationSelf();
     // Refresh every 30 seconds without blocking UI
     const interval = setInterval(() => {
       void loadStandings(false);
+      void loadRegistrationSelf();
     }, 30000);
 
     return () => clearInterval(interval);
@@ -255,6 +296,46 @@ export default function TournamentLeaderboard() {
 
     return { byWins, byAdr };
   }, [data]);
+
+  const handleRegisterSelf = async () => {
+    if (!id) return;
+    setRegistrationLoading(true);
+    try {
+      const response = await api.post<{ success: boolean; alreadyRegistered?: boolean }>(
+        `/api/tournament/${id}/register-self`
+      );
+      if (response.success) {
+        showSuccess(
+          response.alreadyRegistered
+            ? t('leaderboardPage.registration.alreadyRegistered')
+            : t('leaderboardPage.registration.registerSuccess')
+        );
+        await loadRegistrationSelf();
+        await loadStandings(false);
+      }
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : t('leaderboardPage.registration.registerError');
+      showError(message);
+    } finally {
+      setRegistrationLoading(false);
+    }
+  };
+
+  const handleUnregisterSelf = async () => {
+    if (!id) return;
+    setRegistrationLoading(true);
+    try {
+      await api.delete(`/api/tournament/${id}/register-self`);
+      showSuccess(t('leaderboardPage.registration.unregisterSuccess'));
+      await loadRegistrationSelf();
+      await loadStandings(false);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : t('leaderboardPage.registration.unregisterError');
+      showError(message);
+    } finally {
+      setRegistrationLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -500,6 +581,48 @@ export default function TournamentLeaderboard() {
                   </Box>
                 </Box>
               </Box>
+              {tournament.type === 'shuffle' && tournament.status === 'setup' && (
+                <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mb: 2 }}>
+                  {registrationSelf?.registered && (
+                    <Chip
+                      color="success"
+                      size="small"
+                      label={t('leaderboardPage.registration.registeredChip')}
+                    />
+                  )}
+                  {registrationSelf?.canRegister && (
+                    <Button
+                      variant="contained"
+                      size="small"
+                      startIcon={<PersonAddIcon />}
+                      disabled={registrationLoading}
+                      onClick={() => void handleRegisterSelf()}
+                      data-testid="tournament-leaderboard-register-self"
+                    >
+                      {registrationLoading
+                        ? t('leaderboardPage.registration.registering')
+                        : t('leaderboardPage.registration.registerCta')}
+                    </Button>
+                  )}
+                  {registrationSelf?.canUnregister && (
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      startIcon={<PersonRemoveIcon />}
+                      disabled={registrationLoading}
+                      onClick={() => void handleUnregisterSelf()}
+                      data-testid="tournament-leaderboard-unregister-self"
+                    >
+                      {t('leaderboardPage.registration.unregisterCta')}
+                    </Button>
+                  )}
+                  {playerSteamId && hasPlayerRecord === false && (
+                    <Typography variant="caption" color="text.secondary">
+                      {t('leaderboardPage.registration.needPlayerRecord')}
+                    </Typography>
+                  )}
+                </Stack>
+              )}
 
               {/* Quick-glance top performers */}
               {topPerformers && (

@@ -145,7 +145,19 @@
     "team": "Drużyna",
     "matches": "Mecze",
     "view": "View",
-    "profileHint": "Click on any player's name or the \"View\" link to see their detailed profile, match history, and Skill Rating progression."
+    "profileHint": "Click on any player's name or the \"View\" link to see their detailed profile, match history, and Skill Rating progression.",
+    "registration": {
+      "registerCta": "Join tournament",
+      "registering": "Joining…",
+      "registerSuccess": "You are registered for this shuffle tournament.",
+      "registerError": "Could not join the tournament.",
+      "alreadyRegistered": "You are already registered.",
+      "unregisterCta": "Leave tournament",
+      "unregisterSuccess": "You left the tournament registration list.",
+      "unregisterError": "Could not leave the tournament.",
+      "registeredChip": "You are registered",
+      "needPlayerRecord": "Register as a player first to join shuffle tournaments."
+    }
   },
   "teamsPage": {
     "headerSelect": {

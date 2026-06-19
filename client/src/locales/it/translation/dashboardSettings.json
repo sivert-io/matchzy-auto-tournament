@@ -169,7 +169,9 @@
         "title": "Registrazione giocatori",
         "description": "Controlla se i nuovi accessi Steam creano automaticamente profili giocatore. Quando disabilitato, solo i giocatori creati o importati dagli admin compariranno in tornei privati e shuffle pool.",
         "toggleLabel": "Consenti a chiunque di registrarsi tramite accesso Steam",
-        "recommendation": "Consigliato: lascialo disattivato per tornei su invito o privati, così accessi Steam casuali non “sporcano” la lista giocatori."
+        "recommendation": "Consigliato: lascialo disattivato per tornei su invito o privati, così accessi Steam casuali non “sporcano” la lista giocatori.",
+        "shuffleToggleLabel": "Allow players to join shuffle tournaments from the public leaderboard",
+        "shuffleRecommendation": "When enabled, registered players can join shuffle events while the tournament is still in setup. Disable for admin-only registration lists."
       }
     },
     "developer": {

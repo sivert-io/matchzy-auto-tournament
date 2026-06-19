@@ -408,6 +408,80 @@ export function getSchemaSQL(): string {
 
     CREATE INDEX IF NOT EXISTS idx_lobbies_status ON lobbies(status);
 
+    -- Multi-organization foundation (additive; single-org installs keep working)
+    CREATE TABLE IF NOT EXISTS organizations (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      slug TEXT NOT NULL UNIQUE,
+      created_at INTEGER NOT NULL DEFAULT EXTRACT(EPOCH FROM NOW())::INTEGER,
+      updated_at INTEGER NOT NULL DEFAULT EXTRACT(EPOCH FROM NOW())::INTEGER
+    );
+
+    CREATE TABLE IF NOT EXISTS organization_memberships (
+      organization_id TEXT NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+      player_id TEXT NOT NULL REFERENCES players(id) ON DELETE CASCADE,
+      role TEXT NOT NULL DEFAULT 'member',
+      created_at INTEGER NOT NULL DEFAULT EXTRACT(EPOCH FROM NOW())::INTEGER,
+      PRIMARY KEY (organization_id, player_id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_organization_memberships_player ON organization_memberships(player_id);
+
+    CREATE TABLE IF NOT EXISTS competition_staff (
+      tournament_id INTEGER NOT NULL REFERENCES tournament(id) ON DELETE CASCADE,
+      player_id TEXT NOT NULL REFERENCES players(id) ON DELETE CASCADE,
+      role TEXT NOT NULL DEFAULT 'operator',
+      created_at INTEGER NOT NULL DEFAULT EXTRACT(EPOCH FROM NOW())::INTEGER,
+      PRIMARY KEY (tournament_id, player_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS team_memberships (
+      team_id TEXT NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
+      player_id TEXT NOT NULL REFERENCES players(id) ON DELETE CASCADE,
+      role TEXT NOT NULL DEFAULT 'player',
+      status TEXT NOT NULL DEFAULT 'active',
+      created_at INTEGER NOT NULL DEFAULT EXTRACT(EPOCH FROM NOW())::INTEGER,
+      updated_at INTEGER NOT NULL DEFAULT EXTRACT(EPOCH FROM NOW())::INTEGER,
+      PRIMARY KEY (team_id, player_id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_team_memberships_player ON team_memberships(player_id);
+
+    CREATE TABLE IF NOT EXISTS registrations (
+      id SERIAL PRIMARY KEY,
+      tournament_id INTEGER NOT NULL DEFAULT 1 REFERENCES tournament(id) ON DELETE CASCADE,
+      team_id TEXT REFERENCES teams(id) ON DELETE SET NULL,
+      player_id TEXT REFERENCES players(id) ON DELETE SET NULL,
+      status TEXT NOT NULL DEFAULT 'pending',
+      payment_status TEXT NOT NULL DEFAULT 'unpaid',
+      mercadopago_preference_id TEXT,
+      mercadopago_payment_id TEXT,
+      amount_cents INTEGER,
+      currency TEXT DEFAULT 'BRL',
+      created_at INTEGER NOT NULL DEFAULT EXTRACT(EPOCH FROM NOW())::INTEGER,
+      updated_at INTEGER NOT NULL DEFAULT EXTRACT(EPOCH FROM NOW())::INTEGER
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_registrations_tournament ON registrations(tournament_id);
+    CREATE INDEX IF NOT EXISTS idx_registrations_player ON registrations(player_id);
+
+    CREATE TABLE IF NOT EXISTS audit_log (
+      id SERIAL PRIMARY KEY,
+      organization_id TEXT REFERENCES organizations(id) ON DELETE SET NULL,
+      actor_id TEXT,
+      action TEXT NOT NULL,
+      entity_type TEXT,
+      entity_id TEXT,
+      before_data TEXT,
+      after_data TEXT,
+      created_at INTEGER NOT NULL DEFAULT EXTRACT(EPOCH FROM NOW())::INTEGER
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_audit_log_org ON audit_log(organization_id);
+    CREATE INDEX IF NOT EXISTS idx_audit_log_created ON audit_log(created_at);
+
+    ALTER TABLE tournament ADD COLUMN IF NOT EXISTS organization_id TEXT REFERENCES organizations(id);
+
     -- Session table for connect-pg-simple (express-session PostgreSQL store)
     -- This table is required for session persistence across API restarts
     CREATE TABLE IF NOT EXISTS session (

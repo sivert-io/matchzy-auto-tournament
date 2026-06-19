@@ -278,7 +278,9 @@
         "title": "Spillerregistrering",
         "description": "Styr om nye Steam-innlogginger automatisk oppretter spillerprofiler. Når deaktivert vil kun spillere som admins har opprettet eller importert vises i private turneringer og shuffle-pooler.",
         "toggleLabel": "Tillat at hvem som helst kan registrere seg via Steam-innlogging",
-        "recommendation": "Anbefalt: la dette være av for invitasjons‑ eller private turneringer, slik at tilfeldige Steam-innlogginger ikke fyller opp spillerlisten."
+        "recommendation": "Anbefalt: la dette være av for invitasjons‑ eller private turneringer, slik at tilfeldige Steam-innlogginger ikke fyller opp spillerlisten.",
+        "shuffleToggleLabel": "Allow players to join shuffle tournaments from the public leaderboard",
+        "shuffleRecommendation": "When enabled, registered players can join shuffle events while the tournament is still in setup. Disable for admin-only registration lists."
       }
     },
     "developer": {

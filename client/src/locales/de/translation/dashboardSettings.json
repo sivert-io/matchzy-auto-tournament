@@ -169,7 +169,9 @@
         "title": "Spielerregistrierung",
         "description": "Steuere, ob neue Steam-Logins automatisch Spielerprofile erstellen. Wenn deaktiviert, erscheinen in privaten Turnieren und Shuffle-Pools nur Spieler, die von Admins erstellt oder importiert wurden.",
         "toggleLabel": "Allen erlauben, sich per Steam-Login zu registrieren",
-        "recommendation": "Empfohlen: Für Einladungs- oder private Turniere deaktiviert lassen, damit zufällige Steam-Logins die Spielerliste nicht „vermüllen“."
+        "recommendation": "Empfohlen: Für Einladungs- oder private Turniere deaktiviert lassen, damit zufällige Steam-Logins die Spielerliste nicht „vermüllen“.",
+        "shuffleToggleLabel": "Allow players to join shuffle tournaments from the public leaderboard",
+        "shuffleRecommendation": "When enabled, registered players can join shuffle events while the tournament is still in setup. Disable for admin-only registration lists."
       }
     },
     "developer": {

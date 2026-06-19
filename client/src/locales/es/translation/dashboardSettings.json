@@ -169,7 +169,9 @@
         "title": "Registro de jugadores",
         "description": "Controla si los nuevos inicios de sesión con Steam crean automáticamente registros de jugador. Cuando está deshabilitado, solo los jugadores creados o importados por admins aparecerán en torneos privados y pools shuffle.",
         "toggleLabel": "Permitir que cualquiera se registre mediante inicio de sesión con Steam",
-        "recommendation": "Recomendado: mantenlo desactivado para torneos por invitación o privados, para que inicios de sesión aleatorios no ensucien la lista de jugadores."
+        "recommendation": "Recomendado: mantenlo desactivado para torneos por invitación o privados, para que inicios de sesión aleatorios no ensucien la lista de jugadores.",
+        "shuffleToggleLabel": "Allow players to join shuffle tournaments from the public leaderboard",
+        "shuffleRecommendation": "When enabled, registered players can join shuffle events while the tournament is still in setup. Disable for admin-only registration lists."
       }
     },
     "developer": {

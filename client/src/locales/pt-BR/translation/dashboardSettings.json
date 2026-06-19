@@ -169,7 +169,9 @@
         "title": "Registo de jogadores",
         "description": "Controla se novos logins Steam criam automaticamente registos de jogador. Quando desativado, apenas jogadores criados ou importados por admins aparecem em torneios privados e pools shuffle.",
         "toggleLabel": "Permitir que qualquer pessoa se registe via login Steam",
-        "recommendation": "Recomendado: mantém isto desativado para torneios por convite ou privados, para que logins Steam aleatórios não poluam a lista de jogadores."
+        "recommendation": "Recomendado: mantém isto desativado para torneios por convite ou privados, para que logins Steam aleatórios não poluam a lista de jogadores.",
+        "shuffleToggleLabel": "Permitir que jogadores entrem em torneios shuffle pelo ranking público",
+        "shuffleRecommendation": "Quando ativado, jogadores cadastrados podem entrar em eventos shuffle enquanto o torneio está em setup. Desative para listas só via admin."
       }
     },
     "developer": {

@@ -15,6 +15,9 @@ import {
   registerPlayers,
   setRegisteredPlayers,
   getRegisteredPlayers,
+  registerSelfForShuffle,
+  unregisterSelfFromShuffle,
+  isPlayerRegisteredForShuffle,
   generateRoundMatches,
   getPlayerLeaderboard,
   getTournamentLeaderboard,
@@ -27,6 +30,8 @@ import { serverInitializationService } from '../services/serverInitializationSer
 import { checkTournamentCompletion } from '../utils/matchProgression';
 import { cs2UpdateService } from '../services/cs2UpdateService';
 import { extractCs2StatusVersionLine, parseCs2BuildId } from '../utils/cs2Version';
+import { getVerifiedPlayerSteamId } from '../utils/signedPlayerCookie';
+import { playerService } from '../services/playerService';
 
 const router = Router();
 
@@ -285,6 +290,107 @@ router.get('/allocation-status', async (_req: Request, res: Response) => {
       success: false,
       error: 'Failed to fetch allocation status',
     });
+  }
+});
+
+/**
+ * Player shuffle registration status (public; uses signed Steam cookie when present).
+ */
+router.get('/:id/registration-self', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    if (id !== '1') {
+      return res.status(400).json({ success: false, error: 'Only tournament ID 1 is supported' });
+    }
+
+    const tournament = await tournamentService.getTournament();
+    if (!tournament) {
+      return res.json({
+        success: true,
+        registered: false,
+        canRegister: false,
+        canUnregister: false,
+        tournamentType: null,
+        tournamentStatus: null,
+      });
+    }
+
+    const steamId = getVerifiedPlayerSteamId(req.headers.cookie);
+    const isShuffle = tournament.type === 'shuffle';
+    const inSetup = tournament.status === 'setup';
+    const allowShuffleSelfRegister = await settingsService.isShuffleSelfRegistrationAllowed();
+    const hasPlayerRecord = steamId ? Boolean(await playerService.getPlayerById(steamId)) : false;
+    const registered =
+      steamId && isShuffle ? await isPlayerRegisteredForShuffle(steamId) : false;
+
+    return res.json({
+      success: true,
+      registered,
+      canRegister:
+        Boolean(steamId) &&
+        hasPlayerRecord &&
+        isShuffle &&
+        inSetup &&
+        allowShuffleSelfRegister &&
+        !registered,
+      canUnregister: Boolean(steamId) && registered && isShuffle && inSetup,
+      allowShuffleSelfRegister,
+      hasPlayerRecord,
+      tournamentType: tournament.type,
+      tournamentStatus: tournament.status,
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    log.error('Error fetching shuffle registration status', { error });
+    return res.status(500).json({ success: false, error: message });
+  }
+});
+
+router.post('/:id/register-self', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    if (id !== '1') {
+      return res.status(400).json({ success: false, error: 'Only tournament ID 1 is supported' });
+    }
+
+    const steamId = getVerifiedPlayerSteamId(req.headers.cookie);
+    if (!steamId) {
+      return res.status(401).json({
+        success: false,
+        error: 'Sign in with Steam to register for the tournament',
+      });
+    }
+
+    const result = await registerSelfForShuffle(steamId);
+    return res.json({ success: true, ...result });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    log.warn('Shuffle self-registration failed', { error });
+    return res.status(400).json({ success: false, error: message });
+  }
+});
+
+router.delete('/:id/register-self', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    if (id !== '1') {
+      return res.status(400).json({ success: false, error: 'Only tournament ID 1 is supported' });
+    }
+
+    const steamId = getVerifiedPlayerSteamId(req.headers.cookie);
+    if (!steamId) {
+      return res.status(401).json({
+        success: false,
+        error: 'Sign in with Steam to manage tournament registration',
+      });
+    }
+
+    const result = await unregisterSelfFromShuffle(steamId);
+    return res.json({ success: true, ...result });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    log.warn('Shuffle self-unregistration failed', { error });
+    return res.status(400).json({ success: false, error: message });
   }
 });
 

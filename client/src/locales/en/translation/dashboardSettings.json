@@ -278,7 +278,9 @@
         "title": "Player registration",
         "description": "Control whether new Steam logins automatically create player records. When disabled, only players created or imported by admins will appear in private tournaments and shuffle pools.",
         "toggleLabel": "Allow anyone to register via Steam login",
-        "recommendation": "Recommended: keep this off for invite‑only or private tournaments so random Steam logins do not pollute the player list."
+        "recommendation": "Recommended: keep this off for invite‑only or private tournaments so random Steam logins do not pollute the player list.",
+        "shuffleToggleLabel": "Allow players to join shuffle tournaments from the public leaderboard",
+        "shuffleRecommendation": "When enabled, registered players can join shuffle events while the tournament is still in setup. Disable for admin-only registration lists."
       }
     },
     "developer": {

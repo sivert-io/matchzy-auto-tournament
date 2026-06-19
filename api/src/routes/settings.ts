@@ -28,6 +28,7 @@ const mapSettingsResponse = async () => {
   const ratingsEnabled = await settingsService.areRatingsEnabled();
   const matchzyDebugChatEnabled = await settingsService.isMatchzyDebugChatEnabled();
   const allowSelfRegister = await settingsService.isSelfRegistrationAllowed();
+  const allowShuffleSelfRegister = await settingsService.isShuffleSelfRegistrationAllowed();
   const matchzyCore = await settingsService.getMatchzyCoreDefaults();
   
   // MatchZy Enhanced v1.3.0 settings
@@ -47,6 +48,7 @@ const mapSettingsResponse = async () => {
     ratingsEnabled,
     matchzyDebugChatEnabled,
     allowSelfRegister,
+    allowShuffleSelfRegister,
     // MatchZy core defaults
     matchzyAutostartMode: matchzyCore.autostartMode,
     matchzyMinimumReadyRequired: matchzyCore.minimumReadyRequired,
@@ -96,6 +98,7 @@ router.put('/', async (req: Request, res: Response) => {
     ratingsEnabled,
     matchzyDebugChatEnabled,
     allowSelfRegister,
+    allowShuffleSelfRegister,
     // MatchZy core defaults
     matchzyAutostartMode,
     matchzyMinimumReadyRequired,
@@ -134,6 +137,7 @@ router.put('/', async (req: Request, res: Response) => {
     ratingsEnabled?: unknown;
     matchzyDebugChatEnabled?: unknown;
     allowSelfRegister?: unknown;
+    allowShuffleSelfRegister?: unknown;
     // MatchZy core defaults
     matchzyAutostartMode?: unknown;
     matchzyMinimumReadyRequired?: unknown;
@@ -310,6 +314,20 @@ router.put('/', async (req: Request, res: Response) => {
         allowSelfRegister === null ? null : allowSelfRegister === true ? '1' : '0';
 
       await settingsService.setSetting('allow_self_register', value);
+    }
+
+    if (allowShuffleSelfRegister !== undefined) {
+      if (typeof allowShuffleSelfRegister !== 'boolean' && allowShuffleSelfRegister !== null) {
+        return res.status(400).json({
+          success: false,
+          error: 'allowShuffleSelfRegister must be a boolean or null',
+        });
+      }
+
+      const value =
+        allowShuffleSelfRegister === null ? null : allowShuffleSelfRegister === true ? '1' : '0';
+
+      await settingsService.setSetting('allow_shuffle_self_register', value);
     }
 
     if (matchzyMinimumReadyRequired !== undefined) {

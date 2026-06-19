@@ -5,6 +5,7 @@
 
 import { db } from '../config/database';
 import { log } from '../utils/logger';
+import { settingsService } from './settingsService';
 import { balanceTeams, type BalancedTeam } from './teamBalancingService';
 import { playerService, type PlayerRecord } from './playerService';
 import { teamService } from './teamService';
@@ -208,6 +209,71 @@ export async function registerPlayers(playerIds: string[]): Promise<{
   });
 
   return { registered, errors };
+}
+
+export async function isPlayerRegisteredForShuffle(playerId: string): Promise<boolean> {
+  const row = await db.queryOneAsync<{ player_id: string }>(
+    'SELECT player_id FROM shuffle_tournament_players WHERE tournament_id = 1 AND player_id = ?',
+    [playerId]
+  );
+  return Boolean(row);
+}
+
+/**
+ * Register the authenticated player for the shuffle tournament (player portal).
+ */
+export async function registerSelfForShuffle(playerId: string): Promise<{
+  registered: boolean;
+  alreadyRegistered: boolean;
+}> {
+  if (!(await settingsService.isShuffleSelfRegistrationAllowed())) {
+    throw new Error('Shuffle tournament self-registration is disabled');
+  }
+
+  const player = await playerService.getPlayerById(playerId);
+  if (!player) {
+    throw new Error('Player record not found. Register as a player first.');
+  }
+
+  if (await isPlayerRegisteredForShuffle(playerId)) {
+    return { registered: true, alreadyRegistered: true };
+  }
+
+  const result = await registerPlayers([playerId]);
+  if (result.errors.length > 0) {
+    throw new Error(result.errors[0]?.error || 'Failed to register for tournament');
+  }
+
+  return { registered: result.registered > 0, alreadyRegistered: false };
+}
+
+/**
+ * Remove the authenticated player from shuffle tournament registration (setup only).
+ */
+export async function unregisterSelfFromShuffle(playerId: string): Promise<{ unregistered: boolean }> {
+  const tournament = await getShuffleTournament();
+  if (!tournament) {
+    throw new Error('No shuffle tournament found');
+  }
+
+  if (tournament.status !== 'setup') {
+    throw new Error(
+      `Cannot unregister. Tournament is in "${tournament.status}" status. ` +
+        'Players can only unregister while the tournament is in "setup" status.'
+    );
+  }
+
+  if (!(await isPlayerRegisteredForShuffle(playerId))) {
+    return { unregistered: false };
+  }
+
+  await db.deleteAsync('shuffle_tournament_players', 'tournament_id = ? AND player_id = ?', [
+    1,
+    playerId,
+  ]);
+
+  log.success(`Player ${playerId} unregistered from shuffle tournament`);
+  return { unregistered: true };
 }
 
 /**
