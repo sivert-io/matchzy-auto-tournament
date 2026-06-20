@@ -1,81 +1,136 @@
 # Environment variables
 
+Complete reference for Fragbase / MatchZy Auto Tournament.
+
+**Quick start:** `node scripts/generate-env.mjs` then add `STEAM_API_KEY`.
+
+## Required for production (org camp stack)
+
+| Variable | Example | Notes |
+|----------|---------|--------|
+| `SESSION_SECRET` | random 32+ bytes | express-session |
+| `SERVER_TOKEN` | random | Same on all CS2 MatchZy servers |
+| `DB_PASSWORD` | random | Postgres in stack |
+| `STEAM_API_KEY` | from Steam | https://steamcommunity.com/dev/apikey |
+| `FRONTEND_BASE_URL` | `https://admin.camp.fragbase.gg` | Org portal — **OAuth redirects** |
+| `API_BASE_URL` | `https://admin.camp.fragbase.gg` | CS2 webhooks, Mercado Pago |
+| `PLAYER_PORTAL_URL` | `https://play.camp.fragbase.gg` | Checkout return URLs |
+| `ORG_HOST` | `admin.camp.fragbase.gg` | Caddy vhost → org SPA |
+| `PLAYER_HOST` | `play.camp.fragbase.gg` | Caddy vhost → player SPA |
+| `ORG_SLUG` | `camp-alpha` | Compose project + `ORGANIZATION_ID` |
+
+Mercado Pago (only if `registrationFeeCents > 0`):
+
+| Variable | Example |
+|----------|---------|
+| `MERCADOPAGO_CLIENT_ID` | MP OAuth app |
+| `MERCADOPAGO_CLIENT_SECRET` | MP OAuth secret |
+| `MERCADOPAGO_REDIRECT_URI` | `API_BASE_URL/api/payments/mercadopago/callback` |
+
+## Local dev (split portals)
+
+```env
+FRONTEND_BASE_URL=http://localhost:5174   # org Vite
+API_BASE_URL=http://localhost:3000        # API
+PLAYER_PORTAL_URL=http://localhost:5173   # player Vite
+MERCADOPAGO_REDIRECT_URI=http://localhost:3000/api/payments/mercadopago/callback
+```
+
 ## Core
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `PORT` | No | API port inside container (default `3000`) |
-| `NODE_ENV` | No | `development` or `production` |
-| `SESSION_SECRET` | **Yes (prod)** | express-session secret |
-| `SERVER_TOKEN` | **Yes (prod)** | Shared secret with MatchZy on CS2 servers |
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `PORT` | No | `3000` | API port inside container |
+| `NODE_ENV` | No | `development` | `production` on Docker stacks |
+| `SESSION_SECRET` | **Prod** | dev fallback | Session signing |
+| `SERVER_TOKEN` | **Prod** | — | MatchZy + API server auth |
 
 ## Database
 
 | Variable | Description |
 |----------|-------------|
-| `DATABASE_URL` | `postgresql://user:pass@host:5432/db` (Docker) |
-| `DB_HOST` | Host when not using `DATABASE_URL` |
-| `DB_PORT` | Default `5432` |
-| `DB_USER` | Default `postgres` |
+| `DATABASE_URL` | Set by `docker-compose.org.yml` in Docker |
+| `DB_HOST` | `127.0.0.1` local / `postgres` in compose |
+| `DB_PORT` | `5432` |
+| `DB_USER` | `postgres` |
 | `DB_PASSWORD` | Postgres password |
-| `DB_NAME` | Default `matchzy_tournament` |
+| `DB_NAME` | `matchzy_tournament` (hub: `fragbase_hub`) |
 
 ## Multi-instance / org
 
 | Variable | Description |
 |----------|-------------|
-| `ORGANIZATION_ID` | Org slug for this stack (compose sets from `ORG_SLUG`) |
+| `ORG_SLUG` | Stack slug (`org-stack.sh` argument) |
+| `ORGANIZATION_ID` | Usually same as `ORG_SLUG` |
 | `ORGANIZATION_NAME` | Display name |
-| `ORGANIZATION_SLUG` | URL slug (usually same as id) |
-| `PLAYER_HOST` | Caddy vhost for player SPA |
-| `ORG_HOST` | Caddy vhost for org SPA |
+| `ORGANIZATION_SLUG` | URL slug |
+| `HOST_PORT` | Host port mapped to Caddy `3069` |
+| `PLAYER_HOST` | Player SPA hostname |
+| `ORG_HOST` | Org SPA hostname |
 
 ## URLs
 
-| Variable | Description |
-|----------|-------------|
-| `FRONTEND_BASE_URL` | OAuth redirect base (org admin URL) |
-| `API_BASE_URL` | Public API (Mercado Pago webhook) |
-| `PLAYER_PORTAL_URL` | Player portal for checkout returns |
-
-Dev example:
-
-```env
-FRONTEND_BASE_URL=http://localhost:5174
-API_BASE_URL=http://localhost:3000
-PLAYER_PORTAL_URL=http://localhost:5173
-```
+| Variable | Used for |
+|----------|----------|
+| `FRONTEND_BASE_URL` | Steam/SSO OAuth return URLs (org admin) |
+| `API_BASE_URL` | MatchZy webhooks, MP webhook, Swagger |
+| `PLAYER_PORTAL_URL` | Mercado Pago checkout success/failure URLs |
 
 ## Auth
 
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `AUTH_STEAM_ENABLED` | `true` | Steam login |
+| `STEAM_API_KEY` | — | Required for Steam |
+| `AUTH_DISCORD_ENABLED` | — | Optional SSO |
+| `DISCORD_CLIENT_ID` / `DISCORD_CLIENT_SECRET` | — | Discord OAuth |
+| `AUTH_GITHUB_ENABLED` | — | Optional SSO |
+| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | — | GitHub OAuth |
+| `AUTH_KEYCLOAK_ENABLED` | — | Optional SSO |
+| `KEYCLOAK_ISSUER_URL` / `KEYCLOAK_CLIENT_ID` / `KEYCLOAK_CLIENT_SECRET` | — | Keycloak OIDC |
+
+## Docker deploy
+
 | Variable | Description |
 |----------|-------------|
-| `AUTH_STEAM_ENABLED` | Default `true` |
-| `STEAM_API_KEY` | Required for Steam login |
-| `AUTH_DISCORD_ENABLED` | Optional SSO |
-| `AUTH_GITHUB_ENABLED` | Optional SSO |
-| `AUTH_KEYCLOAK_ENABLED` | Optional SSO |
-
-## Mercado Pago (org checkout)
-
-| Variable | Description |
-|----------|-------------|
-| `MERCADOPAGO_CLIENT_ID` | OAuth app |
-| `MERCADOPAGO_CLIENT_SECRET` | OAuth secret |
-| `MERCADOPAGO_REDIRECT_URI` | `API_BASE_URL/api/payments/mercadopago/callback` |
+| `MAT_IMAGE` | Default `sivertio/matchzy-auto-tournament:latest` |
 
 ## Logging
 
 | Variable | Default |
 |----------|---------|
 | `LOG_LEVEL` | `info` |
-| `LOG_HTTP_REQUESTS` | optional |
-| `LOG_DB_VERBOSE` | auto in debug |
+| `LOG_HTTP_REQUESTS` | `true` (set `false` to quiet) |
+| `LOG_DB_VERBOSE` | auto when `LOG_LEVEL=debug` |
+| `LOG_RCON_VERBOSE` | `false` |
 
-## Generate local files
+## Optional
+
+| Variable | Description |
+|----------|-------------|
+| `CORS_ORIGIN` | Socket.IO CORS (default `*`) |
+| `FACEIT_API_KEY` | FACEIT ELO in lobbies |
+| `CS2_ADMINS_JSON_PATH` | Path to admins.json on server |
+| `GITHUB_TOKEN` | fetchCS2Maps GitHub API |
+| `MATCHZY_ENABLE_SIMULATION_IN_PROD` | Simulation in prod |
+| `ENABLE_TEST_ENDPOINTS` | E2E test helpers |
+| `TEST_STEAM_ID` | Playwright admin Steam ID |
+
+## Files
+
+| File | Purpose |
+|------|---------|
+| `.env` | Local dev (`yarn dev:player` / `yarn dev:org`) |
+| `docker/env/fragbase-camp.env` | Production camp (generated) |
+| `docker/example.env.org` | Template per-org stack |
+| `docker/example.env.hub` | Global hub stack |
+| `example.env` | Annotated reference (copy to `.env`) |
+
+Generate:
 
 ```bash
 node scripts/generate-env.mjs
+node scripts/generate-env.mjs --force   # regenerate secrets
 ```
 
-See also `example.env`, `docker/example.env.org`, `docker/example.env.hub`.
+See `docs/DEPLOY.md` for VPS steps.

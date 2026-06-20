@@ -46,6 +46,8 @@ services:
       - DB_HOST=postgres
       - DATABASE_URL=postgresql://${DB_USER:-postgres}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-fragbase_hub}
       - SESSION_SECRET=${SESSION_SECRET:?set SESSION_SECRET}
+      - SERVER_TOKEN=${SERVER_TOKEN:?set SERVER_TOKEN}
+      - STEAM_API_KEY=${STEAM_API_KEY:-}
       - ORGANIZATION_ID=${ORGANIZATION_ID:-hub}
       - ORGANIZATION_NAME=${ORGANIZATION_NAME:-Fragbase Hub}
       - ORGANIZATION_SLUG=${ORGANIZATION_SLUG:-hub}

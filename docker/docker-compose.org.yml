@@ -54,6 +54,8 @@ services:
       - DB_HOST=postgres
       - DATABASE_URL=postgresql://${DB_USER:-postgres}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-matchzy_tournament}
       - SESSION_SECRET=${SESSION_SECRET:?set SESSION_SECRET}
+      - SERVER_TOKEN=${SERVER_TOKEN:?set SERVER_TOKEN}
+      - STEAM_API_KEY=${STEAM_API_KEY:-}
       - ORGANIZATION_ID=${ORG_SLUG}
       - ORGANIZATION_NAME=${ORGANIZATION_NAME:-${ORG_SLUG}}
       - ORGANIZATION_SLUG=${ORGANIZATION_SLUG:-${ORG_SLUG}}
