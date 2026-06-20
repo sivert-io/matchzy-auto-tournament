@@ -7,7 +7,10 @@ export const portalPaths = {
     home: '/play',
     lobbies: '/play/lobbies',
     inventory: '/play/skins',
+    camps: '/camps',
+    teams: '/teams',
     players: '/player',
+    leaderboard: '/leaderboard',
   },
   organizer: {
     home: '/organizer',

@@ -20,7 +20,6 @@ import { useTeamMatchData } from '../hooks/useTeamMatchData';
 import { useTournamentStatus } from '../hooks/useTournamentStatus';
 import { TournamentRulesAccordion } from '../components/tournament/TournamentRulesAccordion';
 import { useAuth } from '../contexts/AuthContext';
-import { TopNavBar } from '../components/layout/TopNavBar';
 import { GlassCard, PageShell, pageWidth, publicPageShellSx } from '../shared/ui';
 import { useTranslation } from 'react-i18next';
 
@@ -68,28 +67,19 @@ export default function TeamMatch() {
 
   if (loading) {
     return (
-      <Box
-        minHeight="100vh"
-        display="flex"
-        flexDirection="column"
-        bgcolor="background.default"
-      >
-        <TopNavBar />
-        <Box flex={1} display="flex" alignItems="center" justifyContent="center">
+      <PageShell maxWidth={pageWidth.content} sx={publicPageShellSx}>
+        <Box display="flex" justifyContent="center" alignItems="center" minHeight={400}>
           <CircularProgress />
         </Box>
-      </Box>
+      </PageShell>
     );
   }
 
   if (error) {
     return (
-      <Box minHeight="100vh" bgcolor="background.default">
-        <TopNavBar />
-        <PageShell maxWidth={pageWidth.content} sx={publicPageShellSx}>
-          <Alert severity="error">{error}</Alert>
-        </PageShell>
-      </Box>
+      <PageShell maxWidth={pageWidth.content} sx={publicPageShellSx}>
+        <Alert severity="error">{error}</Alert>
+      </PageShell>
     );
   }
 
@@ -99,9 +89,7 @@ export default function TeamMatch() {
 
   if (!hasMatch) {
     return (
-      <Box minHeight="100vh" bgcolor="background.default">
-        <TopNavBar />
-        <PageShell maxWidth={pageWidth.content} sx={publicPageShellSx}>
+      <PageShell maxWidth={pageWidth.content} sx={publicPageShellSx}>
           <Stack spacing={3}>
             <TeamHeader team={team} hideSoundControls />
 
@@ -181,15 +169,12 @@ export default function TeamMatch() {
             <TeamStatsCard stats={stats} standing={standing} />
             <TeamMatchHistoryCard matchHistory={matchHistory} teamId={teamId} />
           </Stack>
-        </PageShell>
-      </Box>
+      </PageShell>
     );
   }
 
   return (
-    <Box minHeight="100vh" bgcolor="background.default">
-      <TopNavBar />
-      <PageShell maxWidth={pageWidth.content} sx={publicPageShellSx}>
+    <PageShell maxWidth={pageWidth.content} sx={publicPageShellSx}>
           <Stack spacing={3}>
             {tournamentName && (
               <Typography
@@ -234,6 +219,5 @@ export default function TeamMatch() {
             <TeamMatchHistoryCard matchHistory={matchHistory} teamId={teamId} />
           </Stack>
       </PageShell>
-    </Box>
   );
 }

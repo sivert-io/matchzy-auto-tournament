@@ -1,14 +1,14 @@
 import { lazy, ReactNode, Suspense } from 'react';
-import { Box, CircularProgress } from '@mui/material';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { RequireAccess } from '../components/auth/RequireAccess';
 import { legacyOrganizerRedirects, portalPaths } from '../config/portals';
+import { OrgPublicShell } from '../components/layout/public/OrgPublicShell';
 import { useIsDevelopment } from '../hooks/useIsDevelopment';
 import { AppProviders } from '../shared/AppProviders';
+import { AppLoadingScreen } from '../shared/AppLoadingScreen';
 import { useAuth } from '../contexts/AuthContext';
+import OrgAuthPage from '../pages/public/OrgAuthPage';
 
-const Login = lazy(() => import('../pages/Login'));
-const Landing = lazy(() => import('../pages/Landing'));
 const Dashboard = lazy(() => import('../pages/Dashboard'));
 const Teams = lazy(() => import('../pages/Teams'));
 const Players = lazy(() => import('../pages/Players'));
@@ -27,11 +27,11 @@ const Layout = lazy(() => import('../components/layout/Layout'));
 const NotFound = lazy(() => import('../pages/NotFound'));
 
 function RouteFallback() {
-  return (
-    <Box sx={{ minHeight: '100vh', display: 'grid', placeItems: 'center' }}>
-      <CircularProgress aria-label="Carregando página" />
-    </Box>
-  );
+  return <AppLoadingScreen />;
+}
+
+function Lazy({ children }: { children: ReactNode }) {
+  return <Suspense fallback={<RouteFallback />}>{children}</Suspense>;
 }
 
 function Access({ level, children }: { level: 'public' | 'identity' | 'admin'; children: ReactNode }) {
@@ -43,51 +43,56 @@ function LegacyRedirect({ to }: { to: string }) {
   return <Navigate to={`${to}${location.search}${location.hash}`} replace />;
 }
 
-function OrgRoot() {
+function OrgPublicEntry() {
   const { isLoading, isAuthenticated } = useAuth();
   if (isLoading) return <RouteFallback />;
   if (isAuthenticated) {
     return <Navigate to={portalPaths.organizer.home} replace />;
   }
-  return <Landing portal="organizer" />;
+  return <OrgAuthPage />;
 }
 
 function OrgRoutes() {
   const isDevelopment = useIsDevelopment();
 
   return (
-    <Suspense fallback={<RouteFallback />}>
-      <Routes>
-        <Route path="/" element={<OrgRoot />} />
-        <Route path="/login" element={<Login portal="organizer" />} />
-        <Route path="/connect-steam" element={<Access level="admin"><ConnectSteam /></Access>} />
+    <Routes>
+      <Route element={<OrgPublicShell />}>
+        <Route path="/" element={<OrgPublicEntry />} />
+        <Route path="/login" element={<Navigate to="/" replace />} />
+      </Route>
 
-        <Route
-          path={portalPaths.organizer.home}
-          element={<Access level="admin"><Layout portal="organizer" /></Access>}
-        >
-          <Route index element={<Dashboard />} />
-          <Route path="teams" element={<Teams />} />
-          <Route path="players" element={<Players />} />
-          <Route path="servers" element={<Servers />} />
-          <Route path="tournament" element={<Tournament />} />
-          <Route path="bracket" element={<Bracket />} />
-          <Route path="matches" element={<Matches />} />
-          <Route path="admin" element={<AdminTools />} />
-          <Route path="settings" element={<Settings />} />
-          <Route path="maps" element={<Maps />} />
-          <Route path="templates" element={<Templates />} />
-          <Route path="elo-templates" element={<ELOTemplates />} />
-          {isDevelopment && <Route path="dev" element={<Development />} />}
-          <Route path="*" element={<NotFound />} />
-        </Route>
+      <Route path="/connect-steam" element={<Access level="admin"><Lazy><ConnectSteam /></Lazy></Access>} />
 
-        {Object.entries(legacyOrganizerRedirects).map(([from, to]) => (
-          <Route key={from} path={from} element={<LegacyRedirect to={to} />} />
-        ))}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Suspense>
+      <Route
+        path={portalPaths.organizer.home}
+        element={
+          <Lazy>
+            <Access level="admin"><Layout portal="organizer" /></Access>
+          </Lazy>
+        }
+      >
+        <Route index element={<Lazy><Dashboard /></Lazy>} />
+        <Route path="teams" element={<Lazy><Teams /></Lazy>} />
+        <Route path="players" element={<Lazy><Players /></Lazy>} />
+        <Route path="servers" element={<Lazy><Servers /></Lazy>} />
+        <Route path="tournament" element={<Lazy><Tournament /></Lazy>} />
+        <Route path="bracket" element={<Lazy><Bracket /></Lazy>} />
+        <Route path="matches" element={<Lazy><Matches /></Lazy>} />
+        <Route path="admin" element={<Lazy><AdminTools /></Lazy>} />
+        <Route path="settings" element={<Lazy><Settings /></Lazy>} />
+        <Route path="maps" element={<Lazy><Maps /></Lazy>} />
+        <Route path="templates" element={<Lazy><Templates /></Lazy>} />
+        <Route path="elo-templates" element={<Lazy><ELOTemplates /></Lazy>} />
+        {isDevelopment && <Route path="dev" element={<Lazy><Development /></Lazy>} />}
+        <Route path="*" element={<Lazy><NotFound /></Lazy>} />
+      </Route>
+
+      {Object.entries(legacyOrganizerRedirects).map(([from, to]) => (
+        <Route key={from} path={from} element={<LegacyRedirect to={to} />} />
+      ))}
+      <Route path="*" element={<Lazy><NotFound /></Lazy>} />
+    </Routes>
   );
 }
 

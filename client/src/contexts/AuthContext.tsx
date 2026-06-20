@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { fetchWithTimeout } from '../utils/fetchWithTimeout';
 
 const PLAYER_AVATAR_CACHE_KEY_PREFIX = 'mat.playerAvatarUrl:';
 
@@ -89,6 +90,11 @@ interface AuthContextType {
   selfRegister: () => Promise<boolean>;
   isSelfRegistering: boolean;
   /**
+   * False when auth bootstrap could not reach the API (timeout / network).
+   * UI can warn the user instead of staying on a black loading screen.
+   */
+  apiReachable: boolean;
+  /**
    * When true, the admin sees the app as a regular player (isAuthenticated = false).
    * Toggle via the dev tools or navbar.
    */
@@ -111,6 +117,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [hasPlayerRecord, setHasPlayerRecord] = useState(false);
   const [allowSelfRegister, setAllowSelfRegister] = useState(false);
   const [isSelfRegistering, setIsSelfRegistering] = useState(false);
+  const [apiReachable, setApiReachable] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
@@ -123,11 +130,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       let cookieSteamId: string | null = null;
       let cookieHasPlayerRecord = false;
 
+      let sawApiResponse = false;
+
       const fetchPlayerIdentity = async () => {
         try {
-          const response = await fetch('/api/auth/me', {
+          const response = await fetchWithTimeout('/api/auth/me', {
             credentials: 'include',
           });
+          sawApiResponse = true;
 
           if (!isMounted) return;
 
@@ -186,9 +196,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       const fetchAdminIdentity = async () => {
         try {
-          const response = await fetch('/api/auth/admin/me', {
+          const response = await fetchWithTimeout('/api/auth/admin/me', {
             credentials: 'include',
           });
+          sawApiResponse = true;
 
           if (!isMounted) return;
 
@@ -250,6 +261,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Steam user after a reload.
       await fetchAdminIdentity();
       await fetchPlayerIdentity();
+
+      setApiReachable(sawApiResponse);
 
       // If the user has a valid Steam cookie but no player record, and an admin
       // enables self-registration later, we want a simple refresh to "sign up"
@@ -374,6 +387,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         allowSelfRegister,
         selfRegister,
         isSelfRegistering,
+        apiReachable,
         isRealAdmin: isAdmin,
         viewAsUser,
         setViewAsUser,

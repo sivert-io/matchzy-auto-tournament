@@ -1,8 +1,8 @@
 import { ReactNode } from 'react';
-import { Box } from '@mui/material';
 import { Navigate, useLocation } from 'react-router-dom';
 import { AccessLevel, portalPaths } from '../../config/portals';
 import { useAuth } from '../../contexts/AuthContext';
+import { AppLoadingScreen } from '../../shared/AppLoadingScreen';
 
 interface RequireAccessProps {
   access: AccessLevel;
@@ -14,31 +14,7 @@ export function RequireAccess({ access, children }: RequireAccessProps) {
   const location = useLocation();
 
   if (isLoading) {
-    return (
-      <Box
-        sx={{
-          display: 'grid',
-          placeItems: 'center',
-          minHeight: '100vh',
-          backgroundColor: 'background.default',
-        }}
-      >
-        <Box
-          component="img"
-          src="/fragbase-logo.png"
-          alt="Fragbase"
-          sx={{
-            width: 80,
-            height: 80,
-            animation: 'portalPulse 2s ease-in-out infinite',
-            '@keyframes portalPulse': {
-              '0%, 100%': { opacity: 1 },
-              '50%': { opacity: 0.45 },
-            },
-          }}
-        />
-      </Box>
-    );
+    return <AppLoadingScreen />;
   }
 
   if (access === 'public') return <>{children}</>;

@@ -33,7 +33,6 @@ import { MatchInfoCard } from '../components/team/MatchInfoCard';
 import { PlayerMatchDetailsModal } from '../components/player/PlayerMatchDetailsModal';
 import { useSoundSettings } from '../hooks/useSoundSettings';
 import { MatchNotificationAudio } from '../components/match/MatchNotificationAudio';
-import { TopNavBar } from '../components/layout/TopNavBar';
 import { TournamentRulesAccordion } from '../components/tournament/TournamentRulesAccordion';
 import { PlayerAvatar } from '../components/player/PlayerAvatar';
 import { PlayerName } from '../components/player/PlayerName';
@@ -746,19 +745,11 @@ export default function PlayerProfile() {
 
   if (loading) {
     return (
-      <Box minHeight="100vh" bgcolor="background.default">
-        <TopNavBar />
-        <PageShell maxWidth={pageWidth.content} sx={publicPageShellSx}>
-          <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            minHeight="400px"
-          >
-            <CircularProgress />
-          </Box>
-        </PageShell>
-      </Box>
+      <PageShell maxWidth={pageWidth.content} sx={publicPageShellSx}>
+        <Box display="flex" justifyContent="center" alignItems="center" minHeight={400}>
+          <CircularProgress />
+        </Box>
+      </PageShell>
     );
   }
 
@@ -779,9 +770,7 @@ export default function PlayerProfile() {
 
   if (error || !player) {
     return (
-      <Box minHeight="100vh" bgcolor="background.default">
-        <TopNavBar />
-        <PageShell maxWidth={pageWidth.narrow} sx={publicPageShellSx}>
+      <PageShell maxWidth={pageWidth.narrow} sx={publicPageShellSx}>
           <GlassCard sx={{ p: 0 }}>
               <CardContent sx={{ textAlign: 'center', py: 4 }}>
                 {isOwnUnregistered ? (
@@ -848,8 +837,7 @@ export default function PlayerProfile() {
                 )}
               </CardContent>
             </GlassCard>
-        </PageShell>
-      </Box>
+      </PageShell>
     );
   }
 
@@ -928,13 +916,11 @@ export default function PlayerProfile() {
   }
 
   return (
-    <Box
-      minHeight="100vh"
-      bgcolor="background.default"
+    <PageShell
+      maxWidth={pageWidth.content}
+      sx={publicPageShellSx}
       data-testid="public-player-page"
     >
-      <TopNavBar />
-      <PageShell maxWidth={pageWidth.content} sx={publicPageShellSx}>
         <Stack spacing={3}>
           <MatchNotificationAudio
             vetoReady={vetoReadyForPlayer}
@@ -1612,7 +1598,6 @@ export default function PlayerProfile() {
             />
           )}
         </Stack>
-      </PageShell>
-    </Box>
+    </PageShell>
   );
 }

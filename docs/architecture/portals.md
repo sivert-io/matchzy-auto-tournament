@@ -105,8 +105,8 @@ Because canonical routes, access rules, portal shells and shared UI already exis
 
 ## Operational requirements
 
-- Validate all mutations server-side and record privileged changes in `audit_log`.
-- Use idempotency keys for payments, registrations and match creation.
-- Publish domain events for bracket generation, server allocation and notifications.
-- Keep external integrations behind adapters with timeouts, retries and circuit breakers.
-- Add contract tests for portal/API boundaries and end-to-end tests for player and organizer critical paths.
+- Validate all mutations server-side; `audit_log` table exists (writers not yet wired everywhere).
+- Mercado Pago + registration flows documented in `docs/DEPLOY.md` and `docs/ENV.md`.
+- Per-org deploy: `docs/architecture/deployment-topologies.md`, `scripts/org-stack.sh`.
+- Env generation: `node scripts/generate-env.mjs` → see `docs/ENV.md`.
+- Portal preview screenshots: `yarn preview:portals` → `docs/assets/preview/portals/`.

@@ -18,7 +18,6 @@ import PlayerSearchResultsModal from '../components/modals/PlayerSearchResultsMo
 import { useSnackbar } from '../contexts/SnackbarContext';
 import { PlayerAvatar } from '../components/player/PlayerAvatar';
 import { PlayerName } from '../components/player/PlayerName';
-import { TopNavBar } from '../components/layout/TopNavBar';
 import { GlassCard, PageShell, pageWidth, publicPageShellSx } from '../shared/ui';
 
 interface PlayerOption {
@@ -93,15 +92,11 @@ export default function FindPlayer() {
 
       if (response.success) {
         if (response.player) {
-          // Single player found - redirect to their page
           navigate(`/player/${response.player.id}`);
         } else if (response.players && response.players.length > 0) {
-          // Check if single player or multiple players
           if (response.players.length === 1) {
-            // Single player found - redirect to their page
             navigate(`/player/${response.players[0].id}`);
           } else {
-            // Multiple players found - show selection modal
             setSearchResults(response.players);
             setShowResultsModal(true);
           }
@@ -133,137 +128,130 @@ export default function FindPlayer() {
   };
 
   return (
-    <Box minHeight="100vh" bgcolor="background.default" data-testid="find-player-page">
-      <TopNavBar />
-      <PageShell maxWidth={pageWidth.narrow} sx={publicPageShellSx}>
-        <GlassCard data-testid="find-player-form" sx={{ p: { xs: 3, sm: 4 } }}>
-            <Box textAlign="center" mb={4}>
-              <PersonIcon sx={{ fontSize: 64, color: 'primary.main', mb: 2 }} />
-              <Typography variant="h4" fontWeight={700} gutterBottom>
-                {t('findPlayer.title')}
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                {t('findPlayer.subtitle')}
-              </Typography>
-            </Box>
+    <PageShell maxWidth={pageWidth.narrow} sx={publicPageShellSx} data-testid="find-player-page">
+      <GlassCard data-testid="find-player-form" sx={{ p: { xs: 3, sm: 4 } }}>
+        <Box textAlign="center" mb={4}>
+          <PersonIcon sx={{ fontSize: 64, color: 'primary.main', mb: 2 }} />
+          <Typography variant="h4" fontWeight={700} gutterBottom>
+            {t('findPlayer.title')}
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            {t('findPlayer.subtitle')}
+          </Typography>
+        </Box>
 
-            <Box mb={3}>
-              <Autocomplete
-                options={players}
-                loading={playersLoading}
-                getOptionLabel={(option) => option.name}
-                onChange={(_, newValue) => {
-                  if (newValue && typeof newValue !== 'string') {
-                    setSelectedPlayer(newValue);
-                    navigate(`/player/${newValue.id}`);
-                  }
-                }}
-                inputValue={inputValue}
-                onInputChange={(_, newInputValue) => {
-                  // If the user is typing, drop any prior selection so styling
-                  // doesn't "stick" incorrectly.
-                  if (selectedPlayer && newInputValue !== selectedPlayer.name) {
-                    setSelectedPlayer(null);
-                  }
-                  setInputValue(newInputValue);
-                  setQuery(newInputValue);
-                  if (inputError) {
-                    setInputError(null);
-                  }
+        <Box mb={3}>
+          <Autocomplete
+            options={players}
+            loading={playersLoading}
+            getOptionLabel={(option) => option.name}
+            onChange={(_, newValue) => {
+              if (newValue && typeof newValue !== 'string') {
+                setSelectedPlayer(newValue);
+                navigate(`/player/${newValue.id}`);
+              }
+            }}
+            inputValue={inputValue}
+            onInputChange={(_, newInputValue) => {
+              if (selectedPlayer && newInputValue !== selectedPlayer.name) {
+                setSelectedPlayer(null);
+              }
+              setInputValue(newInputValue);
+              setQuery(newInputValue);
+              if (inputError) {
+                setInputError(null);
+              }
+            }}
+            slotProps={{
+              paper: {
+                sx: players.length === 0 ? { pointerEvents: 'none' } : undefined,
+              },
+            }}
+            renderOption={(props, option) => (
+              <Box
+                component="li"
+                {...props}
+                sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+              >
+                <PlayerAvatar
+                  id={option.id}
+                  name={option.name}
+                  avatarUrl={option.avatar}
+                  size={24}
+                  isAdmin={option.isAdmin}
+                />
+                <Box>
+                  <PlayerName name={option.name} isAdmin={option.isAdmin} variant="body2" />
+                  <Typography variant="caption" color="text.secondary">
+                    {option.id}
+                  </Typography>
+                </Box>
+              </Box>
+            )}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                fullWidth
+                label={t('findPlayer.searchLabel')}
+                placeholder={t('findPlayer.searchPlaceholder')}
+                onKeyPress={handleKeyPress}
+                disabled={loading}
+                error={!!inputError}
+                helperText={inputError || undefined}
+                sx={{
+                  ...(selectedPlayer?.isAdmin
+                    ? {
+                        '& .MuiInputBase-input': {
+                          color: 'error.main',
+                          fontWeight: 700,
+                        },
+                      }
+                    : undefined),
                 }}
                 slotProps={{
-                  // When there are no options to select, don't let the "No players found" popper
-                  // intercept clicks on the Find Player button below.
-                  paper: {
-                    sx: players.length === 0 ? { pointerEvents: 'none' } : undefined,
+                  htmlInput: {
+                    ...params.inputProps,
+                    'data-testid': 'find-player-input',
                   },
                 }}
-                renderOption={(props, option) => (
-                  <Box
-                    component="li"
-                    {...props}
-                    sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
-                  >
-                    <PlayerAvatar
-                      id={option.id}
-                      name={option.name}
-                      avatarUrl={option.avatar}
-                      size={24}
-                      isAdmin={option.isAdmin}
-                    />
-                    <Box>
-                      <PlayerName name={option.name} isAdmin={option.isAdmin} variant="body2" />
-                      <Typography variant="caption" color="text.secondary">
-                        {option.id}
-                      </Typography>
-                    </Box>
-                  </Box>
-                )}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    fullWidth
-                    label={t('findPlayer.searchLabel')}
-                    placeholder={t('findPlayer.searchPlaceholder')}
-                    onKeyPress={handleKeyPress}
-                    disabled={loading}
-                    error={!!inputError}
-                    helperText={inputError || undefined}
-                    sx={{
-                      ...(selectedPlayer?.isAdmin
-                        ? {
-                            '& .MuiInputBase-input': {
-                              color: 'error.main',
-                              fontWeight: 700,
-                            },
-                          }
-                        : undefined),
-                    }}
-                    slotProps={{
-                      htmlInput: {
-                        ...params.inputProps,
-                        'data-testid': 'find-player-input',
-                      },
-                    }}
-                    InputProps={{
-                      ...params.InputProps,
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          {playersLoading ? <CircularProgress size={20} /> : <SearchIcon />}
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                )}
-                noOptionsText={
-                  playersLoading
-                    ? t('findPlayer.noOptionsLoading')
-                    : t('findPlayer.noOptionsEmpty')
-                }
+                InputProps={{
+                  ...params.InputProps,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      {playersLoading ? <CircularProgress size={20} /> : <SearchIcon />}
+                    </InputAdornment>
+                  ),
+                }}
               />
-            </Box>
+            )}
+            noOptionsText={
+              playersLoading
+                ? t('findPlayer.noOptionsLoading')
+                : t('findPlayer.noOptionsEmpty')
+            }
+          />
+        </Box>
 
-            <Stack spacing={2}>
-              <Button
-                data-testid="find-player-button"
-                fullWidth
-                variant="contained"
-                size="large"
-                onClick={() => handleSearch(inputValue)}
-                disabled={loading || !inputValue.trim()}
-                startIcon={loading ? <CircularProgress size={20} /> : <SearchIcon />}
-              >
-                {loading ? t('findPlayer.searching') : t('findPlayer.searchButton')}
-              </Button>
-            </Stack>
-        </GlassCard>
-      </PageShell>
+        <Stack spacing={2}>
+          <Button
+            data-testid="find-player-button"
+            fullWidth
+            variant="contained"
+            size="large"
+            onClick={() => handleSearch(inputValue)}
+            disabled={loading || !inputValue.trim()}
+            startIcon={loading ? <CircularProgress size={20} /> : <SearchIcon />}
+          >
+            {loading ? t('findPlayer.searching') : t('findPlayer.searchButton')}
+          </Button>
+        </Stack>
+      </GlassCard>
 
       <PlayerSearchResultsModal
         open={showResultsModal}
         players={searchResults}
         onClose={() => setShowResultsModal(false)}
       />
-    </Box>
+    </PageShell>
   );
 }

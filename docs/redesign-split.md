@@ -120,18 +120,31 @@ Primitivas em `client/src/shared/ui/`: `PageShell`, `SectionHeader`, `GlassCard`
 - **Páginas públicas com `TopNavBar`**: `PageShell` + `publicPageShellSx` (FindPlayer, PlayerProfile, TeamMatch, TournamentLeaderboard, NotFound).
 - **Login / Landing / ConnectSteam**: `PageShell` sem `publicPageShellSx` (centrado na viewport).
 
-## Decisões/pendências (precisam do dono)
+## Decisões de produto (opcional)
 
-1. **Domínio real + subdomínios**: confirmar hostnames de produção e Cloudflare Tunnel/DNS.
-2. **Telas públicas** no app Player — confirmar se org também precisa acessá-las.
-3. **Copy/marca** final de landing/login.
+1. **Domínio real + subdomínios** — ver `docs/DEPLOY.md` e `docker/env/fragbase-camp.env`
+2. **Hub global** vs player portal por camp — hub é opcional (`docker-compose.hub.yml`)
+3. **Copy/marca** final de landing/login
 
 ## Known issues (pré-existentes)
 
 - `tsc -p api` — erros pré-existentes; build usa esbuild.
 
-## Próximos passos
+## Próximos passos (prod)
 
-1. **QA visual** com backend: `yarn db` + `yarn dev:player` / `yarn dev:org`
-2. Merge `feat/split-player-org-apps` → `main`
-3. **Fase 4 (restante)**: inscrições player + checkout MP, multi-org no backend, QA visual
+1. Merge `feat/split-player-org-apps` → `main` + publish Docker image
+2. `node scripts/generate-env.mjs` → edit `docker/env/fragbase-camp.env`
+3. `./scripts/org-stack.sh fragbase-camp up` + DNS/Tunnel
+4. QA: `docs/qa/fase4-smoke-checklist.md` (public browse + org console)
+
+## Public browse (player portal, jun/2026)
+
+- [x] **API** `GET /api/public/camp`, `/teams`, `/teams/:id` (no auth)
+- [x] **Routes** `/camps`, `/teams`, `/teams/:id`, `/player/:id` (slim), `/leaderboard` redirect
+- [x] **Shells** `PlayerPublicShell`, `OrgPublicShell` — Suspense only on `<Outlet />`
+- [x] **Hub** `PlayerEntryPage` with browse cards (not org console)
+- [x] **Tests** `tests/api/publicBrowse.spec.ts`
+- [x] **i18n** `publicBrowse.*` en, pt-BR, lv
+- [x] **gitignore fix** `api/public/` only (not `public/` — was hiding `client/src/**/public/`)
+
+Participant team console stays on `/team/:id` (`TeamMatch`), outside public nav.

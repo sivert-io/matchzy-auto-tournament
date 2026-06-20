@@ -1,39 +1,60 @@
-# Fragbase Fase 4 — smoke checklist (manual QA)
+# Fragbase — smoke checklist (manual QA before VPS deploy)
 
 Run with local Postgres + dev portals:
 
 ```bash
 yarn db
-yarn dev:player   # http://localhost:5173
-yarn dev:org      # http://localhost:5174 (second terminal)
+yarn dev:player:win   # http://localhost:5173
+yarn dev:org:win      # http://localhost:5174 (second terminal)
 ```
 
-## Player portal (`/play`)
+## Player portal — public browse (no login)
 
-- [ ] Landing loads with glass background and skip link
-- [ ] Login / Steam connect flow opens
-- [ ] PlayerHome shows self-register CTA when enabled in org Settings
-- [ ] Tournament leaderboard: shuffle self-registration register/unregister
-- [ ] Team page: captain sees registration card (free + paid fee paths)
-- [ ] PlayerProfile self-register CTA when logged in without player row
+- [ ] `/` hub loads with glass background, skip link, cards (Camps, Teams, Players, Leaderboard)
+- [ ] `/camps` shows organization + current tournament (`GET /api/public/camp`)
+- [ ] `/teams` lists teams with search (`GET /api/public/teams`)
+- [ ] `/teams/:id` shows roster + stats (public slim page, not captain console)
+- [ ] `/player` search navigates to `/player/:steamId` public profile
+- [ ] `/leaderboard` redirects to active tournament leaderboard
+- [ ] `/login` Steam / SSO providers load
+- [ ] Top nav: Home · Championships · Teams · Players · Leaderboard
 
-## Org portal (`/org`)
+## Player portal — after login (`/play`)
 
-- [ ] Dashboard: four **StatTile** summary cards link to tournament/matches/servers/players
-- [ ] Settings: toggles `allowSelfRegister`, shuffle self-register, MP OAuth connect
-- [ ] Tournament: team self-registration toggle + registration fee (BRL cents)
-- [ ] Teams: championship roster roles (starter/coach/reserve) in TeamModal
-- [ ] Bracket / Matches / Servers pages render without layout regressions
+- [ ] PlayerHome + self-register CTA when enabled in org Settings
+- [ ] Tournament leaderboard: shuffle self-registration
+- [ ] `/team/:id` captain registration (free + Mercado Pago when fee > 0)
+- [ ] Lobbies / skins under authenticated layout
 
-## API smoke (optional)
+## Org portal (`/organizer`)
+
+- [ ] `/` shows organizer auth gate (not public browse)
+- [ ] Dashboard StatTile links work
+- [ ] Settings: self-register toggles, Mercado Pago OAuth
+- [ ] Tournament: team registration fee, roster roles in TeamModal
+- [ ] Bracket / Matches / Servers without layout regressions
+
+## API smoke (automated)
 
 ```bash
 yarn test:manual -- tests/api/organization.spec.ts
+yarn test:manual -- tests/api/publicBrowse.spec.ts
 ```
 
-## Deploy stacks (production)
+## VPS deploy
 
 ```bash
-cp docker/example.env.hub docker/env/hub.env && ./scripts/hub-stack.sh up
-cp docker/example.env.org docker/env/camp-alpha.env && ./scripts/org-stack.sh camp-alpha up
+node scripts/generate-env.mjs
+# edit docker/env/fragbase-camp.env (domains, STEAM_API_KEY, secrets)
+./scripts/org-stack.sh fragbase-camp up
 ```
+
+Health:
+
+```bash
+curl -s https://admin.YOUR_CAMP/health
+curl -s https://admin.YOUR_CAMP/api/public/camp
+curl -s https://play.YOUR_CAMP/camps
+```
+
+See `docs/DEPLOY.md` for DNS, Mercado Pago webhook URL and CS2 server webhooks.

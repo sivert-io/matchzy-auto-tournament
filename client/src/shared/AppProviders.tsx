@@ -7,6 +7,8 @@ import { SnackbarProvider } from '../contexts/SnackbarContext';
 import { BackgroundProvider } from '../contexts/BackgroundContext';
 import { AppBackground } from '../components/layout/AppBackground';
 import { BackgroundSwitcherFab } from '../components/layout/BackgroundSwitcherFab';
+import { ApiOfflineBanner } from '../components/layout/ApiOfflineBanner';
+import { AppErrorBoundary } from './AppErrorBoundary';
 import { theme } from '../theme';
 
 /**
@@ -18,19 +20,22 @@ export function AppProviders({ children }: { children: ReactNode }) {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <AuthProvider>
-          <SnackbarProvider>
-            <PageHeaderProvider>
-              <BackgroundProvider>
-                <AppBackground />
-                {children}
-                <BackgroundSwitcherFab />
-              </BackgroundProvider>
-            </PageHeaderProvider>
-          </SnackbarProvider>
-        </AuthProvider>
-      </BrowserRouter>
+      <AppErrorBoundary>
+        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <AuthProvider>
+            <SnackbarProvider>
+              <PageHeaderProvider>
+                <BackgroundProvider>
+                  <AppBackground />
+                  <ApiOfflineBanner />
+                  {children}
+                  <BackgroundSwitcherFab />
+                </BackgroundProvider>
+              </PageHeaderProvider>
+            </SnackbarProvider>
+          </AuthProvider>
+        </BrowserRouter>
+      </AppErrorBoundary>
     </ThemeProvider>
   );
 }

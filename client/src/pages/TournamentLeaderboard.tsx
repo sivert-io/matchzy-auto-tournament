@@ -38,7 +38,6 @@ import { useSnackbar } from '../contexts/SnackbarContext';
 import { getPlayerPageUrl } from '../utils/playerLinks';
 import { PlayerAvatar } from '../components/player/PlayerAvatar';
 import { PlayerName } from '../components/player/PlayerName';
-import { TopNavBar } from '../components/layout/TopNavBar';
 import { GlassCard, PageShell, pageWidth, publicPageShellSx } from '../shared/ui';
 import { TeamNameLink } from '../components/team/TeamNameLink';
 import type { Tournament } from '../types/tournament.types';
@@ -339,25 +338,19 @@ export default function TournamentLeaderboard() {
 
   if (loading) {
     return (
-      <Box minHeight="100vh" bgcolor="background.default">
-        <TopNavBar />
-        <PageShell maxWidth={pageWidth.default} sx={publicPageShellSx}>
-          <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
-            <CircularProgress />
-          </Box>
-        </PageShell>
-      </Box>
+      <PageShell maxWidth={pageWidth.default} sx={publicPageShellSx}>
+        <Box display="flex" justifyContent="center" alignItems="center" minHeight={400}>
+          <CircularProgress />
+        </Box>
+      </PageShell>
     );
   }
 
   if (error) {
     return (
-      <Box minHeight="100vh" bgcolor="background.default">
-        <TopNavBar />
-        <PageShell maxWidth={pageWidth.default} sx={publicPageShellSx}>
-          <Alert severity="error">{error}</Alert>
-        </PageShell>
-      </Box>
+      <PageShell maxWidth={pageWidth.default} sx={publicPageShellSx}>
+        <Alert severity="error">{error}</Alert>
+      </PageShell>
     );
   }
 
@@ -365,13 +358,11 @@ export default function TournamentLeaderboard() {
   // show a gentle empty state instead of crashing or displaying an error.
   if (!data) {
     return (
-      <Box
-        minHeight="100vh"
-        bgcolor="background.default"
+      <PageShell
+        maxWidth={pageWidth.default}
+        sx={publicPageShellSx}
         data-testid="public-leaderboard-page"
       >
-        <TopNavBar />
-        <PageShell maxWidth={pageWidth.default} sx={publicPageShellSx}>
           <Stack spacing={3}>
             <GlassCard sx={{ p: 0 }}>
               <CardContent>
@@ -406,8 +397,7 @@ export default function TournamentLeaderboard() {
               </CardContent>
             </GlassCard>
           </Stack>
-        </PageShell>
-      </Box>
+      </PageShell>
     );
   }
 
@@ -539,13 +529,11 @@ export default function TournamentLeaderboard() {
   };
 
   return (
-    <Box
-      minHeight="100vh"
-      bgcolor="background.default"
+    <PageShell
+      maxWidth={pageWidth.default}
+      sx={publicPageShellSx}
       data-testid="public-leaderboard-page"
     >
-      <TopNavBar />
-      <PageShell maxWidth={pageWidth.default} sx={publicPageShellSx}>
         <Stack spacing={3}>
           {/* Tournament Header */}
           <GlassCard sx={{ p: 0 }}>
@@ -1083,7 +1071,6 @@ export default function TournamentLeaderboard() {
             </CardContent>
           </GlassCard>
         </Stack>
-      </PageShell>
-    </Box>
+    </PageShell>
   );
 }
