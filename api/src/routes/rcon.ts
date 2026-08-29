@@ -6,6 +6,10 @@ import { log } from '../utils/logger';
 import { getWebhookBaseUrl } from '../utils/urlHelper';
 import { getMatchZyWebhookCommands } from '../utils/matchzyRconCommands';
 import { getLastServerTestEvent } from '../services/serverConnectivityService';
+import { db } from '../config/database';
+import { emitMatchUpdate } from '../services/socketService';
+import { serverAllocationTracker } from '../services/serverAllocationTracker';
+import { matchAllocationService } from '../services/matchAllocationService';
 
 const router = Router();
 
@@ -694,7 +698,12 @@ router.post('/add-time', async (req: Request, res: Response) => {
 
 /**
  * POST /api/rcon/end-match
- * Force end the current match (css_restart / css_endmatch)
+ * Force end whatever match the server is running.
+ *
+ * This used to send `css_restart` and stop there. The server did reset, but our
+ * own record was never touched, so the match sat at `live` and the Matches tab
+ * kept showing LIVE afterwards. `ResetMatch()` emits no series_end either, so
+ * nothing else was ever going to close the record out.
  */
 router.post('/end-match', async (req: Request, res: Response) => {
   try {
@@ -707,12 +716,47 @@ router.post('/end-match', async (req: Request, res: Response) => {
       });
     }
 
-    const result = await rconService.sendCommand(serverId, 'css_restart');
-    const statusCode = result.success ? 200 : 400;
+    // css_endmatch and css_restart both call ResetMatch() in the plugin; this
+    // one announces "an admin ended the match", which is what happened.
+    const result = await rconService.sendCommand(serverId, 'css_endmatch');
+    if (!result.success) {
+      return res.status(400).json(result);
+    }
 
-    return res.status(statusCode).json(result);
+    // Close out our own record, the way force-cancel does, so the UI and the
+    // allocator both stop believing the match is still running.
+    const match = await db.queryOneAsync<{ slug: string }>(
+      `SELECT slug FROM matches
+        WHERE server_id = ?
+          AND status IN ('loaded', 'live')
+        ORDER BY id DESC
+        LIMIT 1`,
+      [serverId]
+    );
+
+    if (!match) {
+      log.info(`[RCON] Ended match on ${serverId}; no loaded or live match on record`);
+      return res.json({ ...result, endedMatchSlug: null });
+    }
+
+    await db.updateAsync(
+      'matches',
+      { status: 'cancelled', completed_at: Math.floor(Date.now() / 1000) },
+      'slug = ?',
+      [match.slug]
+    );
+    log.info(`[RCON] Match ${match.slug} ended by admin on ${serverId}`);
+
+    serverAllocationTracker.markIdle(serverId);
+    setImmediate(() => {
+      void matchAllocationService.tryImmediateAllocation();
+    });
+
+    emitMatchUpdate({ slug: match.slug, status: 'cancelled' });
+
+    return res.json({ ...result, endedMatchSlug: match.slug });
   } catch (error) {
-    console.error('Error ending match:', error);
+    log.error('Error ending match:', error as Error);
     return res.status(500).json({
       success: false,
       error: 'Failed to end match',
