@@ -30,7 +30,7 @@ async function withInsecureClipboard(page: Page, success: boolean) {
     (window as unknown as { __copiedText?: string }).__copiedText = undefined;
     document.execCommand = ((command: string) => {
       if (command !== 'copy') return false;
-      const active = document.activeElement as HTMLTextAreaElement | null;
+      const active = document.activeElement as { value?: string } | null;
       (window as unknown as { __copiedText?: string }).__copiedText = active?.value;
       return execSucceeds;
     }) as typeof document.execCommand;
