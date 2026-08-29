@@ -184,7 +184,19 @@ export function SnackbarProvider({ children }: { children: ReactNode }) {
       maxSnack={5}
       // Only the toasts themselves are interactive; the container must let
       // clicks through to the page underneath.
-      style={{ pointerEvents: 'none' }}
+      // Sit below MUI's modal layer (zIndex 1300) rather than above it.
+      //
+      // Toasts are anchored bottom-right and the stack grows upward, so with two
+      // or three showing it reaches the action row of a tall dialog — measured at
+      // y 620-689 for the server modal, against a stack reaching y~650. Which
+      // button gets covered just depends on the corner: Save sits bottom-right,
+      // Delete bottom-left (`mr: 'auto'`). Moving the anchor only moves the
+      // problem.
+      //
+      // A modal dialog is by definition the focused interaction, so it should own
+      // its own clicks. With no dialog open — the common case — toasts are
+      // unaffected and still fully interactive.
+      style={{ pointerEvents: 'none', zIndex: 1200 }}
       anchorOrigin={{
         vertical: 'bottom',
         horizontal: 'right',
