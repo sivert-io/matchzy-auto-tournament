@@ -29,9 +29,9 @@ test.describe.serial('Maps UI', () => {
   });
 
   test(
-    'should reject a map id that is not lowercase',
+    'should normalise a typed map id to lowercase',
     { tag: ['@ui', '@maps', '@validation'] },
-    async ({ page }) => {
+    async ({ page, request }) => {
       await page.goto('/maps');
       await dismissSnackbars(page);
       await page.getByTestId('add-map-button').click();
@@ -39,15 +39,31 @@ test.describe.serial('Maps UI', () => {
       const modal = page.getByTestId('map-modal');
       await expect(modal).toBeVisible();
 
-      await page.getByTestId('map-id-input').fill(`INVALID_MAP_${Date.now()}`);
-      await page.getByTestId('map-display-name-input').fill('Invalid Map');
-      await page.getByTestId('map-create-button').click();
+      // The field sanitises as you type (`toLowerCase().trim()`), so the
+      // `/^[a-z0-9_]+$/` guard behind the Create button is unreachable through
+      // the UI — an invalid id simply cannot be entered. Assert the behaviour
+      // that actually exists rather than a rejection that cannot happen.
+      //
+      // An earlier version of this test asserted the error copy and appeared to
+      // pass, but it was matching the field's *helper text*, which reads
+      // "Lowercase letters, numbers, and underscores only (de_dust2)".
+      const suffix = Date.now();
+      const idInput = page.getByTestId('map-id-input');
+      await idInput.fill(`UPPER_MAP_${suffix}`);
+      await expect(idInput).toHaveValue(`upper_map_${suffix}`);
 
-      // The modal stays open and surfaces the validation message.
-      await expect(modal).toBeVisible();
-      await expect(
-        modal.getByText(/lowercase letters, numbers, and underscores/i)
-      ).toBeVisible();
+      await page.getByTestId('map-display-name-input').fill('Normalised Map');
+      const [createResponse] = await Promise.all([
+        page.waitForResponse(
+          (resp) => resp.url().includes('/api/maps') && resp.request().method() === 'POST',
+          { timeout: 15000 }
+        ),
+        page.getByTestId('map-create-button').click(),
+      ]);
+      expect(createResponse.ok()).toBe(true);
+
+      const maps = await (await request.get('/api/maps', { headers: getAuthHeader() })).json();
+      expect(maps.maps.map((m: { id: string }) => m.id)).toContain(`upper_map_${suffix}`);
     }
   );
 
@@ -148,6 +164,8 @@ test.describe.serial('Tournament Map Pool Selection', () => {
       await page.goto('/tournament');
       await page.getByTestId('tournament-welcome-create-new').click();
 
+      // Toasts stack bottom-right, over the wizard's Next button.
+      await dismissSnackbars(page);
       const nextButton = page.getByTestId('tournament-next-button');
 
       // Name -> Type -> Format -> Maps
