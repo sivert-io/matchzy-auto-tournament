@@ -1,4 +1,5 @@
 import swaggerJsdoc from 'swagger-jsdoc';
+import fs from 'fs';
 import path from 'path';
 import {
   collectRouterGroups,
@@ -444,4 +445,61 @@ function buildTags(
   return [...byName.values()].sort((a, b) => a.name.localeCompare(b.name));
 }
 
-export const swaggerSpec = buildOpenApiSpec();
+/**
+ * Where the committed spec might be, relative to this file.
+ *
+ * Two layouts: running from source (`api/src/config`), and the release image,
+ * where the backend is bundled to `/app/dist` and the spec is copied to
+ * `/app/docs`.
+ */
+const COMMITTED_SPEC_CANDIDATES = [
+  // Running from source: api/src/config -> repo root.
+  path.resolve(__dirname, '..', '..', '..', 'docs', 'openapi.json'),
+  // Release image: the backend is bundled to /app/dist/index.js, so __dirname
+  // is /app/dist and the spec sits beside it at /app/docs.
+  path.resolve(__dirname, '..', 'docs', 'openapi.json'),
+];
+
+/**
+ * The spec this instance serves.
+ *
+ * Prefer the committed `docs/openapi.json`, and fall back to building one.
+ *
+ * The fallback exists because the release image contains `dist/index.js`, not
+ * `api/src/**.ts` — so swagger-jsdoc's globs match nothing there and every
+ * hand-written description, request body and response schema disappears. A
+ * production Swagger UI was therefore a skeleton: correct about which endpoints
+ * exist and silent about all of them. The committed file has that detail, is
+ * generated from these same routers, and CI will not let it drift, so shipping
+ * it is strictly better than rebuilding a worse one at boot.
+ *
+ * The one thing not taken from the file is `servers`: the committed copy pins a
+ * portable URL so its bytes are reproducible, which would point Swagger UI's
+ * "Try it" button at the wrong host. That is replaced with this instance's own.
+ */
+function resolveOpenApiSpec(): Record<string, unknown> {
+  for (const candidate of COMMITTED_SPEC_CANDIDATES) {
+    try {
+      if (!fs.existsSync(candidate)) continue;
+      const spec = JSON.parse(fs.readFileSync(candidate, 'utf8')) as Record<string, unknown>;
+      spec.servers = [{ url: swaggerServerUrl, description: 'This instance' }];
+      return spec;
+    } catch {
+      // Unreadable or malformed: fall through and build one rather than
+      // refusing to start over a documentation file.
+    }
+  }
+
+  return buildOpenApiSpec();
+}
+
+let cachedSpec: Record<string, unknown> | null = null;
+
+/**
+ * Lazy so that merely importing this module — as the docs generator does, for
+ * `buildOpenApiSpec` — does not read a spec file it is about to rewrite.
+ */
+export function getOpenApiSpec(): Record<string, unknown> {
+  cachedSpec ??= resolveOpenApiSpec();
+  return cachedSpec;
+}
